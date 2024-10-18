@@ -1,8 +1,10 @@
 // Route to handle authentication
 
-const express = require("express");
-const jwt = require("jsonwebtoken");
-require("dotenv").config();
+import express from "express";
+import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const router = express.Router();
 
@@ -33,4 +35,4 @@ router.post("/", (req, res) => {
     res.json({ token });
 });
 
-module.exports = router;
+export default router;
