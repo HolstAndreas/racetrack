@@ -1,8 +1,7 @@
 const STATUS = {
-    SAFE: "Safe",
-    HAZARD: "Hazard",
-    DANGER: "Danger",
-    FINISH: "Finish"
-}
+  WAITING: "Waiting",
+  STARTED: "Started",
+  FINISHED: "Finished",
+};
 
 export default STATUS;
