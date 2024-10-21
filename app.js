@@ -20,7 +20,14 @@ app.set("views", path.join(__dirname, "views")); // Express will look for views 
 app.set("view engine", "ejs"); // Sets EJS as view engine.
 
 // Here should all defined routes be. (Endpoint, method)
-app.get("/races", getRaceById);
+app.get("/race-sessions:raceId", getRaceById); // get a race by ID
+app.get("/leader-board", getLeaderBoard); // get leaderboard
+app.get("/next-race", getNextRace); // get next race
+app.post("/lap-times", postLapTimes); // post/update lap-times
+app.post("/raceId/drivers", postDriversInRace); // add driver to race
+app.delete("/raceId/drivers", deleteDriversInRace); // delete driver from race
+app.patch("/raceId/drivers/driverId", patchRaceById); // edit driver from race
+app.post("/raceId/drivers/driverId/assign-car", assignCarToDriver); // assign a car to driver
 
 // Starts the server
 const PORT = process.env.PORT || 3000; // Sets the port number, checks for environment variables, default is 3000.
