@@ -1,5 +1,5 @@
-import MODE from "./mode.js";
-import STATUS from "../../status.js";
+import MODE from "../entities/Mode.js";
+import STATUS from "../entities/Status.js";
 
 export class Race {
   constructor(id, name, drivers) {
