@@ -2,9 +2,8 @@ import MODE from "../entities/Mode.js";
 import STATUS from "../entities/Status.js";
 
 export class Race {
-  constructor(id, name, drivers) {
+  constructor(id, drivers) {
     this.id = id;
-    this.name = name; // what name?
     this.startTime = undefined;
     this.drivers = drivers; //gets array of drivers from...
     this.remainingTime = 600;
@@ -50,3 +49,12 @@ export class Race {
 }
 
 export default Race;
+
+// CREATE TABLE races (
+//     id SERIAL PRIMARY KEY,
+//     start_time TIMESTAMP,
+//     drivers INTEGER[],
+//     remaining_time INTEGER DEFAULT 600,
+//     status VARCHAR(50) DEFAULT 'WAITING',
+//     mode VARCHAR(50) DEFAULT 'DANGER'
+// );

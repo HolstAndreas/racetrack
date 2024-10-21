@@ -2,7 +2,40 @@
 import express from "express"; // Import express module - handles routing, middleware, HTTP requests, responses
 import path from "path"; // Provides ulities for working with file and directory paths.
 import { fileURLToPath } from "url"; // converts a file URL into an actual filepath - in ES Node.js does not provide built-in __filename or __dirname...
-import { getRaceById } from "./app/controllers/RaceController.js"; // import all methods from raceControllers.js
+import {
+  getRaceById,
+  getLeaderboard,
+  getNextRace,
+  getRaceFlags,
+  postDriversInRace,
+  assignCarToDriver,
+  deleteDriversInRace,
+  patchRaceById,
+} from "./app/controllers/RaceController.js"; // import all methods from RaceController.js
+import dotenv from "dotenv";
+
+dotenv.config();
+
+const requiredKeys = [
+  "JWT_SECRET",
+  "receptionist_key",
+  "observer_key",
+  "safety_key",
+];
+
+function checkEnvVariables() {
+  const unsetEnv = requiredKeys.filter((key) => !process.env[key]);
+  if (unsetEnv.length > 0) {
+    console.error("Missing access key");
+    process.exit(1);
+  }
+}
+
+checkEnvVariables();
+// console.log(process.env.JWT_SECRET);
+// console.log(process.env.receptionist_key);
+// console.log(process.env.observer_key);
+// console.log(process.env.safety_key);
 
 // Sets up Express
 const app = express(); // app is now an instance of Express application.

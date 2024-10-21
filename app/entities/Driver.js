@@ -6,8 +6,6 @@ class Driver {
     this.name = name;
     this.car = car;
     this.currentRace = currentRace;
-    this.currentLap = currentLap; // vb MAP - lapID + lap-time.
-    this.fastestLap = fastestLap;
     this.lapTimes = lapTimes;
   }
   recordLapTime(lapTime) {
@@ -24,3 +22,11 @@ class Driver {
 }
 
 export default Driver;
+
+// CREATE TABLE drivers (
+//     id SERIAL PRIMARY KEY,
+//     name VARCHAR(255) NOT NULL,
+//     car INTEGER,
+//     current_race INTEGER REFERENCES races(id),
+//     lap_times INTEGER[]
+// );
