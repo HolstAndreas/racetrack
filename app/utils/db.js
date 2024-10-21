@@ -1,4 +1,10 @@
-import Pool from "pg";
+// import * as pg from "pg";
+// const { Pool } = pg;
+
+import pkg from "pg";
+const { Pool } = pkg;
+
+// import { Pool } from "pg/lib/index.js"
 
 const pool = new Pool({
   user: "andreas",
@@ -8,4 +14,4 @@ const pool = new Pool({
   host: "localhost",
 });
 
-export default pool;
+export { pool as default };
