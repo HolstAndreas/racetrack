@@ -12,6 +12,13 @@ import {
   deleteDriversInRace,
   patchRaceById,
 } from "./app/controllers/RaceController.js"; // import all methods from RaceController.js
+import {
+  getAllDrivers,
+  getDriverById,
+  postDriver,
+  patchDriverById,
+  deleteDriverById,
+} from ".app/controllers/DriverController.js";
 import dotenv from "dotenv";
 
 dotenv.config();
@@ -54,7 +61,6 @@ app.set("view engine", "ejs"); // Sets EJS as view engine.
 
 // TODO:
 // Authentication endpoint /authenticate
-// app.post("/lap-times", postLapTimes); // post/update lap-times
 // app.get("race-countdown", getRaceCountdown); // get race remaining time
 
 // left alt + left click = multi cursor
@@ -72,6 +78,16 @@ app.post("api/raceId/drivers/:driverId/assign-car", assignCarToDriver); // assig
 
 app.delete("api/:raceId/drivers", deleteDriversInRace); // delete driver from race
 app.patch("api/raceId/drivers/:driverId", patchRaceById); // edit driver from race
+
+// Here are drivercontrollers
+app.get("/api/drivers", getAllDrivers);
+app.get("/api/drivers/:driverId", getDriverById);
+
+app.post("/api/drivers", postDriver);
+app.post("/api/drivers/:raceId/:driverId/lap-times", postLapTimes); // post/update lap-times
+
+app.patch("/api/drivers/:driverId", patchDriverById);
+app.delete("/api/drivers/:driverId", deleteDriverById);
 
 app.get("/", function (req, res) {
   res.sendFile(path.join(__dirname, "app/views/index.html"));

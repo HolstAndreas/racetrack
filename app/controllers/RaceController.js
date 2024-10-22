@@ -34,6 +34,11 @@ export const getRaceFlags = (req, res) => {
   res.send("MODE: HAZARD");
 };
 
+export const getRaceCountdown = (req, res) => {
+  const { raceId } = req.params;
+  res.send("getRaceCountdown: ", raceId);
+};
+
 // POST
 export const postDriversInRace = (req, res) => {
   const { raceId, drivers } = req.params;
@@ -49,7 +54,7 @@ export const patchRaceById = (req, res) => {
 // DELETE
 export const deleteDriversInRace = (req, res) => {
   const { raceId } = req.params;
-  res.send("deeteDriversInRace: ", raceId);
+  res.send("deleteDriversInRace: ", raceId);
 };
 
 export const assignCarToDriver = (req, res) => {
