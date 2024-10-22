@@ -1,0 +1,81 @@
+html,
+body {
+  height: 100%;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+body {
+  height: 100vh;
+  width: 100vw;
+}
+
+main {
+  height: 90%;
+  width: 95%;
+}
+
+section {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 4fr;
+  height: 100%;
+  width: 100%;
+  padding: 10px;
+}
+
+h2 {
+  display: inline-block;
+}
+
+ol {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  padding: 0;
+  margin: 0;
+  list-style-position: inside;
+}
+
+li {
+  flex-grow: 1;
+  display: block;
+  width: 100%;
+  padding: 5px;
+  border: 1px solid #ccc;
+}
+
+.race-list {
+  display: grid;
+  background-color: aqua;
+  grid-row: 1/5;
+  grid-column: 1;
+}
+
+.race-sessions {
+  background-color: aquamarine;
+  grid-column: 2;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
+}
+
+.btn {
+  display: inline-block;
+  text-align: center;
+  text-decoration: none;
+  /* font-size: 2rem; */
+  padding: 1rem 1rem;
+  border-radius: 9px;
+  font-weight: 600;
+  border: 1px solid #000;
+  cursor: pointer;
+  background-color: #bde6b1;
+}
+
+.race-drivers {
+  background-color: lightblue;
+  grid-column: 2;
+}

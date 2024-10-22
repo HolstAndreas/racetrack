@@ -2,13 +2,17 @@
 import express from "express"; // Import express module - handles routing, middleware, HTTP requests, responses
 import path from "path"; // Provides ulities for working with file and directory paths.
 import { fileURLToPath } from "url"; // converts a file URL into an actual filepath - in ES Node.js does not provide built-in __filename or __dirname...
+import dotenv from "dotenv";
+import cookieParser from "cookie-parser";
 import {
   getRaceById,
   getLeaderboard,
   getNextRace,
   getRaceFlags,
+  getRemainingTime,
   postDriversInRace,
   assignCarToDriver,
+  postRace,
   deleteDriversInRace,
   patchRaceById,
 } from "./app/controllers/RaceController.js"; // import all methods from RaceController.js
@@ -16,10 +20,14 @@ import {
   getAllDrivers,
   getDriverById,
   postDriver,
+  postLapTimes,
   patchDriverById,
   deleteDriverById,
-} from ".app/controllers/DriverController.js";
-import dotenv from "dotenv";
+} from "./app/controllers/DriverController.js";
+import validateIsNumber from "./app/middleware/ValidateIsNumber.js";
+import logger from "./app/utils/logger.js";
+import authMiddleware from "./app/middleware/authMiddleware.js";
+import authRouter from "./app/utils/authentication.js";
 
 dotenv.config();
 
@@ -50,6 +58,7 @@ const app = express(); // app is now an instance of Express application.
 // Middleware Configuration:
 app.use(express.json()); // Parse JSON - adds middleware that parses JSON payloads - convert the body into a JS object available under req.body.
 app.use(express.urlencoded({ extended: true })); // Middleware to parse URL-encoded data from form submissions, true == allows rich objects and arrays.
+app.use(cookieParser()); // Parse cookies
 
 // File and Directory Setup:
 const __filename = fileURLToPath(import.meta.url); // Converts current URL of the module into a filepath using...
@@ -61,23 +70,25 @@ app.set("view engine", "ejs"); // Sets EJS as view engine.
 
 // TODO:
 // Authentication endpoint /authenticate
-// app.get("race-countdown", getRaceCountdown); // get race remaining time
 
-// left alt + left click = multi cursor
-// left alt + left shift + i = multi cursor select
-// ctrl + d select occurences
+// Here should all defined routes be. (Endpoint, middleware, middleware, controller method)
 
-// Here should all defined routes be. (Endpoint, method)
-app.get("/api/race-sessions/:raceId", getRaceById); // get a race by ID
-app.get("api/leader-board/:raceId", getLeaderboard); // get leaderboard
-app.get("api/next-race/", getNextRace); // get next race
-app.get("api/race-flags", getRaceFlags); // get race mode
+app.get("/api/race-sessions/:raceId", validateIsNumber, getRaceById); // get a race by ID | DONE
+app.get("/api/leader-board/:raceId", validateIsNumber, getLeaderboard); // get leaderboard
+app.get("/api/next-race/:raceId", validateIsNumber, getNextRace); // get next race | DONE
+app.get("/api/race-flags/:raceId", validateIsNumber, getRaceFlags); // get race mode | DONE
+app.get(
+  "/api/race-sessions/:raceId/remainingtime",
+  validateIsNumber,
+  getRemainingTime
+); // get race remaining time | DONE
 
-app.post("api/race-sessions/:raceId/drivers/:drivers", postDriversInRace); // app driver to race
-app.post("api/raceId/drivers/:driverId/assign-car", assignCarToDriver); // assign a car to driver
+app.post("/api/race-sessions/:raceId/drivers/:driverId", postDriversInRace); // add driver to race
+app.post("/api/:raceId/drivers/:driverId/assign-car", assignCarToDriver); // assign a car to driver
+app.post("/api/race-sessions", postRace);
 
-app.delete("api/:raceId/drivers", deleteDriversInRace); // delete driver from race
-app.patch("api/raceId/drivers/:driverId", patchRaceById); // edit driver from race
+app.delete("api/:raceId/drivers/:driverId", deleteDriversInRace); // delete driver from race
+app.patch("/api/raceId/drivers/:driverId", patchRaceById); // edit driver from race
 
 // Here are drivercontrollers
 app.get("/api/drivers", getAllDrivers);
@@ -93,8 +104,44 @@ app.get("/", function (req, res) {
   res.sendFile(path.join(__dirname, "app/views/index.html"));
 });
 
+app.use("/authenticate", authRouter);
+
+// Login route
+app.get("/login", (req, res) => {
+  res.sendFile(path.join(__dirname, "app/views/login.html"));
+});
+
+// Logout route
+app.get("/logout", (req, res) => {
+  res.clearCookie("token");
+  res.send("Logged out successfully.");
+});
+
+// Protected routes
+app.get("/front-desk", authMiddleware("receptionist"), function (req, res) {
+  res.sendFile(path.join(__dirname, "app/views/front-desk.html"));
+});
+
+app.get("/observer", authMiddleware("observer"), (req, res) => {
+  res.sendFile(path.join(__dirname, "app/views/lap-line-tracker.html"));
+});
+
+app.get("/safety", authMiddleware("safety"), (req, res) => {
+  res.sendFile(path.join(__dirname, "app/views/race-control.html"));
+});
+
+app.use((err, req, res, next) => {
+  if (err.status === 401) {
+    res.status(401).sendFile(path.join(__dirname, "app/views/401.html"));
+  } else if (err.status === 403) {
+    res.status(403).sendFile(path.join(__dirname, "app/views/403.html"));
+  } else {
+    next(err);
+  }
+});
+
 // Starts the server
 const PORT = process.env.PORT || 3000; // Sets the port number, checks for environment variables, default is 3000.
 app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`); // Start listening to requests at PORT
+  logger.info(`Server is running on port ${PORT}`); // Start listening to requests at PORT
 });

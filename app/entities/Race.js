@@ -1,6 +1,3 @@
-import MODE from "../entities/Mode.js";
-import STATUS from "../entities/Status.js";
-
 export class Race {
   constructor(id, drivers) {
     this.id = id;

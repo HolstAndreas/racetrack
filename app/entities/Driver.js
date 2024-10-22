@@ -1,7 +1,5 @@
-import LapTime from "./LapTime.js";
-
 class Driver {
-  constructor(id, name, car, currentRace, currentLap, fastestLap, lapTimes) {
+  constructor(id = null, name, car = null, currentRace = null, lapTimes = []) {
     this.id = id;
     this.name = name;
     this.car = car;

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div
+      style="
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      "
+    >
+      <form
+        id="login-form"
+        method="post"
+        style="display: flex; flex-direction: column; width: 25%; gap: 0.25rem"
+      >
+        <select name="role" id="role">
+          <option value="receptionist">Receptionist</option>
+          <option value="observer">Lap-line Observer</option>
+          <option value="safety">Safety Official</option>
+        </select>
+        <input
+          type="password"
+          id="accessKey"
+          name="accessKey"
+          placeholder="Access key"
+          value="8ded6076"
+        />
+        <button type="submit">Login</button>
+        <p id="errorMessage" style="color: red; margin-top: 0.5rem"></p>
+      </form>
+    </div>
+
+    <script>
+      document
+        .getElementById("login-form")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const role = document.getElementById("role").value;
+          const accessKey = document.getElementById("accessKey").value;
+
+          try {
+            const response = await fetch("/authenticate", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              credentials: "include",
+              body: JSON.stringify({ accessKey, role }),
+            });
+
+            if (response.ok) {
+              switch (role) {
+                case "receptionist":
+                  window.location.href = "/front-desk";
+                  break;
+                case "observer":
+                  window.location.href = "/lap-line-tracker";
+                  break;
+                case "safety":
+                  window.location.href = "/race-control";
+                  break;
+                default:
+                  document.getElementById("errorMessage").textContent =
+                    "Invalid role selected.";
+                  break;
+              }
+            } else {
+              const errorData = await response.json();
+              document.getElementById("errorMessage").textContent =
+                errorData.message;
+            }
+          } catch (error) {
+            console.error("Error:", error);
+            document.getElementById("errorMessage").textContent =
+              "An error occurred. Please try again.";
+          }
+        });
+    </script>
+  </body>
+</html>

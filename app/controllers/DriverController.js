@@ -1,4 +1,6 @@
-import Driver from "../entities/driver.js";
+import Driver from "../entities/Driver.js";
+import * as DriverService from "../services/DriverService.js";
+import logger from "../utils/logger.js";
 
 // Get all drivers
 export const getAllDrivers = () => {
@@ -12,8 +14,11 @@ export const getDriverById = (req, res) => {
 };
 
 // Post by ID - vajalik üldse?
-export const postDriver = () => {
-  res.send("postDriver: Driver Posted");
+export const postDriver = async (req, res) => {
+  const { name } = req.body;
+  logger.info("DriverController.postDriver" + name);
+  const driver = await DriverService.createDriver(name);
+  res.send(JSON.stringify(driver));
 };
 
 export const postLapTimes = (req, res) => {
