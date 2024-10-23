@@ -202,7 +202,17 @@ async function getLapTimesByRace() {
     const resultElement = document.getElementById("lapTimeResult");
     const raceId = document.getElementById("lapRaceId").value;
 
+    if (!raceId || isNaN(raceId)) {
+        displayResult(
+            resultElement,
+            "Error: Race ID is required and must be a valid number.",
+            true
+        );
+        return;
+    }
+
     try {
+        console.log(`${raceId}`);
         const response = await fetch(`/api/laptimes/race/${raceId}`);
         const data = await handleResponse(response, resultElement);
         displayResult(resultElement, data);
@@ -231,7 +241,7 @@ async function getFastestLap() {
 
     try {
         const response = await fetch(
-            `/api/laptimes/driver/${driverId}/race/${raceId}/fastest`
+            `/api/laptimes/race/${raceId}/driver/${driverId}?fastest=true`
         );
         const data = await handleResponse(response, resultElement);
         displayResult(resultElement, data);

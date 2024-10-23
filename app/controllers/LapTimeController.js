@@ -1,86 +1,116 @@
 import * as LapTimeService from "../services/LapTimeService.js";
 import logger from "../utils/logger.js";
+import ApiResponse from "../utils/ApiResponse.js";
+import ApiError from "../utils/ApiError.js";
 
-export const postLapTimes = (req, res) => {
+export const postLapTimes = async (req, res, next) => {
     const { raceId, driverId, lapTime, lapNumber } = req.body;
     logger.info(
         `LapTimeController.postLapTimes(lapTime:${JSON.stringify(req.body)})`
     );
+    try {
+        // Check if all required fields are present
+        if (!raceId) {
+            throw ApiError.badRequest("Race ID is required");
+        }
+        if (!driverId) {
+            throw ApiError.badRequest("Driver ID is required");
+        }
+        if (!lapTime) {
+            throw ApiError.badRequest("Lap time is required");
+        }
+        if (!lapNumber) {
+            throw ApiError.badRequest("Lap number is required");
+        }
 
-    // Check if all required fields are present
-    if (!raceId) {
-        logger.error("LapTimeController.postLapTimes() | Missing race ID");
-        return res.status(400).send("Race ID is required");
-    }
-    if (!driverId) {
-        logger.error("LapTimeController.postLapTimes() | Missing driver ID");
-        return res.status(400).send("Driver ID is required");
-    }
-    if (!lapTime) {
-        logger.error("LapTimeController.postLapTimes() | Missing lap time");
-        return res.status(400).send("Lap time is required");
-    }
-    if (!lapNumber) {
-        logger.error("LapTimeController.postLapTimes() | Missing lap number");
-        return res.status(400).send("Lap number is required");
-    }
+        // Check if all values are integers
+        if (
+            !Number.isInteger(raceId) ||
+            !Number.isInteger(driverId) ||
+            !Number.isInteger(lapTime) ||
+            !Number.isInteger(lapNumber)
+        ) {
+            throw ApiError.badRequest("All values must be integers");
+        }
 
-    // Check if all values are integers
-    if (
-        !Number.isInteger(raceId) ||
-        !Number.isInteger(driverId) ||
-        !Number.isInteger(lapTime) ||
-        !Number.isInteger(lapNumber)
-    ) {
-        logger.error(
-            "LapTimeController.postLapTimes() | All values must be integers"
+        const result = await LapTimeService.postLapTime(
+            driverId,
+            raceId,
+            lapTime,
+            lapNumber
         );
-        return res.status(400).send("All values must be integers");
+        return ApiResponse.success(
+            result,
+            "Lap time recorded successfully"
+        ).send(res);
+    } catch (error) {
+        next(error);
     }
-
-    const result = LapTimeService.postLapTime(
-        driverId,
-        raceId,
-        lapTime,
-        lapNumber
-    );
-    return res.status(200).json(result);
 };
 
-export const getLapTimesByRace = async (req, res) => {
+export const getLapTimesByRace = async (req, res, next) => {
     const raceId = req.params.raceId;
     const fastest = req.query.fastest === "true"; // /api/laptimes/race/:raceId?fastest=true
-    logger.info(`getLapTimesByDriver: raceId: ${raceId}, fastest: ${fastest}`);
-    if (fastest) {
-        const fastestLapTime = await LapTimeService.getFastestLapTime(raceId);
-        return res.status(200).json(fastestLapTime);
-    } else {
-        const lapTimes = await LapTimeService.getLapTimesByRace(raceId);
-        return res.status(200).json(lapTimes);
+    logger.info(`getLapTimesByRace: raceId: ${raceId}, fastest: ${fastest}`);
+    try {
+        if (!raceId) {
+            throw ApiError.badRequest("Race ID is required.");
+        }
+        if (fastest) {
+            const fastestLapTime = await LapTimeService.getFastestLapByRace(
+                raceId
+            );
+            return ApiResponse.success(
+                fastestLapTime,
+                "Fastest lap time retrieved successfully"
+            ).send(res);
+        } else {
+            const lapTimes = await LapTimeService.getLapTimesByRace(raceId);
+            return ApiResponse.success(
+                lapTimes,
+                "Lap times retrieved successfully"
+            ).send(res);
+        }
+    } catch (error) {
+        next(error);
     }
 };
 
-export const getLapTimesByDriver = async (req, res) => {
-    const { driverId, raceId } = req.params;
-    const fastest = req.query.fastest;
-    logger.info(
-        `getLapTimesByDriver: driverId: ${driverId}, raceId: ${raceId}, fastest: ${fastest}`
-    );
-    if (fastest) {
-        const fastestLapTime = await LapTimeService.getLapTimesByDriver(
-            driverId,
-            raceId
-        );
-        return res.status(200).json(fastestLapTime);
-    } else {
-        const lapTimes = await LapTimeService.getLapTimesByDriver(
-            driverId,
-            raceId
-        );
-        return res.status(200).json(lapTimes);
+export const getLapTimesByDriver = async (req, res, next) => {
+    const { driverId } = req.params;
+
+    try {
+        if (!driverId) {
+            throw ApiError.badRequest("Driver ID is required.");
+        }
+
+        const lapTimes = await LapTimeService.getLapTimesByDriver(driverId);
+        return ApiResponse.success(lapTimes, "Lap times retrieved successfully").send(res);
+    } catch (error) {
+        next(error);
     }
 };
 
-export const getFastestLapByDriver = async (req, res) => {
-    return;
+export const getLapTimesByRaceAndDriver = async (req, res, next) => {
+    const { raceId, driverId } = req.params;
+    const fastest = req.query.fastest === "true";
+
+    try {
+        if (!raceId) {
+            throw ApiError.badRequest("Race ID is required.");
+        }
+        if (!driverId) {
+            throw ApiError.badRequest("Driver ID is required.");
+        }
+
+        if (fastest) {
+            const fastestLap = await LapTimeService.getFastestLapByDriver(driverId, raceId);
+            return ApiResponse.success(fastestLap, "Fastest lap time retrieved successfully").send(res);
+        } else {
+            const lapTimes = await LapTimeService.getLapTimesByDriverAndRace(driverId, raceId);
+            return ApiResponse.success(lapTimes, "Lap times retrieved successfully").send(res);
+        }
+    } catch (error) {
+        next(error);
+    }
 };

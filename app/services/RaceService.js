@@ -2,20 +2,6 @@ import Race from "../entities/Race.js";
 import * as RaceRepository from "../repositories/RaceRepository.js";
 import logger from "../utils/logger.js";
 
-// export const getLeaderboardData = async (raceId) => {
-//   const race = await Race.findById(raceId).populate("drivers");
-
-//   if (!race) {
-//     throw new Error("Race not found");
-//   }
-
-//   const sortedDrivers = race.drivers.sort(
-//     (a, b) => a.fastestLap - b.fastestLap
-//   );
-
-//   return { race, sortedDrivers };
-// };
-
 export const findById = async (id) => {
     logger.info("RaceService | findById: " + id);
     const race = await RaceRepository.getRaceById(id);
@@ -88,7 +74,7 @@ export const addDriverToRace = async (raceId, driverId) => {
     );
 
     try {
-        // check if race exists
+        // Check if race exists
         const raceExists = await RaceRepository.checkRaceExists(raceId);
         if (!raceExists) {
             logger.error(
@@ -97,7 +83,7 @@ export const addDriverToRace = async (raceId, driverId) => {
             return { error: "RACE_NOT_FOUND" };
         }
 
-        // check if driver exists
+        // Check if driver exists
         const driverExists = await RaceRepository.checkDriverExists(driverId);
         if (!driverExists) {
             logger.error(
@@ -106,11 +92,10 @@ export const addDriverToRace = async (raceId, driverId) => {
             return { error: "DRIVER_NOT_FOUND" };
         }
 
-        // get current drivers
-        // { drivers: [ 1, 2, 3 ] }
+        // Get current drivers
         const drivers = await RaceRepository.getDriversByRace(raceId);
 
-        // Check got drivers
+        // Check if drivers data exists
         if (!drivers) {
             logger.error(
                 `RaceService.addDriverToRace() | No drivers for race ${raceId}`
@@ -118,7 +103,7 @@ export const addDriverToRace = async (raceId, driverId) => {
             return { error: "RACE_DATA_NOT_FOUND" };
         }
 
-        // check if driver already in race
+        // Check if driver already in race
         if (drivers[0].drivers.includes(Number(driverId))) {
             logger.error(
                 `RaceService.addDriverToRace() | Driver ${driverId} already in race ${raceId}`
@@ -127,7 +112,7 @@ export const addDriverToRace = async (raceId, driverId) => {
         }
 
         // Add driver
-        drivers[0].drivers.push(driverId);
+        drivers[0].drivers.push(Number(driverId));
         const result = await RaceRepository.postDriverToRace(
             raceId,
             drivers[0].drivers
@@ -147,7 +132,7 @@ export const removeDriverFromRace = async (raceId, driverId) => {
     );
 
     try {
-        // check if race exists
+        // Check if race exists
         const raceExists = await RaceRepository.checkRaceExists(raceId);
         if (!raceExists) {
             logger.error(
@@ -158,7 +143,7 @@ export const removeDriverFromRace = async (raceId, driverId) => {
 
         const drivers = await RaceRepository.getDriversByRace(raceId);
 
-        // check if driver exists
+        // Check if driver exists
         const driverExists = await RaceRepository.checkDriverExists(driverId);
         if (!driverExists) {
             logger.error(
@@ -167,7 +152,7 @@ export const removeDriverFromRace = async (raceId, driverId) => {
             return { error: "DRIVER_NOT_FOUND" };
         }
 
-        // Check got drivers
+        // Check if drivers data exists
         if (!drivers) {
             logger.error(
                 `RaceService.removeDriverFromRace() | No drivers for race ${raceId}`
@@ -178,7 +163,7 @@ export const removeDriverFromRace = async (raceId, driverId) => {
         // Convert driverId to number for comparison
         const driverIdNum = Number(driverId);
 
-        // check if driver is not in race
+        // Check if driver is not in race
         if (!drivers[0].drivers.includes(driverIdNum)) {
             logger.error(
                 `RaceService.removeDriverFromRace() | Driver ${driverId} is not in race ${raceId}`

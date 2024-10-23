@@ -2,7 +2,7 @@ import pool from "../utils/db.js";
 import logger from "../utils/logger.js";
 
 export const checkDriverExists = async (id) => {
-    logger.info(`DriverRepository.checkDriverExists(id:${id})`);
+    logger.info(`RaceRepository.checkDriverExists(id:${id})`);
     try {
         const res = await pool.query("SELECT * FROM drivers WHERE id = $1;", [
             id,
@@ -10,6 +10,7 @@ export const checkDriverExists = async (id) => {
         return res.rows.length > 0;
     } catch (err) {
         logger.error(err);
+        throw err;
     }
 };
 
@@ -22,11 +23,12 @@ export const checkRaceExists = async (id) => {
         return res.rows.length > 0;
     } catch (err) {
         logger.error(err);
+        throw err;
     }
 };
 
 export const getDriversByRace = async (id) => {
-    logger.info(`DriverRepository.getDriversByRace(id:${id})`);
+    logger.info(`RaceRepository.getDriversByRace(id:${id})`);
     try {
         const res = await pool.query(
             "SELECT drivers FROM races WHERE id = $1;",
@@ -35,20 +37,10 @@ export const getDriversByRace = async (id) => {
         return res.rows;
     } catch (err) {
         logger.error(err);
+        throw err;
     }
 };
 
-// getRaceById(6);
-// [
-//   {
-//     id: 6,
-//     start_time: 2024-10-22T10:23:44.933Z,
-//     drivers: [ 1, 2, 3 ],
-//     remaining_time: 600,
-//     status: 'WAITING',
-//     mode: 'DANGER'
-//   }
-// ]
 export const getRaceById = async (id) => {
     logger.info(`RaceRepository.getRaceById(id:${id})`);
     try {
@@ -58,6 +50,7 @@ export const getRaceById = async (id) => {
         return res.rows;
     } catch (err) {
         logger.error(err);
+        throw err;
     }
 };
 
@@ -70,6 +63,7 @@ export const getCurrentRace = async () => {
         return res.rows;
     } catch (err) {
         logger.error(err);
+        throw err;
     }
 };
 
@@ -82,6 +76,7 @@ export const getUpcomingRaces = async () => {
         return res.rows;
     } catch (err) {
         logger.error(err);
+        throw err;
     }
 };
 
@@ -94,6 +89,7 @@ export const getRaceModeById = async (id) => {
         return res.rows;
     } catch (err) {
         logger.error(err);
+        throw err;
     }
 };
 
@@ -107,6 +103,7 @@ export const getRemainingTimeById = async (id) => {
         return res.rows;
     } catch (err) {
         logger.error(err);
+        throw err;
     }
 };
 
@@ -119,11 +116,10 @@ export const getNextRace = async (id) => {
         return res.rows;
     } catch (err) {
         logger.error(err);
+        throw err;
     }
 };
 
-// insertRace({ start_time: "2023-10-01 12:00:00", drivers: [1, 2, 3] });
-// Added a race with the start time 2023-10-01 12:00:00, generated ID: 3
 export async function insertRace(race) {
     logger.info(`insertData.insertRace(race:${race.toString()})`);
     try {
@@ -132,15 +128,22 @@ export async function insertRace(race) {
             [race.getStartTime(), race.getDrivers()]
         );
         return res.rows;
-    } catch (e) {
-        throw error;
+    } catch (err) {
+        logger.error(err);
+        throw err;
     }
 }
 
 export async function deleteRace(id) {
     logger.info(`insertData.deleteRace(id:${id})`);
-    const res = await pool.query("DELETE FROM races WHERE id = $1", [id]);
-    console.log(`Deleted race with ID: ${id}`);
+    try {
+        const res = await pool.query("DELETE FROM races WHERE id = $1", [id]);
+        logger.info(`Deleted race with ID: ${id}`);
+        return res.rowCount > 0;
+    } catch (err) {
+        logger.error(err);
+        throw err;
+    }
 }
 
 export const postDriverToRace = async (raceId, drivers) => {
@@ -155,9 +158,9 @@ export const postDriverToRace = async (raceId, drivers) => {
         return res.rows;
     } catch (err) {
         logger.error(err);
+        throw err;
     }
 };
-
 // CREATE TABLE races (
 //   id SERIAL PRIMARY KEY,
 //   start_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -171,3 +174,4 @@ export const postDriverToRace = async (raceId, drivers) => {
 // VALUES ('2023-10-01 12:00:00', 600, 'WAITING', 'DANGER');
 
 // SELECT * FROM races;
+

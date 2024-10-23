@@ -10,6 +10,7 @@ export const checkDriverExists = async (id) => {
         return res.rows.length > 0;
     } catch (err) {
         logger.error(err);
+        throw err;
     }
 };
 
@@ -21,7 +22,8 @@ export const findById = async (id) => {
         ]);
         return res.rows;
     } catch (err) {
-        logger.error(err);
+        logger.error(`DriverRepository.findById | Error: ${err}`);
+        throw err;
     }
 };
 
@@ -32,6 +34,7 @@ export const findAll = async () => {
         return res.rows;
     } catch (err) {
         logger.error(err);
+        throw err;
     }
 };
 
@@ -42,6 +45,7 @@ export const getDrivers = async () => {
         return res.rows;
     } catch (err) {
         logger.error(err);
+        throw err;
     }
 };
 
@@ -54,6 +58,7 @@ export const getDriversByCar = async (carId) => {
         return res.rows;
     } catch (err) {
         logger.error(err);
+        throw err;
     }
 };
 
@@ -67,21 +72,23 @@ export const getDriversByRace = async (id) => {
         return res.rows;
     } catch (err) {
         logger.error(err);
+        throw err;
     }
 };
 
-export async function insertDriver(driver) {
-    logger.info(`insertData.insertDriver(driver:${driver})`);
+export const insertDriver = async (name) => {
+    logger.info(`insertData.insertDriver(driver:${name})`);
     try {
         const res = await pool.query(
             "INSERT INTO drivers (name) VALUES ($1) RETURNING *",
-            [driver]
+            [name]
         );
         return res.rows;
     } catch (err) {
+        logger.error(err);
         throw err;
     }
-}
+};
 
 export const postCarToDriver = async (driverId, carId) => {
     logger.info(
@@ -95,6 +102,37 @@ export const postCarToDriver = async (driverId, carId) => {
         return res.rows;
     } catch (err) {
         logger.error(err);
+        throw err;
+    }
+};
+
+export const updateDriverName = async (driverId, name) => {
+    logger.info(
+        `DriverRepository.updateDriverName(driverId:${driverId}, name:${name})`
+    );
+    try {
+        const res = await pool.query(
+            `UPDATE drivers SET name = $1 WHERE id = $2 RETURNING *;`,
+            [name, driverId]
+        );
+        return res.rows[0];
+    } catch (err) {
+        logger.error(err);
+        throw err;
+    }
+};
+
+export const deleteDriver = async (driverId) => {
+    logger.info(`DriverRepository.deleteDriver(driverId:${driverId})`);
+    try {
+        const res = await pool.query(
+            "DELETE FROM drivers WHERE id = $1 RETURNING *;",
+            [driverId]
+        );
+        return res.rowCount > 0;
+    } catch (err) {
+        logger.error(err);
+        throw err;
     }
 };
 

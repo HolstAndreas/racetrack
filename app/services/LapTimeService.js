@@ -66,3 +66,8 @@ export const getFastestLapByDriver = async (driverId, raceId) => {
   );
   return await LapTimeRepository.getFastestLapByDriver(driverId, raceId);
 };
+
+export const getLapTimesByDriverAndRace = async (driverId, raceId) => {
+    logger.info(`LapTimeService.getLapTimesByDriverAndRace(driverId:${driverId}, raceId:${raceId})`);
+    return await LapTimeRepository.getLapTimesByDriverAndRace(driverId, raceId);
+};

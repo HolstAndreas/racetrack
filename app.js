@@ -14,6 +14,7 @@ import {
     postRace,
     deleteDriverFromRace,
     createRaceList,
+    getCurrentRace,
 } from "./app/controllers/RaceController.js"; // import all methods from RaceController.js
 import {
     getAllDrivers,
@@ -27,13 +28,12 @@ import {
     postLapTimes,
     getLapTimesByRace,
     getLapTimesByDriver,
-    getFastestLapByDriver,
+    getLapTimesByRaceAndDriver,
 } from "./app/controllers/LapTimeController.js";
 import validateIsNumber from "./app/middleware/ValidateIsNumber.js";
 import logger from "./app/utils/logger.js";
 import authMiddleware from "./app/middleware/authMiddleware.js";
 import authRouter from "./app/utils/authentication.js";
-import { getCurrentRace } from "./app/repositories/RaceRepository.js";
 
 dotenv.config();
 
@@ -103,17 +103,14 @@ app.delete(
 ); // delete driver from race | Done
 // app.patch("/api/raceId/drivers/:driverId", patchRaceById); // edit driver from race
 
-// Here are drivercontrollers
+// Here are driver controllers
 app.get("/api/drivers", getAllDrivers);
 app.get("/api/drivers/:driverId", getDriverById);
 
 app.post("/api/laptimes", postLapTimes); // Create new lap time | Done
 app.get("/api/laptimes/race/:raceId", getLapTimesByRace); // Get all lap times for a race | Done
-app.get("/api/laptimes/driver/:driverId", getLapTimesByDriver); // Get all lap times for a driver | Done
-app.get(
-    "/api/laptimes/driver/:driverId/race/:raceId/fastest",
-    getFastestLapByDriver
-); // Get driver's fastest lap in a race | Done
+app.get("/api/laptimes/driver/:driverId/", getLapTimesByDriver); // Get all lap times for a driver in a specific race
+app.get("/api/laptimes/race/:raceId/driver/:driverId", getLapTimesByRaceAndDriver); // Get all lap times for a driver in a specific race, 
 
 app.patch("/api/drivers/:driverId", patchDriverById);
 app.delete("/api/drivers/:driverId", deleteDriverById);
@@ -148,15 +145,10 @@ app.get("/safety", authMiddleware("safety"), (req, res) => {
     res.sendFile(path.join(__dirname, "public/race-control.html"));
 });
 
-app.use((err, req, res, next) => {
-    if (err.status === 401) {
-        res.status(401).sendFile(path.join(__dirname, "public/401.html"));
-    } else if (err.status === 403) {
-        res.status(403).sendFile(path.join(__dirname, "public/403.html"));
-    } else {
-        next(err);
-    }
-});
+import errorHandler from "./app/middleware/errorHandler.js";
+
+// Error handling middleware
+app.use(errorHandler);
 
 // Starts the server
 const PORT = process.env.PORT || 3000; // Sets the port number, checks for environment variables, default is 3000.
