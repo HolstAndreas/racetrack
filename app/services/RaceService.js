@@ -1,6 +1,5 @@
 import Race from "../entities/Race.js";
-import * as retrieveData from "../utils/retrieveData.js";
-import * as insertData from "../utils/insertData.js";
+import * as RaceRepository from "../repositories/RaceRepository.js";
 import logger from "../utils/logger.js";
 
 // export const getLeaderboardData = async (raceId) => {
@@ -19,19 +18,19 @@ import logger from "../utils/logger.js";
 
 export const findById = async (id) => {
   logger.info("RaceService | findById: " + id);
-  const race = await retrieveData.getRaceById(id);
+  const race = await RaceRepository.getRaceById(id);
   return race;
 };
 
 export const findModeById = async (id) => {
   logger.info("RaceService | findModeById: " + id);
-  const mode = await retrieveData.getRaceModeById(id);
+  const mode = await RaceRepository.getRaceModeById(id);
   return mode;
 };
 
 export const findRemainingTimeById = async (id) => {
   logger.info("RaceService | findRemainingTimeById: " + id);
-  const remainingTime = await retrieveData.getRemainingTimeById(id);
+  const remainingTime = await RaceRepository.getRemainingTimeById(id);
   return remainingTime;
 };
 
@@ -45,7 +44,7 @@ export const createRaceList = async () => {
 
 export const findCurrentRace = async () => {
   logger.info("RaceService.findCurrentRace: ");
-  const lastRaceStarted = await retrieveData.getCurrentRace();
+  const lastRaceStarted = await RaceRepository.getCurrentRace();
   if (lastRaceStarted.remaining_time === 0) {
     return [];
   } else {
@@ -55,31 +54,31 @@ export const findCurrentRace = async () => {
 
 export const findUpcomingRaces = async () => {
   logger.info("RaceService.findUpcomingRaces");
-  const upcomingRaces = await retrieveData.getUpcomingRaces();
+  const upcomingRaces = await RaceRepository.getUpcomingRaces();
   return upcomingRaces;
 };
 
 export const findNextRace = async (id) => {
   logger.info("RaceService.findNextRace(id:" + id + ")");
-  const nextRace = await retrieveData.getNextRace(id);
+  const nextRace = await RaceRepository.getNextRace(id);
   return nextRace;
 };
 
 export const findDrivers = async () => {
   logger.info("RaceService.findDrivers()");
-  const drivers = await retrieveData.getDrivers();
+  const drivers = await RaceRepository.getDrivers();
   return drivers;
 };
 
 export const findDriversByCar = async (carId) => {
   logger.info("RaceService.findDriversByCar()");
-  const drivers = await retrieveData.getDriversByCar(carId);
+  const drivers = await RaceRepository.getDriversByCar(carId);
   return drivers;
 };
 
 export const addRace = async (race) => {
   logger.info(`RaceService.addRace(race:${race.toString()})`);
-  const result = await insertData.insertRace(race);
+  const result = await RaceRepository.insertRace(race);
   return result[0];
 };
 
@@ -90,14 +89,14 @@ export const addDriverToRace = async (raceId, driverId) => {
 
   try {
     // check if race exists
-    const raceExists = await retrieveData.checkRaceExists(raceId);
+    const raceExists = await RaceRepository.checkRaceExists(raceId);
     if (!raceExists) {
       logger.error(`RaceService.addDriverToRace() | Race ${raceId} not found `);
       return { error: "RACE_NOT_FOUND" };
     }
 
     // check if driver exists
-    const driverExists = await retrieveData.checkDriverExists(driverId);
+    const driverExists = await RaceRepository.checkDriverExists(driverId);
     if (!driverExists) {
       logger.error(
         `RaceService.addDriverToRace() | Driver ${driverId} not found `
@@ -107,7 +106,7 @@ export const addDriverToRace = async (raceId, driverId) => {
 
     // get current drivers
     // { drivers: [ 1, 2, 3 ] }
-    const drivers = await retrieveData.getDriversByRace(raceId);
+    const drivers = await RaceRepository.getDriversByRace(raceId);
 
     // Check got drivers
     if (!drivers) {
@@ -127,7 +126,7 @@ export const addDriverToRace = async (raceId, driverId) => {
 
     // Add driver
     drivers[0].drivers.push(driverId);
-    const result = await insertData.postDriverToRace(
+    const result = await RaceRepository.postDriverToRace(
       raceId,
       drivers[0].drivers
     );
@@ -146,7 +145,7 @@ export const assignCarToDriver = async (driverId, carId) => {
   );
   try {
     // Check if driver exists
-    const driverExists = await retrieveData.checkDriverExists(driverId);
+    const driverExists = await RaceRepository.checkDriverExists(driverId);
     if (!driverExists) {
       logger.error(
         `RaceService.assignCarToDriver() | Driver ${driverId} not found `
@@ -161,7 +160,7 @@ export const assignCarToDriver = async (driverId, carId) => {
       return { error: "CAR_TAKEN_BY", id: carDrivers[0].id };
     }
 
-    const result = await insertData.postCarToDriver(driverId, carId);
+    const result = await RaceRepository.postCarToDriver(driverId, carId);
     return result[0];
   } catch (err) {
     logger.error(`RaceService.assignCarToDriver() | Error: ${err}`);
@@ -176,7 +175,7 @@ export const removeDriverFromRace = async (raceId, driverId) => {
 
   try {
     // check if race exists
-    const raceExists = await retrieveData.checkRaceExists(raceId);
+    const raceExists = await RaceRepository.checkRaceExists(raceId);
     if (!raceExists) {
       logger.error(
         `RaceService.removeDriverFromRace() | Race ${raceId} not found `
@@ -184,10 +183,10 @@ export const removeDriverFromRace = async (raceId, driverId) => {
       return { error: "RACE_NOT_FOUND" };
     }
 
-    const drivers = await retrieveData.getDriversByRace(raceId);
+    const drivers = await RaceRepository.getDriversByRace(raceId);
 
     // check if driver exists
-    const driverExists = await retrieveData.checkDriverExists(driverId);
+    const driverExists = await RaceRepository.checkDriverExists(driverId);
     if (!driverExists) {
       logger.error(
         `RaceService.removeDriverFromRace() | Driver ${driverId} not found `
@@ -214,7 +213,7 @@ export const removeDriverFromRace = async (raceId, driverId) => {
     // Remove driver
     const index = drivers[0].drivers.indexOf(driverId);
     const newArr = drivers[0].drivers.splice(index, 1);
-    const result = await insertData.postDriverToRace(
+    const result = await RaceRepository.postDriverToRace(
       raceId,
       drivers[0].drivers
     );

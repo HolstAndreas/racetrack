@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>API Testing Interface</title>
+    <script src="/js/script.js" defer></script>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+      .section {
+        margin: 20px 0;
+        padding: 20px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+      }
+      .result {
+        white-space: pre-wrap;
+        background-color: #f5f5f5;
+        padding: 15px;
+        margin-top: 10px;
+        border-radius: 4px;
+        font-family: monospace;
+      }
+      .error {
+        color: #721c24;
+        background-color: #f8d7da;
+        border: 1px solid #f5c6cb;
+      }
+      .success {
+        color: #155724;
+        background-color: #d4edda;
+        border: 1px solid #c3e6cb;
+      }
+      button {
+        margin: 5px;
+        padding: 8px 15px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+      button:hover {
+        background-color: #0056b3;
+      }
+      input {
+        padding: 8px;
+        margin: 5px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>API Testing Interface</h1>
+
+    <!-- Race Session Management -->
+    <div class="section">
+      <h2>Race Session Management</h2>
+      <div>
+        <input type="text" id="raceId" placeholder="Race ID" />
+        <button onclick="fetchRace()">Get Race</button>
+        <button onclick="fetchNextRace()">Get Next Race</button>
+        <button onclick="fetchRaceFlags()">Get Race Flags</button>
+        <button onclick="fetchRemainingTime()">Get Remaining Time</button>
+        <button onclick="fetchLeaderboard()">Get Leaderboard</button>
+        <div id="raceResult" class="result"></div>
+      </div>
+
+      <div style="margin-top: 20px">
+        <h3>Create New Race</h3>
+        <input
+          type="text"
+          id="startTime"
+          placeholder="Start Time (YYYY-MM-DD HH:mm:ss)"
+        />
+        <input
+          type="text"
+          id="raceDrivers"
+          placeholder="Drivers (comma-separated IDs)"
+        />
+        <button onclick="createRace()">Create Race</button>
+      </div>
+    </div>
+
+    <!-- Driver Management -->
+    <div class="section">
+      <h2>Driver Management</h2>
+      <div>
+        <input type="text" id="driverId" placeholder="Driver ID" />
+        <button onclick="fetchDriver()">Get Driver</button>
+        <button onclick="fetchAllDrivers()">Get All Drivers</button>
+        <div id="driverResult" class="result"></div>
+      </div>
+
+      <div style="margin-top: 20px">
+        <h3>Create New Driver</h3>
+        <input type="text" id="driverName" placeholder="Driver Name" />
+        <button onclick="createDriver()">Create Driver</button>
+      </div>
+    </div>
+
+    <!-- Lap Times -->
+    <div class="section">
+      <h2>Lap Times</h2>
+      <div>
+        <input type="text" id="lapRaceId" placeholder="Race ID" />
+        <input type="text" id="lapDriverId" placeholder="Driver ID" />
+        <input type="text" id="lapTime" placeholder="Lap Time (ms)" />
+        <input type="text" id="lapNumber" placeholder="Lap Number" />
+        <button onclick="postLapTime()">Add Lap Time</button>
+        <button onclick="getLapTimesByRace()">Get Race Lap Times</button>
+        <button onclick="getLapTimesByDriver()">Get Driver Lap Times</button>
+        <button onclick="getFastestLap()">Get Fastest Lap</button>
+        <div id="lapTimeResult" class="result"></div>
+      </div>
+    </div>
+
+    <!-- Race-Driver Operations -->
+    <div class="section">
+      <h2>Race-Driver Operations</h2>
+      <div>
+        <input type="text" id="raceIdOp" placeholder="Race ID" />
+        <input type="text" id="driverIdOp" placeholder="Driver ID" />
+        <input type="text" id="carId" placeholder="Car ID" />
+        <button onclick="addDriverToRace()">Add Driver to Race</button>
+        <button onclick="assignCar()">Assign Car</button>
+        <button onclick="removeDriverFromRace()">Remove Driver</button>
+        <div id="operationResult" class="result"></div>
+      </div>
+    </div>
+  </body>
+</html>

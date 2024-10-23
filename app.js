@@ -14,21 +14,26 @@ import {
   assignCarToDriver,
   postRace,
   deleteDriverFromRace,
-  patchRaceById,
   createRaceList,
 } from "./app/controllers/RaceController.js"; // import all methods from RaceController.js
 import {
   getAllDrivers,
   getDriverById,
   postDriver,
-  postLapTimes,
   patchDriverById,
   deleteDriverById,
 } from "./app/controllers/DriverController.js";
+import {
+  postLapTimes,
+  getLapTimesByRace,
+  getLapTimesByDriver,
+  getFastestLapByDriver,
+} from "./app/controllers/LapTimeController.js";
 import validateIsNumber from "./app/middleware/ValidateIsNumber.js";
 import logger from "./app/utils/logger.js";
 import authMiddleware from "./app/middleware/authMiddleware.js";
 import authRouter from "./app/utils/authentication.js";
+import { getCurrentRace } from "./app/repositories/RaceRepository.js";
 
 dotenv.config();
 
@@ -64,6 +69,7 @@ app.use(cookieParser()); // Parse cookies
 // File and Directory Setup:
 const __filename = fileURLToPath(import.meta.url); // Converts current URL of the module into a filepath using...
 const __dirname = path.dirname(__filename); // Directory name where __filepath is full path. Useful for relative path in relation to current dir.
+app.use(express.static("public"));
 
 // Setting View Engine and Views Directory:
 app.set("views", path.join(__dirname, "views")); // Express will look for views in the views folder located in the same dir as current file.
@@ -84,33 +90,39 @@ app.get(
   getRemainingTime
 ); // get race remaining time | DONE
 app.get("/api/racelist", createRaceList);
+app.get("/api/currentrace", getCurrentRace);
 
 app.post("/api/race-sessions/:raceId/drivers/:driverId", postDriverToRace); // add driver to race | Done
 app.post("/api/drivers/:driverId/assign-car/:carId", assignCarToDriver); // assign a car to driver | Done
 app.post("/api/race-sessions", postRace); // add race | Done
 
 app.delete("api/race-sessions/:raceId/drivers/:driverId", deleteDriverFromRace); // delete driver from race | Done
-app.patch("/api/raceId/drivers/:driverId", patchRaceById); // edit driver from race
+// app.patch("/api/raceId/drivers/:driverId", patchRaceById); // edit driver from race
 
 // Here are drivercontrollers
 app.get("/api/drivers", getAllDrivers);
 app.get("/api/drivers/:driverId", getDriverById);
 
-app.post("/api/drivers", postDriver); // | DONE
-app.post("/api/laptimes/", postLapTimes); // post/update lap-times
+app.post("/api/laptimes", postLapTimes); // Create new lap time | Done
+app.get("/api/laptimes/race/:raceId", getLapTimesByRace); // Get all lap times for a race | Done
+app.get("/api/laptimes/driver/:driverId", getLapTimesByDriver); // Get all lap times for a driver | Done
+app.get(
+  "/api/laptimes/driver/:driverId/race/:raceId/fastest",
+  getFastestLapByDriver
+); // Get driver's fastest lap in a race | Done
 
 app.patch("/api/drivers/:driverId", patchDriverById);
 app.delete("/api/drivers/:driverId", deleteDriverById);
 
 app.get("/", function (req, res) {
-  res.sendFile(path.join(__dirname, "app/views/index.html"));
+  res.sendFile(path.join(__dirname, "public/index.html"));
 });
 
 app.use("/authenticate", authRouter);
 
 // Login route
 app.get("/login", (req, res) => {
-  res.sendFile(path.join(__dirname, "app/views/login.html"));
+  res.sendFile(path.join(__dirname, "public/login.html"));
 });
 
 // Logout route
@@ -121,22 +133,22 @@ app.get("/logout", (req, res) => {
 
 // Protected routes
 app.get("/front-desk", authMiddleware("receptionist"), function (req, res) {
-  res.sendFile(path.join(__dirname, "app/views/front-desk.html"));
+  res.sendFile(path.join(__dirname, "public/front-desk.html"));
 });
 
 app.get("/observer", authMiddleware("observer"), (req, res) => {
-  res.sendFile(path.join(__dirname, "app/views/lap-line-tracker.html"));
+  res.sendFile(path.join(__dirname, "public/lap-line-tracker.html"));
 });
 
 app.get("/safety", authMiddleware("safety"), (req, res) => {
-  res.sendFile(path.join(__dirname, "app/views/race-control.html"));
+  res.sendFile(path.join(__dirname, "public/race-control.html"));
 });
 
 app.use((err, req, res, next) => {
   if (err.status === 401) {
-    res.status(401).sendFile(path.join(__dirname, "app/views/401.html"));
+    res.status(401).sendFile(path.join(__dirname, "public/401.html"));
   } else if (err.status === 403) {
-    res.status(403).sendFile(path.join(__dirname, "app/views/403.html"));
+    res.status(403).sendFile(path.join(__dirname, "public/403.html"));
   } else {
     next(err);
   }

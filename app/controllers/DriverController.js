@@ -3,14 +3,35 @@ import * as DriverService from "../services/DriverService.js";
 import logger from "../utils/logger.js";
 
 // Get all drivers
-export const getAllDrivers = () => {
-  res.send("getAllDrivers");
+export const getAllDrivers = async (req, res) => {
+  logger.info("DriverController.getAllDrivers()");
+  try {
+    const drivers = await DriverService.findAll();
+    logger.success("DriverController | Got result: " + JSON.stringify(drivers));
+    res.status(200).json(drivers);
+  } catch (error) {
+    logger.error(`DriverController.getAllDrivers() | Error: ${error}`);
+    res.status(500).json({ error: "Internal server error" });
+  }
 };
 
 // Get driver by ID
-export const getDriverById = (req, res) => {
+export const getDriverById = async (req, res) => {
   const { driverId } = req.params;
-  res.send("getDriverById: ", driverId);
+  logger.info(`DriverController.getDriverById(driverId:${driverId})`);
+  try {
+    const driver = await DriverService.findById(driverId);
+    if (!driver) {
+      return res.status(404).json({ error: "Driver not found" });
+    }
+    logger.success(
+      "DriverController | Got result: \n" + JSON.stringify(driver, null, 2)
+    );
+    res.status(200).json(driver);
+  } catch (error) {
+    logger.error(`DriverController.getDriverById() | Error: ${error}`);
+    res.status(500).json({ error: "Internal server error" });
+  }
 };
 
 // Post by ID - vajalik üldse?
@@ -35,29 +56,6 @@ export const postDriver = async (req, res) => {
     )}`
   );
   res.status(200).send(driver);
-};
-
-export const postLapTimes = (req, res) => {
-  const { raceId, driverId, lapTime, lapNumber } = req.body;
-
-  // Check if all required fields are present
-  if (!raceId || !driverId || !lapTime || !lapNumber) {
-    logger.error("DriverController.postLapTimes() | Missing required fields");
-    return res.status(400).send("All fields are required");
-  }
-
-  // Check if all values are integers
-  if (
-    !Number.isInteger(raceId) ||
-    !Number.isInteger(driverId) ||
-    !Number.isInteger(lapTime) ||
-    !Number.isInteger(lapNumber)
-  ) {
-    logger.error(
-      "DriverController.postLapTimes() | All values must be integers"
-    );
-    return res.status(400).send("All values must be integers");
-  }
 };
 
 // Patch by ID

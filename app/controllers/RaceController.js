@@ -42,13 +42,16 @@ export const createRaceList = async (req, res) => {
   return res.status(200).json(result);
 };
 
+export const getCurrentRace = async (req, res) => {
+  const result = await RaceService.findCurrentRace();
+  return res.status(200).json(result);
+};
+
 export const getNextRace = async (req, res) => {
   const { raceId } = req.params;
   logger.info(`RaceController.getNextRace(raceId:${raceId})`);
   const result = await RaceService.findNextRace(raceId); // Fetches a next race
-  logger.success(
-    "RaceController | Got result: \n" + JSON.stringify(result, null, 2)
-  );
+  logger.success("RaceController | Got result: \n" + JSON.stringify(result));
   if (result.length === 0) {
     res.status(404).send("No next race found.");
   } else {
@@ -171,11 +174,13 @@ export const postRace = async (req, res) => {
   res.status(200).send(result);
 };
 
-// PATCH
-export const patchRaceById = (req, res) => {
-  const { raceId } = req.params;
-  res.send("patchRaceById: " + raceId);
-};
+// // PATCH
+// export const patchRaceById = async (req, res) => {
+//   const { raceId } = req.params;
+//   logger.info(`RaceController.patchRaceById: ${raceId}`);
+//   const result = await RaceService.patchRaceById();
+//   res.send("patchRaceById: " + raceId);
+// };
 
 // DELETE
 export const deleteDriverFromRace = async (req, res) => {

@@ -26,5 +26,4 @@ export default Driver;
 //     name VARCHAR(255) NOT NULL,
 //     car INTEGER,
 //     current_race INTEGER REFERENCES races(id),
-//     lap_times INTEGER[]
 // );
