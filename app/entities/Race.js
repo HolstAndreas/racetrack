@@ -1,16 +1,28 @@
 export class Race {
-  constructor(id, drivers) {
-    this.id = id;
-    this.startTime = undefined;
+  constructor(startTime, drivers) {
+    this.id = 0;
+    this.startTime = startTime;
     this.drivers = drivers; //gets array of drivers from...
     this.remainingTime = 600;
-    this.status = STATUS.WAITING;
-    this.mode = MODE.DANGER;
+    this.status = "Waiting";
+    this.mode = "Danger";
+  }
+
+  getStartTime() {
+    return this.startTime;
+  }
+
+  getDrivers() {
+    return this.drivers;
+  }
+
+  toString() {
+    return `Race ID$:{this.id} - START:${this.startTime} - DRIVERS:${this.drivers} - TIME:${this.remainingTime} - STATUS:${this.status} - MODE:${this.mode}`;
   }
 
   startRace() {
-    this.status = STATUS.STARTED;
-    this.mode = MODE.SAFE;
+    this.status = "Started";
+    this.mode = "Safe";
     this.countdown();
     //leaderboard change
     //Next race screen;
@@ -23,7 +35,7 @@ export class Race {
     var timer = setInterval(() => {
       if (remainingTime === 0) {
         clearInterval(timer);
-        this.mode = MODE.FINISH;
+        this.mode = "Finish";
         //make endrace() available?
       }
       this.remainingTime--;
@@ -40,8 +52,8 @@ export class Race {
   endRace() {
     //if (this mode != MODE.FINISH) - button unavailable
     // otherwise some eventlistener activation
-    this.changeStatus(STATUS.FINISHED);
-    this.changeMode(MODE.DANGER);
+    this.changeStatus("Finish");
+    this.changeMode("Danger");
   }
 }
 

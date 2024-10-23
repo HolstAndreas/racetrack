@@ -16,14 +16,48 @@ export const getDriverById = (req, res) => {
 // Post by ID - vajalik üldse?
 export const postDriver = async (req, res) => {
   const { name } = req.body;
-  logger.info("DriverController.postDriver" + name);
+  if (!name) {
+    logger.error("DriverController.postDriver() | Missing name");
+    return res.status(400).send("Name is required");
+  } else if (name.length < 3) {
+    logger.error(
+      "DriverController.postDriver() | Name must be at least 3 characters long"
+    );
+    return res.status(400).send("Name must be at least 3 characters long");
+  }
+  logger.info(`DriverController.postDriver(name:${name})`);
   const driver = await DriverService.createDriver(name);
-  res.send(JSON.stringify(driver));
+  logger.success(
+    `DriverController.postDriver() | Driver created: ${JSON.stringify(
+      driver,
+      null,
+      2
+    )}`
+  );
+  res.status(200).send(driver);
 };
 
 export const postLapTimes = (req, res) => {
-  const { raceId, drivers } = req.params;
-  res.send("postLapTime: Race:driver: time");
+  const { raceId, driverId, lapTime, lapNumber } = req.body;
+
+  // Check if all required fields are present
+  if (!raceId || !driverId || !lapTime || !lapNumber) {
+    logger.error("DriverController.postLapTimes() | Missing required fields");
+    return res.status(400).send("All fields are required");
+  }
+
+  // Check if all values are integers
+  if (
+    !Number.isInteger(raceId) ||
+    !Number.isInteger(driverId) ||
+    !Number.isInteger(lapTime) ||
+    !Number.isInteger(lapNumber)
+  ) {
+    logger.error(
+      "DriverController.postLapTimes() | All values must be integers"
+    );
+    return res.status(400).send("All values must be integers");
+  }
 };
 
 // Patch by ID

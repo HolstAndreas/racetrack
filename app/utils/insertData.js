@@ -1,28 +1,18 @@
 import { error } from "console";
 import pool from "./db.js";
 import logger from "../utils/logger.js";
-
-export async function insertData() {
-  const [name, color] = process.argv.slice(2);
-  const res = await pool.query(
-    "INSERT INTO shark (name, color) VALUES ($1, $2)",
-    [name, color]
-  );
-  console.log(`Added a shark with the name ${name}`);
-}
+// import Race from "../entities/Race.js";
 
 // insertRace({ start_time: "2023-10-01 12:00:00", drivers: [1, 2, 3] });
 // Added a race with the start time 2023-10-01 12:00:00, generated ID: 3
 export async function insertRace(race) {
+  logger.info(`insertData.insertRace(race:${race.toString()})`);
   try {
     const res = await pool.query(
-      "INSERT INTO races (start_time, drivers) VALUES ($1, $2) RETURNING id",
-      [race.start_time, race.drivers]
+      "INSERT INTO races (start_time, drivers) VALUES ($1, $2) RETURNING *",
+      [race.getStartTime(), race.getDrivers()]
     );
-    const raceId = res.rows[0].id;
-    console.log(
-      `Added a race with the start time ${race.start_time}, generated ID: ${raceId}`
-    );
+    return res.rows;
   } catch (e) {
     throw error;
   }
@@ -31,26 +21,53 @@ export async function insertRace(race) {
 // insertRace({ start_tiddme: "2023-10-01 d2$22:00:00", drivewdars: [1, a, 3] });
 
 export async function deleteRace(id) {
+  logger.info(`insertData.deleteRace(id:${id})`);
   const res = await pool.query("DELETE FROM races WHERE id = $1", [id]);
   console.log(`Deleted race with ID: ${id}`);
 }
 
 export async function insertDriver(driver) {
-  logger.info("insertData.js - createDriver: " + driver);
+  logger.info(`insertData.insertDriver(driver:${driver})`);
   try {
     const res = await pool.query(
-      "INSERT INTO drivers (name) VALUES ($1) RETURNING id",
+      "INSERT INTO drivers (name) VALUES ($1) RETURNING *",
       [driver]
     );
-    const driverId = res.rows[0].id;
-    logger.info(
-      `Added a driver with a name ${driver}, generated ID: ${driverId}`
-    );
-    return driverId;
+    return res.rows;
   } catch (err) {
     throw err;
   }
 }
+
+export const postDriverToRace = async (raceId, drivers) => {
+  logger.info(
+    `retrieveData.postDriverToRace(raceId:${raceId}, drivers:${drivers})`
+  );
+  try {
+    const res = await pool.query(
+      `UPDATE races SET drivers = $1 WHERE id = $2 RETURNING drivers;`,
+      [drivers, raceId]
+    );
+    return res.rows;
+  } catch (err) {
+    logger.error(err);
+  }
+};
+
+export const postCarToDriver = async (driverId, carId) => {
+  logger.info(
+    `retrieveData.postCarToDriver(driverId:${driverId}, carId:${carId})`
+  );
+  try {
+    const res = await pool.query(
+      `UPDATE drivers SET car = $1 WHERE id = $2 RETURNING *;`,
+      [carId, driverId]
+    );
+    return res.rows;
+  } catch (err) {
+    logger.error(err);
+  }
+};
 
 // CREATE TABLE races (
 //   id SERIAL PRIMARY KEY,

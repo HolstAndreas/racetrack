@@ -1,17 +1,20 @@
-// import * as pg from "pg";
-// const { Pool } = pg;
-
+import logger from "./logger.js";
+import dotenv from "dotenv";
 import pkg from "pg";
 const { Pool } = pkg;
 
-// import { Pool } from "pg/lib/index.js"
+dotenv.config();
 
 const pool = new Pool({
-  user: "andreas",
-  database: "racetrack",
-  password: "koodjohvi",
-  port: 5432,
-  host: "localhost",
+  user: process.env.DB_USER,
+  database: process.env.DB_DATABASE,
+  password: process.env.DB_PASSWORD,
+  port: process.env.DB_PORT,
+  host: process.env.DB_HOST,
+});
+
+pool.on("connect", () => {
+  logger.success("Connect to the database");
 });
 
 export { pool as default };

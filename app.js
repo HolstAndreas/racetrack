@@ -10,11 +10,12 @@ import {
   getNextRace,
   getRaceFlags,
   getRemainingTime,
-  postDriversInRace,
+  postDriverToRace,
   assignCarToDriver,
   postRace,
-  deleteDriversInRace,
+  deleteDriverFromRace,
   patchRaceById,
+  createRaceList,
 } from "./app/controllers/RaceController.js"; // import all methods from RaceController.js
 import {
   getAllDrivers,
@@ -82,20 +83,21 @@ app.get(
   validateIsNumber,
   getRemainingTime
 ); // get race remaining time | DONE
+app.get("/api/racelist", createRaceList);
 
-app.post("/api/race-sessions/:raceId/drivers/:driverId", postDriversInRace); // add driver to race
-app.post("/api/:raceId/drivers/:driverId/assign-car", assignCarToDriver); // assign a car to driver
-app.post("/api/race-sessions", postRace);
+app.post("/api/race-sessions/:raceId/drivers/:driverId", postDriverToRace); // add driver to race | Done
+app.post("/api/drivers/:driverId/assign-car/:carId", assignCarToDriver); // assign a car to driver | Done
+app.post("/api/race-sessions", postRace); // add race | Done
 
-app.delete("api/:raceId/drivers/:driverId", deleteDriversInRace); // delete driver from race
+app.delete("api/race-sessions/:raceId/drivers/:driverId", deleteDriverFromRace); // delete driver from race | Done
 app.patch("/api/raceId/drivers/:driverId", patchRaceById); // edit driver from race
 
 // Here are drivercontrollers
 app.get("/api/drivers", getAllDrivers);
 app.get("/api/drivers/:driverId", getDriverById);
 
-app.post("/api/drivers", postDriver);
-app.post("/api/drivers/:raceId/:driverId/lap-times", postLapTimes); // post/update lap-times
+app.post("/api/drivers", postDriver); // | DONE
+app.post("/api/laptimes/", postLapTimes); // post/update lap-times
 
 app.patch("/api/drivers/:driverId", patchDriverById);
 app.delete("/api/drivers/:driverId", deleteDriverById);
