@@ -1,177 +1,164 @@
 import Race from "../entities/Race.js";
 import * as RaceService from "../services/RaceService.js";
 import logger from "../utils/logger.js";
+import ApiResponse from "../utils/ApiResponse.js";
+import ApiError from "../utils/ApiError.js";
 
 // GET race by ID
-export const getRaceById = async (req, res) => {
-  const { raceId } = req.params;
-  logger.info(`RaceController.getRaceById(raceId:${raceId})`);
-  try {
-    const race = await RaceService.findById(raceId);
-    if (!race) {
-      return res.status(404).json({ error: "Race not found" });
+export const getRaceById = async (req, res, next) => {
+    const { raceId } = req.params;
+    logger.info(`RaceController.getRaceById(raceId:${raceId})`);
+    try {
+        const race = await RaceService.findById(raceId);
+        if (!race) {
+            throw ApiError.notFound("Race not found");
+        }
+        logger.success(
+            "RaceController | Got result: \n" + JSON.stringify(race, null, 2)
+        );
+        return ApiResponse.success(race, "Race retrieved successfully").send(res);
+    } catch (error) {
+        next(error);
     }
-    logger.success(
-      "RaceController | Got result: \n" + JSON.stringify(race, null, 2)
-    );
-    res.status(200).json(race);
-  } catch (error) {
-    logger.error(`RaceController.getRaceById() | Error: ${error}`);
-    res.status(500).json({ error: "Internal server error" });
-  }
-  // /api/race-sessions/1
 };
 
-export const getLeaderboard = (req, res) => {
-  const { raceId } = req.params;
-  // try {
-  //   const { race, sortedDrivers } = await raceService.getLeaderboardData(
-  //     raceId
-  //   );
-  //   res.render("leader-board", { race, sortedDrivers });
-  // } catch (error) {
-  //   console.error("Error fetching leaderboard:", error);
-  //   res.status(500).send("An error occured");
-  // }
-  res.send("getLeaderboard: " + raceId);
+export const getLeaderboard = async (req, res, next) => {
+    const { raceId } = req.params;
+    try {
+        const leaderboard = await RaceService.getLeaderboard(raceId);
+        return ApiResponse.success(leaderboard, "Leaderboard retrieved successfully").send(res);
+    } catch (error) {
+        next(error);
+    }
 };
 
-export const createRaceList = async (req, res) => {
-  logger.info("RaceController.createRaceList()");
-  const result = await RaceService.createRaceList();
-  return res.status(200).json(result);
+export const createRaceList = async (req, res, next) => {
+    logger.info("RaceController.createRaceList()");
+    try {
+        const result = await RaceService.createRaceList();
+        return ApiResponse.success(result, "Race list created successfully").send(res);
+    } catch (error) {
+        next(error);
+    }
 };
 
-export const getCurrentRace = async (req, res) => {
-  const result = await RaceService.findCurrentRace();
-  return res.status(200).json(result);
+export const getCurrentRace = async (req, res, next) => {
+    try {
+        const result = await RaceService.findCurrentRace();
+        return ApiResponse.success(result, "Current race retrieved successfully").send(res);
+    } catch (error) {
+        next(error);
+    }
 };
 
-export const getNextRace = async (req, res) => {
-  const { raceId } = req.params;
-  logger.info(`RaceController.getNextRace(raceId:${raceId})`);
-  const result = await RaceService.findNextRace(raceId); // Fetches a next race
-  logger.success("RaceController | Got result: \n" + JSON.stringify(result));
-  if (result.length === 0) {
-    res.status(404).send("No next race found.");
-  } else {
-    res.status(200).json(result);
-  }
-  // /next-race/
+export const getNextRace = async (req, res, next) => {
+    const { raceId } = req.params;
+    logger.info(`RaceController.getNextRace(raceId:${raceId})`);
+    try {
+        const result = await RaceService.findNextRace(raceId); // Fetches a next race
+        logger.success("RaceController | Got result: \n" + JSON.stringify(result));
+        if (result.length === 0) {
+            throw ApiError.notFound("No next race found.");
+        } else {
+            return ApiResponse.success(result, "Next race retrieved successfully").send(res);
+        }
+    } catch (error) {
+        next(error);
+    }
 };
 
-export const getRaceFlags = async (req, res) => {
-  const { raceId } = req.params;
-  logger.info(`RaceController.getRaceFlags(raceId:${raceId})`);
-  const result = await RaceService.findModeById(raceId); // Fetches a race mode by ID
-  logger.success(
-    "RaceController | Got result: \n" + JSON.stringify(result, null, 2)
-  );
-  if (result.length === 0) {
-    res.status(404).send("No race found.");
-  } else {
-    res.status(200).json(result);
-  }
-  // /race-flags/:raceId
+export const getRaceFlags = async (req, res, next) => {
+    const { raceId } = req.params;
+    logger.info(`RaceController.getRaceFlags(raceId:${raceId})`);
+    try {
+        const result = await RaceService.findModeById(raceId); // Fetches a race mode by ID
+        logger.success(
+            "RaceController | Got result: \n" + JSON.stringify(result, null, 2)
+        );
+        if (result.length === 0) {
+            throw ApiError.notFound("No race found.");
+        } else {
+            return ApiResponse.success(result, "Race flags retrieved successfully").send(res);
+        }
+    } catch (error) {
+        next(error);
+    }
 };
 
-export const getRemainingTime = async (req, res) => {
-  const { raceId } = req.params;
-  logger.info(`RaceController.getRemainingTime(raceId:${raceId})`);
-  const result = await RaceService.findRemainingTimeById(raceId); // Fetches a race remaining time by ID
-  logger.success(
-    "RaceController | Got result: \n" + JSON.stringify(result, null, 2)
-  );
-  if (result.length === 0) {
-    res.status(404).send("No race found.");
-  } else {
-    res.status(200).json(result);
-  }
-  // /race-flags/:raceId
+export const getRemainingTime = async (req, res, next) => {
+    const { raceId } = req.params;
+    logger.info(`RaceController.getRemainingTime(raceId:${raceId})`);
+    try {
+        const result = await RaceService.findRemainingTimeById(raceId); // Fetches a race remaining time by ID
+        logger.success(
+            "RaceController | Got result: \n" + JSON.stringify(result, null, 2)
+        );
+        if (result.length === 0) {
+            throw ApiError.notFound("No race found.");
+        } else {
+            return ApiResponse.success(result, "Remaining time retrieved successfully").send(res);
+        }
+    } catch (error) {
+        next(error);
+    }
 };
 
 // POST
-export const postDriverToRace = async (req, res) => {
-  const { raceId, driverId } = req.params;
-  logger.info(
-    `RaceController.postDriverToRace(raceId:${raceId}, driverId:${driverId})`
-  );
-  const result = await RaceService.addDriverToRace(raceId, driverId);
+export const postDriverToRace = async (req, res, next) => {
+    const { raceId, driverId } = req.params;
+    logger.info(
+        `RaceController.postDriverToRace(raceId:${raceId}, driverId:${driverId})`
+    );
+    try {
+        const result = await RaceService.addDriverToRace(raceId, driverId);
 
-  if (result.error) {
-    switch (result.error) {
-      case "RACE_NOT_FOUND":
-        res.status(404).send("Race not found.");
-        break;
-      case "DRIVER_NOT_FOUND":
-        res.status(404).send("Driver not found.");
-        break;
-      case "DRIVER_ALREADY_IN_RACE":
-        res.status(400).send("Driver already in race.");
-        break;
-      default:
-        res.status(500).send("Internal server error.");
+        if (result.error) {
+            switch (result.error) {
+                case "RACE_NOT_FOUND":
+                    throw ApiError.notFound("Race not found.");
+                case "DRIVER_NOT_FOUND":
+                    throw ApiError.notFound("Driver not found.");
+                case "DRIVER_ALREADY_IN_RACE":
+                    throw ApiError.badRequest("Driver already in race.");
+                default:
+                    throw ApiError.internal("Internal server error.");
+            }
+        } else {
+            return ApiResponse.success(result, "Driver added to race successfully").send(res);
+        }
+    } catch (error) {
+        next(error);
     }
-  } else {
-    res.status(200).json(result);
-  }
 };
 
-export const assignCarToDriver = async (req, res) => {
-  const { raceId, driverId, carId } = req.params;
-  logger.info(
-    `RaceController.assignCarToDriver(driverId:${driverId}, carId:${carId})`
-  );
-  const result = await RaceService.assignCarToDriver(driverId, carId);
-  if (result.error) {
-    switch (error) {
-      case "DRIVER_NOT_FOUND":
-        res.status(404).send("Driver not found.");
-        break;
-      case "CAR_TAKEN_BY":
-        res.status(400).send(`Car taken by driverId: ${result.id}.`);
-        break;
-      default:
-        res.status(500).send("Internal server error.");
+export const postRace = async (req, res, next) => {
+    const { startTime, drivers } = req.body;
+    const timeStampRegex = /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/;
+    logger.info(`RaceController.postRace(startTime:${startTime}, drivers:${drivers})`);
+    try {
+        // Validate required fields
+        if (!Array.isArray(drivers)) {
+            throw ApiError.badRequest("Drivers must be an array.");
+        } else if (!drivers) {
+            throw ApiError.badRequest("Drivers array is required.");
+        } else if (drivers.length < 8) {
+            throw ApiError.badRequest("Drivers array must contain at least 8 drivers.");
+        } else if (!startTime) {
+            throw ApiError.badRequest("Start time is required.");
+        } else if (!timeStampRegex.test(startTime)) {
+            throw ApiError.badRequest(
+                "Invalid startTime format. Use 'YYYY-MM-DD HH:mm:ss'."
+            );
+        }
+
+        const newRace = new Race(startTime, Object.values(drivers));
+        logger.info(`RaceController.postRace(race:${newRace.toString()})`);
+        const result = await RaceService.addRace(newRace);
+
+        return ApiResponse.created(result, "Race created successfully").send(res);
+    } catch (error) {
+        next(error);
     }
-  }
-};
-
-export const postRace = async (req, res) => {
-  const { startTime, drivers } = req.body;
-  const timeStampRegex = /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/;
-  console.log(startTime, drivers);
-
-  // Validate required fields
-  if (!Array.isArray(drivers)) {
-    logger.error("Drivers must be an array.");
-    res.status(400).send("Drivers must be an array.");
-    return;
-  } else if (!drivers) {
-    logger.error("Drivers array is required.");
-    res.status(400).send("Drivers array is required.");
-    return;
-  } else if (drivers.length < 8) {
-    logger.error("Drivers array must contain at least 8 drivers.");
-    res.status(400).send("Drivers array must contain at least 8 drivers.");
-    return;
-  } else if (!startTime) {
-    logger.error("Start time is required.");
-    res.status(400).send("Start time is required.");
-    return;
-  } else if (!timeStampRegex.test(startTime)) {
-    logger.error("Invalid startTime format. Use 'YYYY-MM-DD HH:mm:ss'.");
-    res
-      .status(400)
-      .send("Invalid startTime format. Use 'YYYY-MM-DD HH:mm:ss'.");
-    return;
-  }
-
-  const newRace = new Race(startTime, Object.values(drivers));
-  logger.info(`RaceController.postRace(race:${newRace.toString()})})`);
-  const result = await RaceService.addRace(newRace);
-
-  res.status(200).send(result);
 };
 
 // // PATCH
@@ -183,18 +170,39 @@ export const postRace = async (req, res) => {
 // };
 
 // DELETE
-export const deleteDriverFromRace = async (req, res) => {
-  const { raceId, driverId } = req.params;
-  if (!raceId || !driverId) {
-    logger.error(
-      "RaceController.deleteDriverFromRace() | Race ID and driver ID are required."
+export const deleteDriverFromRace = async (req, res, next) => {
+    const { raceId, driverId } = req.params;
+    if (!raceId || !driverId) {
+        logger.error(
+            "RaceController.deleteDriverFromRace() | Race ID and driver ID are required."
+        );
+        return next(ApiError.badRequest("Race ID and driver ID are required."));
+    }
+
+    logger.info(
+        `RaceController.deleteDriverFromRace(raceId:${raceId}, driverId:${driverId})`
     );
-    res.status(400).send("Race ID and driver ID are required.");
-    return;
-  }
-  logger.info(
-    `RaceController.deleteDriverFromRace(raceId:${raceId}, driverId:${driverId})`
-  );
-  const result = await RaceService.removeDriverFromRace(raceId, driverId);
-  res.status(200).send(result);
+
+    try {
+        const result = await RaceService.removeDriverFromRace(raceId, driverId);
+
+        if (result.error) {
+            switch (result.error) {
+                case "RACE_NOT_FOUND":
+                    throw ApiError.notFound("Race not found.");
+                case "DRIVER_NOT_FOUND":
+                    throw ApiError.notFound("Driver not found.");
+                case "RACE_DATA_NOT_FOUND":
+                    throw ApiError.notFound("Race data not found.");
+                case "DRIVER_NOT_IN_RACE":
+                    throw ApiError.badRequest("Driver is not in this race.");
+                default:
+                    throw ApiError.internal("Internal server error.");
+            }
+        }
+
+        return ApiResponse.success(result, "Driver removed from race successfully").send(res);
+    } catch (error) {
+        next(error);
+    }
 };
