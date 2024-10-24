@@ -5,7 +5,7 @@ import logger from "../utils/logger.js";
 
 export const postLapTime = async (driverId, raceId, lapTime, lapNumber) => {
   logger.info(
-    `LapTimeService.recordLapTime(driverId:${driverId}, raceId:${raceId}, lapTime:${lapTime}, lapNumber:${lapNumber})`
+    `LapTimeService.postLapTime(driverId:${driverId}, raceId:${raceId}, lapTime:${lapTime}, lapNumber:${lapNumber})`
   );
 
   try {
