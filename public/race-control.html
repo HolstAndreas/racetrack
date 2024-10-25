@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="js/socket/rc.socket.io.js"></script>
+    <link rel="stylesheet" href="styles/race-control.css" />
+  </head>
+  <body>
+    <div class="roomTestDiv">
+      <label for="room-name">Room Name</label>
+      <input type="text" id="room-name" />
+      <button onclick="connectToRoom()">Connect to Room</button>
+      <span id="logs"></span>
+    </div>
+    <div class="ctrlButtonsDiv">
+      <div class="ctrlDivTitle">CHANGE MODE</div>
+      <div class="ctrlButtonDiv">
+        <button id="safeButton" onclick="changeMode('safe')">SAFE</button>
+        <button id="hazardButton" onclick="changeMode('hazard')">HAZARD</button>
+        <button id="dangerButton" onclick="changeMode('danger')">DANGER</button>
+        <button id="finishButton" onclick="changeMode('finish')">FINISH</button>
+      </div>
+      <div class="currentStateTitle">
+        <span>CURRENT MODE:</span>
+        <span id="currentMode">NONE</span>
+      </div>
+    <div class="controlButtonsDiv">
+      <div class="ctrlDivTitle">CHANGE STATUS</div>
+      <div class="ctrlButtonDiv">
+        <button onclick="changeStatus('waiting')">WAITING</button>
+        <button onclick="changeStatus('started')">STARTED</button>
+        <button onclick="changeStatus('finished')">FINISH</button>
+      </div>
+      <div class="currentStateTitle">
+        <span>CURRENT STATUS:</span>
+        <span id="currentStatus">NONE</span>
+      </div>
+    </div>
+  </body>
+</html>

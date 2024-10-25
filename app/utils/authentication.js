@@ -43,7 +43,7 @@ router.post("/", (req, res) => {
     httpOnly: true,
     // secure: process.env.NODE_ENV === "production", // set to true in production
     sameSite: "strict",
-    maxAge: 3600000, // 1 hour
+    maxAge: 36000000, // 1 hour
   });
 
   logger.success("Authentication successful");

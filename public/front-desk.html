@@ -3,6 +3,9 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="js/socket/fd.socket.io.js"></script>
+    <script src="js/front-desk.js"></script>
     <link rel="stylesheet" href="styles/front-desk.css" />
     <title>Front-desk</title>
   </head>
@@ -17,7 +20,22 @@
     <main>
       <section class="content">
         <div class="race-list">
-          <div id="current-race"></div>
+          <div id="current-race">
+            <div id="race-info">
+              <div id="race-data"></div>
+              <div id="drivers-in-current">
+                <div id="driver-row-0" class="driver-row"></div>
+                <div id="driver-row-1" class="driver-row"></div>
+                <div id="driver-row-2" class="driver-row"></div>
+                <div id="driver-row-3" class="driver-row"></div>
+                <div id="driver-row-4" class="driver-row"></div>
+                <div id="driver-row-5" class="driver-row"></div>
+                <div id="driver-row-6" class="driver-row"></div>
+                <div id="driver-row-7" class="driver-row"></div>
+              </div>
+            </div>
+            <div id="countdown"></div>
+          </div>
           <div class="section-header">
             <h2 class="content-title">Upcoming races</h2>
           </div>
@@ -28,118 +46,17 @@
         <div class="race-sessions">
           <div class="section-header">
             <h2>Race session</h2>
+            <input type="text" placeholder="Drivers (1, 2, 3) (8x)" />
             <a class="btn" href="">Add a race</a>
           </div>
           <div class="race-drivers">
             <h3>Drivers</h3>
             <div class="drivers-list">
-              <ol>
-                <li>Driver 1</li>
-                <li>Driver 2</li>
-                <li>Driver 3</li>
-                <li>Driver 4</li>
-                <li>Driver 5</li>
-                <li>Driver 6</li>
-                <li>Driver 7</li>
-                <li>Driver 8</li>
-              </ol>
+              <ol id="drivers-list"></ol>
             </div>
           </div>
         </div>
       </section>
     </main>
-    <script>
-      fetch("api/race-sessions/6")
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error("Response went wrong");
-          }
-          return response.json();
-        })
-        .then((data) => {
-          const currentRace = document.getElementById("current-race");
-          const dataContainer = document.createElement("div");
-          dataContainer.classList.add("dataContainer");
-          const titleDrivers = document.createElement("div");
-          titleDrivers.classList.add("titleDrivers");
-
-          const otherData = document.createElement("div");
-          otherData.classList.add("otherData");
-
-          const title = document.createElement("h3");
-          title.innerHTML = `<strong>Current race: ${data[0].id}</strong>`;
-          console.log(`<strong>Current race: ${data[0].id}</strong>`);
-          titleDrivers.append(title);
-
-          const drivers = document.createElement("p");
-          drivers.innerHTML = `Drivers: ${data[0].drivers}`;
-          console.log(`Drivers: ${data[0].drivers}`);
-          titleDrivers.append(drivers);
-
-          dataContainer.append(titleDrivers);
-
-          const start_time = document.createElement("p");
-          start_time.innerHTML = `Started: ${data[0].start_time}`;
-          otherData.append(start_time);
-
-          const status = document.createElement("p");
-          status.innerHTML = `Status: ${data[0].status}`;
-          otherData.append(status);
-
-          const mode = document.createElement("p");
-          mode.innerHTML = `Mode: ${data[0].mode}`;
-          otherData.append(mode);
-
-          dataContainer.append(otherData);
-
-          const countdown = document.createElement("p");
-          countdown.classList.add("countdown"); //parallel
-          countdown.innerHTML = `00.00`;
-
-          currentRace.append(dataContainer);
-          currentRace.append(countdown);
-        });
-
-      fetch("/api/racelist")
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error("Response went wrong");
-          }
-          return response.json();
-        })
-        .then((data) => {
-          const raceList = document.getElementById("race-list");
-
-          if (data.length > 0) {
-            let counter = 0;
-            data.forEach((race) => {
-              const listItem = document.createElement("li");
-              if (race.start_time != null) {
-                listItem.innerHTML = `<strong>Current race: ${race.id}</strong> - ${race.drivers}`;
-              } else {
-                if (counter === 0) {
-                  listItem.innerHTML = `<strong>Next race: ${race.id}</strong> - ${race.drivers}`;
-                } else {
-                  listItem.innerHTML = `<strong>${race.id}</strong> - ${race.drivers}`;
-                }
-              }
-              raceList.append(listItem);
-              counter++;
-            });
-          } else {
-            raceList.innerHTML = "<li>No upcoming races available.</li>";
-          }
-        })
-        .catch((error) => {
-          console.error("Error message.", error);
-          document.getElementById(
-            "race-list"
-          ).innerHTML = `<li> Error loading race data.${error}</li>`;
-        });
-    </script>
-    <script>
-      const openRace = document.getElementsByClassName("open");
-      fetch("").then();
-    </script>
   </body>
 </html>

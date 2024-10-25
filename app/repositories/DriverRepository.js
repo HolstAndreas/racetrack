@@ -108,13 +108,30 @@ export const updateDriverName = async (driverId, name) => {
 
 export const deleteDriver = async (driverId) => {
   logger.info(`DriverRepository.deleteDriver(driverId:${driverId})`);
+
+  if (!Number.isInteger(Number(driverId))) {
+    throw new Error("Invalid driver ID");
+  }
+
   try {
+    // Start a transaction since we are making multiple changes
+    await pool.query("BEGIN");
+
+    // Remove driver from races drivers array
+    await pool.query("UPDATE races SET drivers = array_remove(drivers, $1)", [
+      driverId,
+    ]);
+
+    // Delete the driver
     const res = await pool.query(
       "DELETE FROM drivers WHERE id = $1 RETURNING *;",
       [driverId]
     );
+
+    await pool.query("COMMIT");
     return res.rowCount > 0;
   } catch (err) {
+    await pool.query("ROLLBACK");
     logger.error(err);
     throw err;
   }

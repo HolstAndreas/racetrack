@@ -62,7 +62,7 @@ export const getCurrentRace = async () => {
   logger.info(`RaceRepository.getCurrentRace`);
   try {
     const res = await pool.query(
-      "SELECT * from races WHERE start_time IS NOT NULL ORDER BY id DESC LIMIT 1;"
+      "SELECT * from races WHERE status = 'STARTED';"
     );
     return res.rows;
   } catch (err) {

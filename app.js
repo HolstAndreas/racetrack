@@ -1,5 +1,7 @@
 // Imports everything necessary for app.js to function as an express instance.
 import express from "express"; // Import express module - handles routing, middleware, HTTP requests, responses
+import { createServer } from "http";
+import { Server } from "socket.io";
 import path from "path"; // Provides ulities for working with file and directory paths.
 import { fileURLToPath } from "url"; // converts a file URL into an actual filepath - in ES Node.js does not provide built-in __filename or __dirname...
 import dotenv from "dotenv";
@@ -14,7 +16,7 @@ import {
   postDriverToRace,
   postRace,
   deleteDriverFromRace,
-  createRaceList,
+  getUpcomingRaces,
   getCurrentRace,
 } from "./app/controllers/RaceController.js"; // import all methods from RaceController.js
 import {
@@ -61,6 +63,28 @@ checkEnvVariables();
 
 // Sets up Express
 const app = express(); // app is now an instance of Express application.
+const httpServer = createServer(app);
+const io = new Server(httpServer, {});
+
+io.on("connection", (socket) => {
+  logger.debug(`User connected: ${socket.id}`);
+
+  socket.on("connectToRoom", (roomName) => {
+    socket.join(roomName);
+    logger.debug(`${socket.id} joined room: ${roomName}`);
+    io.to(roomName).emit("newUserJoined", socket.id);
+  });
+
+  socket.on("changeMode", (mode) => {
+    logger.info(`Socket mode in service: ${mode}`);
+    io.emit("updatedRaceMode", mode);
+  });
+
+  socket.on("changeStatus", (status) => {
+    logger.info(`Socket status in service: ${status}`);
+    io.emit("updatedRaceStatus", status);
+  });
+});
 
 // Middleware Configuration:
 app.use(express.json()); // Parse JSON - adds middleware that parses JSON payloads - convert the body into a JS object available under req.body.
@@ -91,7 +115,7 @@ app.get(
   validateIsNumber,
   getRemainingTime
 ); // get race remaining time | DONE
-app.get("/api/racelist", createRaceList); // create a list of races, current + upcoming
+app.get("/api/upcomingraces", getUpcomingRaces); // create a list of races, current + upcoming
 app.get("/api/currentrace", getCurrentRace);
 
 app.post("/api/race-sessions/:raceId/drivers/:driverId", postDriverToRace); // add driver to race | Done
@@ -142,11 +166,11 @@ app.get("/front-desk", authMiddleware("receptionist"), function (req, res) {
   res.sendFile(path.join(__dirname, "public/front-desk.html"));
 });
 
-app.get("/observer", authMiddleware("observer"), (req, res) => {
+app.get("/lap-line-tracker", authMiddleware("observer"), (req, res) => {
   res.sendFile(path.join(__dirname, "public/lap-line-tracker.html"));
 });
 
-app.get("/safety", authMiddleware("safety"), (req, res) => {
+app.get("/race-control", authMiddleware("safety"), (req, res) => {
   res.sendFile(path.join(__dirname, "public/race-control.html"));
 });
 
@@ -157,6 +181,35 @@ app.use(errorHandler);
 
 // Starts the server
 const PORT = process.env.PORT || 3000; // Sets the port number, checks for environment variables, default is 3000.
-app.listen(PORT, () => {
+httpServer.listen(PORT, () => {
   logger.info(`Server is running on port ${PORT}`); // Start listening to requests at PORT
 });
+
+// const app = require('express')();
+// const server = require('http').createServer(app);
+// const io = require('socket.io')(server);
+// const port = process.env.PORT || 8080;
+// app.get('/', function(req, res) {
+//   res.sendfile('index.html');
+// });
+// io.on('connection', (socket) => {
+//   console.log('user connected');
+//   socket.on('disconnect', function () {
+//     console.log('user disconnected');
+//   });
+// })
+// server.listen(port, function() {
+//   console.log(`Listening on port ${port}`);
+// });
+
+// <!DOCTYPE html>
+// <html>
+//    <head>
+//       <title>Hello!</title>
+//    </head>
+//    <script src = "/socket.io/socket.io.js"></script>
+//    <script>
+//       const socket = io();
+//    </script>
+//    <body>Integrating Socket.io with Node.js and Express</body>
+// </html>

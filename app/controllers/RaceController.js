@@ -29,9 +29,7 @@ export const getRaceById = async (req, res, next) => {
     if (!race) {
       throw ApiError.notFound("Race not found");
     }
-    logger.success(
-      "RaceController | Got result: \n" + JSON.stringify(race, null, 2)
-    );
+    logger.success("RaceController | Got result: \n" + JSON.stringify(race));
     return ApiResponse.success(race, "Race retrieved successfully").send(res);
   } catch (error) {
     next(error);
@@ -51,13 +49,14 @@ export const getLeaderboard = async (req, res, next) => {
   }
 };
 
-export const createRaceList = async (req, res, next) => {
-  logger.info("RaceController.createRaceList()");
+export const getUpcomingRaces = async (req, res, next) => {
+  logger.info("RaceController.upcomingRaces()");
   try {
-    const result = await RaceService.createRaceList();
-    return ApiResponse.success(result, "Race list created successfully").send(
-      res
-    );
+    const result = await RaceService.findUpcomingRaces();
+    return ApiResponse.success(
+      result,
+      "Upcoming races list created successfully"
+    ).send(res);
   } catch (error) {
     next(error);
   }

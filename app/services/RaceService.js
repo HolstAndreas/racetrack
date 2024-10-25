@@ -28,28 +28,20 @@ export const findRemainingTimeById = async (id) => {
   return remainingTime;
 };
 
-export const createRaceList = async () => {
-  logger.info(`RaceService.createRaceList()`);
-  const currentRace = await findCurrentRace();
-  const upcomingRaces = await findUpcomingRaces();
-  const raceList = currentRace.concat(upcomingRaces);
-  return raceList;
+export const findUpcomingRaces = async () => {
+  logger.info(`RaceService.findUpcomingRaces()`);
+  const upcomingRaces = await RaceRepository.getUpcomingRaces();
+  return upcomingRaces;
 };
 
 export const findCurrentRace = async () => {
   logger.info(`RaceService.findCurrentRace()`);
   const lastRaceStarted = await RaceRepository.getCurrentRace();
-  if (lastRaceStarted.remaining_time === 0) {
-    return [];
+  if (lastRaceStarted.length > 1) {
+    logger.error("Unexpected error: multiple races have status 'STARTED'");
   } else {
     return lastRaceStarted;
   }
-};
-
-export const findUpcomingRaces = async () => {
-  logger.info(`RaceService.findUpcomingRaces()`);
-  const upcomingRaces = await RaceRepository.getUpcomingRaces();
-  return upcomingRaces;
 };
 
 export const findNextRace = async (id) => {
@@ -109,6 +101,9 @@ export const addDriverToRace = async (raceId, driverId) => {
       return { error: "RACE_DATA_NOT_FOUND" };
     }
 
+    if (drivers[0].drivers === null) {
+      drivers[0].drivers = [];
+    }
     // Check if driver already in race
     if (drivers[0].drivers.includes(Number(driverId))) {
       logger.error(
@@ -118,6 +113,7 @@ export const addDriverToRace = async (raceId, driverId) => {
     }
 
     // Add driver
+
     drivers[0].drivers.push(Number(driverId));
     const result = await RaceRepository.postDriverToRace(
       raceId,
