@@ -22,16 +22,7 @@
             <h2 class="content-title">Upcoming races</h2>
           </div>
           <div class="race-content">
-            <ol id="race-list">
-              <!-- <li>Current race</li>
-              <li>Next race</li>
-              <li>... race</li>
-              <li>... race</li>
-              <li>... race</li>
-              <li>... race</li>
-              <li>... race</li>
-              <li>... race</li> -->
-            </ol>
+            <ol id="race-list"></ol>
           </div>
         </div>
         <div class="race-sessions">
@@ -58,7 +49,7 @@
       </section>
     </main>
     <script>
-      fetch("api/race-sessions/1")
+      fetch("api/race-sessions/6")
         .then((response) => {
           if (!response.ok) {
             throw new Error("Response went wrong");
@@ -77,10 +68,12 @@
 
           const title = document.createElement("h3");
           title.innerHTML = `<strong>Current race: ${data[0].id}</strong>`;
+          console.log(`<strong>Current race: ${data[0].id}</strong>`);
           titleDrivers.append(title);
 
           const drivers = document.createElement("p");
           drivers.innerHTML = `Drivers: ${data[0].drivers}`;
+          console.log(`Drivers: ${data[0].drivers}`);
           titleDrivers.append(drivers);
 
           dataContainer.append(titleDrivers);

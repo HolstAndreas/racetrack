@@ -2,138 +2,122 @@ import pool from "../utils/db.js";
 import logger from "../utils/logger.js";
 
 export const checkDriverExists = async (id) => {
-    logger.info(`DriverRepository.checkDriverExists(id:${id})`);
-    try {
-        const res = await pool.query("SELECT * FROM drivers WHERE id = $1;", [
-            id,
-        ]);
-        return res.rows.length > 0;
-    } catch (err) {
-        logger.error(err);
-        throw err;
-    }
+  logger.info(`DriverRepository.checkDriverExists(id:${id})`);
+  try {
+    const res = await pool.query("SELECT * FROM drivers WHERE id = $1;", [id]);
+    return res.rows.length > 0;
+  } catch (err) {
+    logger.error(err);
+    throw err;
+  }
 };
 
 export const findById = async (id) => {
-    logger.info(`DriverRepository.findById(id:${id})`);
-    try {
-        const res = await pool.query("SELECT * FROM drivers WHERE id = $1;", [
-            id,
-        ]);
-        return res.rows;
-    } catch (err) {
-        logger.error(`DriverRepository.findById | Error: ${err}`);
-        throw err;
-    }
+  logger.info(`DriverRepository.findById(id:${id})`);
+  try {
+    const res = await pool.query("SELECT * FROM drivers WHERE id = $1;", [id]);
+    return res.rows;
+  } catch (err) {
+    logger.error(`DriverRepository.findById | Error: ${err}`);
+    throw err;
+  }
 };
 
 export const findAll = async () => {
-    logger.info(`DriverRepository.findAll()`);
-    try {
-        const res = await pool.query("SELECT * FROM drivers;");
-        return res.rows;
-    } catch (err) {
-        logger.error(err);
-        throw err;
-    }
-};
-
-export const getDrivers = async () => {
-    logger.info(`DriverRepository.getDrivers()`);
-    try {
-        const res = await pool.query("SELECT * FROM drivers;");
-        return res.rows;
-    } catch (err) {
-        logger.error(err);
-        throw err;
-    }
+  logger.info(`DriverRepository.findAll()`);
+  try {
+    const res = await pool.query("SELECT * FROM drivers;");
+    return res.rows;
+  } catch (err) {
+    logger.error(err);
+    throw err;
+  }
 };
 
 export const getDriversByCar = async (carId) => {
-    logger.info(`DriverRepository.getDriversByCar(carId:${carId})`);
-    try {
-        const res = await pool.query("SELECT * FROM drivers WHERE car = $1;", [
-            carId,
-        ]);
-        return res.rows;
-    } catch (err) {
-        logger.error(err);
-        throw err;
-    }
+  logger.info(`DriverRepository.getDriversByCar(carId:${carId})`);
+  try {
+    const res = await pool.query("SELECT * FROM drivers WHERE car = $1;", [
+      carId,
+    ]);
+    return res.rows;
+  } catch (err) {
+    logger.error(err);
+    throw err;
+  }
 };
 
 export const getDriversByRace = async (id) => {
-    logger.info(`DriverRepository.getDriversByRace(id:${id})`);
-    try {
-        const res = await pool.query(
-            "SELECT drivers FROM races WHERE id = $1;",
-            [id]
-        );
-        return res.rows;
-    } catch (err) {
-        logger.error(err);
-        throw err;
-    }
+  logger.info(`DriverRepository.getDriversByRace(id:${id})`);
+  try {
+    const res = await pool.query("SELECT drivers FROM races WHERE id = $1;", [
+      id,
+    ]);
+    return res.rows;
+  } catch (err) {
+    logger.error(err);
+    throw err;
+  }
 };
 
 export const insertDriver = async (name) => {
-    logger.info(`insertData.insertDriver(driver:${name})`);
-    try {
-        const res = await pool.query(
-            "INSERT INTO drivers (name) VALUES ($1) RETURNING *",
-            [name]
-        );
-        return res.rows;
-    } catch (err) {
-        logger.error(err);
-        throw err;
-    }
+  logger.info(`insertData.insertDriver(driver:${name})`);
+  try {
+    const res = await pool.query(
+      "INSERT INTO drivers (name) VALUES ($1) RETURNING *;",
+      [name]
+    );
+    return res.rows;
+  } catch (err) {
+    logger.error(err);
+    throw err;
+  }
 };
 
 export const postCarToDriver = async (driverId, carId) => {
-    logger.info(
-        `DriverRepository.postCarToDriver(driverId:${driverId}, carId:${carId})`
+  logger.info(
+    `DriverRepository.postCarToDriver(driverId:${driverId}, carId:${carId})`
+  );
+  try {
+    const res = await pool.query(
+      "UPDATE drivers SET car = $1 WHERE id = $2 RETURNING *;",
+      [carId, driverId]
     );
-    try {
-        const res = await pool.query(
-            `UPDATE drivers SET car = $1 WHERE id = $2 RETURNING *;`,
-            [carId, driverId]
-        );
-        return res.rows;
-    } catch (err) {
-        logger.error(err);
-        throw err;
-    }
+    return res.rows;
+  } catch (err) {
+    logger.error(err);
+    throw err;
+  }
 };
 
 export const updateDriverName = async (driverId, name) => {
-    logger.info(
-        `DriverRepository.updateDriverName(driverId:${driverId}, name:${name})`
+  logger.info(
+    `DriverRepository.updateDriverName(driverId:${driverId}, name:${name})`
+  );
+  try {
+    const res = await pool.query(
+      "UPDATE drivers SET name = $1 WHERE id = $2 RETURNING *;",
+      [name, driverId]
     );
-    try {
-        const res = await pool.query(
-            `UPDATE drivers SET name = $1 WHERE id = $2 RETURNING *;`,
-            [name, driverId]
-        );
-        return res.rows[0];
-    } catch (err) {
-        logger.error(err);
-        throw err;
-    }
+    return res.rows[0];
+  } catch (err) {
+    logger.error(err);
+    throw err;
+  }
 };
 
 export const deleteDriver = async (driverId) => {
-    logger.info(`DriverRepository.deleteDriver(driverId:${driverId})`);
-    try {
-        const res = await pool.query(
-            "DELETE FROM drivers WHERE id = $1 RETURNING *;",
-            [driverId]
-        );
-        return res.rowCount > 0;
-    } catch (err) {
-        logger.error(err);
-        throw err;
-    }
+  logger.info(`DriverRepository.deleteDriver(driverId:${driverId})`);
+  try {
+    const res = await pool.query(
+      "DELETE FROM drivers WHERE id = $1 RETURNING *;",
+      [driverId]
+    );
+    return res.rowCount > 0;
+  } catch (err) {
+    logger.error(err);
+    throw err;
+  }
 };
 
 // CREATE TABLE drivers(id SERIAL PRIMARY KEY,

@@ -5,30 +5,31 @@ import { fileURLToPath } from "url"; // converts a file URL into an actual filep
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import {
-    getRaceById,
-    getLeaderboard,
-    getNextRace,
-    getRaceFlags,
-    getRemainingTime,
-    postDriverToRace,
-    postRace,
-    deleteDriverFromRace,
-    createRaceList,
-    getCurrentRace,
+  getAll,
+  getRaceById,
+  getLeaderboard,
+  getNextRace,
+  getRaceFlags,
+  getRemainingTime,
+  postDriverToRace,
+  postRace,
+  deleteDriverFromRace,
+  createRaceList,
+  getCurrentRace,
 } from "./app/controllers/RaceController.js"; // import all methods from RaceController.js
 import {
-    getAllDrivers,
-    getDriverById,
-    postDriver,
-    patchDriverById,
-    deleteDriverById,
-    assignCarToDriver,
+  getAllDrivers,
+  getDriverById,
+  postDriver,
+  patchDriverById,
+  deleteDriverById,
+  assignCarToDriver,
 } from "./app/controllers/DriverController.js";
 import {
-    postLapTimes,
-    getLapTimesByRace,
-    getLapTimesByDriver,
-    getLapTimesByRaceAndDriver,
+  postLapTimes,
+  getLapTimesByRace,
+  getLapTimesByDriver,
+  getLapTimesByRaceAndDriver,
 } from "./app/controllers/LapTimeController.js";
 import validateIsNumber from "./app/middleware/ValidateIsNumber.js";
 import logger from "./app/utils/logger.js";
@@ -38,18 +39,18 @@ import authRouter from "./app/utils/authentication.js";
 dotenv.config();
 
 const requiredKeys = [
-    "JWT_SECRET",
-    "receptionist_key",
-    "observer_key",
-    "safety_key",
+  "JWT_SECRET",
+  "receptionist_key",
+  "observer_key",
+  "safety_key",
 ];
 
 function checkEnvVariables() {
-    const unsetEnv = requiredKeys.filter((key) => !process.env[key]);
-    if (unsetEnv.length > 0) {
-        console.error("Missing access key");
-        process.exit(1);
-    }
+  const unsetEnv = requiredKeys.filter((key) => !process.env[key]);
+  if (unsetEnv.length > 0) {
+    console.error("Missing access key");
+    process.exit(1);
+  }
 }
 
 checkEnvVariables();
@@ -81,15 +82,16 @@ app.set("view engine", "ejs"); // Sets EJS as view engine.
 // Here should all defined routes be. (Endpoint, middleware, middleware, controller method)
 
 app.get("/api/race-sessions/:raceId", validateIsNumber, getRaceById); // get a race by ID | DONE
+app.get("/api/race-sessions/", getAll);
 app.get("/api/leader-board/:raceId", validateIsNumber, getLeaderboard); // get leaderboard
 app.get("/api/next-race/:raceId", validateIsNumber, getNextRace); // get next race | DONE
 app.get("/api/race-flags/:raceId", validateIsNumber, getRaceFlags); // get race mode | DONE
 app.get(
-    "/api/race-sessions/:raceId/remainingtime",
-    validateIsNumber,
-    getRemainingTime
+  "/api/race-sessions/:raceId/remainingtime",
+  validateIsNumber,
+  getRemainingTime
 ); // get race remaining time | DONE
-app.get("/api/racelist", createRaceList);
+app.get("/api/racelist", createRaceList); // create a list of races, current + upcoming
 app.get("/api/currentrace", getCurrentRace);
 
 app.post("/api/race-sessions/:raceId/drivers/:driverId", postDriverToRace); // add driver to race | Done
@@ -98,8 +100,8 @@ app.post("/api/race-sessions", postRace); // add race | Done
 app.post("/api/drivers", postDriver); // add driver | Done
 
 app.delete(
-    "/api/race-sessions/:raceId/drivers/:driverId",
-    deleteDriverFromRace
+  "/api/race-sessions/:raceId/drivers/:driverId",
+  deleteDriverFromRace
 ); // delete driver from race | Done
 // app.patch("/api/raceId/drivers/:driverId", patchRaceById); // edit driver from race
 
@@ -110,39 +112,42 @@ app.get("/api/drivers/:driverId", getDriverById);
 app.post("/api/laptimes", postLapTimes); // Create new lap time | Done
 app.get("/api/laptimes/race/:raceId", getLapTimesByRace); // Get all lap times for a race | Done
 app.get("/api/laptimes/driver/:driverId/", getLapTimesByDriver); // Get all lap times for a driver in a specific race
-app.get("/api/laptimes/race/:raceId/driver/:driverId", getLapTimesByRaceAndDriver); // Get all lap times for a driver in a specific race, 
+app.get(
+  "/api/laptimes/race/:raceId/driver/:driverId",
+  getLapTimesByRaceAndDriver
+); // Get all lap times for a driver in a specific race,
 
 app.patch("/api/drivers/:driverId", patchDriverById);
 app.delete("/api/drivers/:driverId", deleteDriverById);
 
 app.get("/", function (req, res) {
-    res.sendFile(path.join(__dirname, "public/index.html"));
+  res.sendFile(path.join(__dirname, "public/index.html"));
 });
 
 app.use("/authenticate", authRouter);
 
 // Login route
 app.get("/login", (req, res) => {
-    res.sendFile(path.join(__dirname, "public/login.html"));
+  res.sendFile(path.join(__dirname, "public/login.html"));
 });
 
 // Logout route
 app.get("/logout", (req, res) => {
-    res.clearCookie("token");
-    res.send("Logged out successfully.");
+  res.clearCookie("token");
+  res.send("Logged out successfully.");
 });
 
 // Protected routes
 app.get("/front-desk", authMiddleware("receptionist"), function (req, res) {
-    res.sendFile(path.join(__dirname, "public/front-desk.html"));
+  res.sendFile(path.join(__dirname, "public/front-desk.html"));
 });
 
 app.get("/observer", authMiddleware("observer"), (req, res) => {
-    res.sendFile(path.join(__dirname, "public/lap-line-tracker.html"));
+  res.sendFile(path.join(__dirname, "public/lap-line-tracker.html"));
 });
 
 app.get("/safety", authMiddleware("safety"), (req, res) => {
-    res.sendFile(path.join(__dirname, "public/race-control.html"));
+  res.sendFile(path.join(__dirname, "public/race-control.html"));
 });
 
 import errorHandler from "./app/middleware/errorHandler.js";
@@ -153,5 +158,5 @@ app.use(errorHandler);
 // Starts the server
 const PORT = process.env.PORT || 3000; // Sets the port number, checks for environment variables, default is 3000.
 app.listen(PORT, () => {
-    logger.info(`Server is running on port ${PORT}`); // Start listening to requests at PORT
+  logger.info(`Server is running on port ${PORT}`); // Start listening to requests at PORT
 });
