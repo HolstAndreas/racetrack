@@ -7,7 +7,11 @@
     <script src="js/socket/fd.socket.io.js"></script>
     <script src="js/front-desk.js"></script>
     <link rel="stylesheet" href="styles/front-desk.css" />
-    <title>Front-desk</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=SUSE:wght@100..800&display=swap" rel="stylesheet">
+    <title>Front Desk</title>
   </head>
   <body>
     <!-- List of upcoming race sessions -->
@@ -19,34 +23,31 @@
     </header>
     <main>
       <section class="content">
+        <!-- Left side: Current and Upcoming Races -->
         <div class="race-list">
-          <div id="current-race">
-            <div id="race-info">
-              <div id="race-data"></div>
-              <div id="drivers-in-current">
-                <div id="driver-row-0" class="driver-row"></div>
-                <div id="driver-row-1" class="driver-row"></div>
-                <div id="driver-row-2" class="driver-row"></div>
-                <div id="driver-row-3" class="driver-row"></div>
-                <div id="driver-row-4" class="driver-row"></div>
-                <div id="driver-row-5" class="driver-row"></div>
-                <div id="driver-row-6" class="driver-row"></div>
-                <div id="driver-row-7" class="driver-row"></div>
+          <!-- Current Race Display -->
+          <div class="current-race-section">
+            <h2>Current Race</h2>
+            <div id="current-race">
+              <div id="race-info">
+                <div id="race-data">
+                  <span id="countdown"></span>
+                </div>
+                <div id="drivers-in-current"></div>
               </div>
             </div>
-            <div id="countdown"></div>
+            
           </div>
-          <!-- <div class="section-header">
-            <h2 class="content-title">Upcoming races</h2>
-          </div>
-          <div class="race-content"> -->
+
+          <!-- Upcoming Races List -->
+          <div class="upcoming-races-section">
+            <h2>Upcoming Races</h2>
             <ol id="race-list"></ol>
           </div>
         </div>
 
         <!-- Right side, managment -->
         <div class="race-sessions">
-
           <div class="management-section-parent">
             <!-- Add Race Section -->
             <div class="management-section">
@@ -71,7 +72,7 @@
                 <select id="driver-select">
                   <option value="">Select Driver</option>
                 </select>
-                <input type="number" id="car-id" placeholder="Car ID" min="1" max="8" required />
+                <input type="number" id="car-id" placeholder="Car ID" min="1" required />
                 <button onclick="assignCar()" class="btn">Assign Car</button>
               </div>
             </div>
@@ -91,9 +92,10 @@
 
 
           <div class="race-drivers">
-            <h3>Drivers</h3>
+            <h2>Drivers</h2>
             <div class="drivers-list">
-              <ol id="drivers-list"></ol>
+              <ol id="drivers-list">
+                </ol>
             </div>
           </div>
         </div>

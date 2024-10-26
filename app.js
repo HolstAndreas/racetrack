@@ -18,6 +18,7 @@ import {
   deleteDriverFromRace,
   getUpcomingRaces,
   getCurrentRace,
+  deleteRace,
 } from "./app/controllers/RaceController.js"; // import all methods from RaceController.js
 import {
   getAllDrivers,
@@ -128,6 +129,7 @@ app.delete(
   deleteDriverFromRace
 ); // delete driver from race | Done
 // app.patch("/api/raceId/drivers/:driverId", patchRaceById); // edit driver from race
+app.delete("/api/race-sessions/:raceId", validateIsNumber, deleteRace); // delete race
 
 // Here are driver controllers
 app.get("/api/drivers", getAllDrivers);

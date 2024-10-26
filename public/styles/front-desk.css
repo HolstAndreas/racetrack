@@ -1,27 +1,43 @@
+:root {
+  --background-color: #252a32;
+  --text-color: #f5f5f5;
+  --menu-color: #2f343c;
+  --disabled-color: #6a6e76;
+  --button-color: #dcf900;
+  --button-text-color: #101419;
+}
+
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
+  font-family: 'Inter', sans-serif;
 }
 
 html,
 body {
   height: 100%;
   width: 100%;
+  background-color: #252a32;
 }
 
 header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-bottom: 2px solid #000;
+  border-bottom: 2px solid var(--disabled-color);
+  color: var(--text-color);
+  padding: 0.5rem 1rem;
 }
 
 main {
-  height: 100vh;
-  width: 100vw;
-  overflow-y: hidden;
+  height: calc(100vh - 57px); /* Subtract header height */
+  width: 100%;
+  overflow: hidden;
+  color: var(--text-color);
 }
+
+
 
 .content {
   display: flex;
@@ -37,22 +53,24 @@ main {
 }
 
 .race-list {
-  background-color: aqua;
   display: flex;
   flex-direction: column;
   width: 100%;
   height: 100%;
+  overflow: hidden;
+}
+
+.current-race-section {
+  padding: 1rem;
 }
 
 .race-sessions {
-  background-color: aquamarine;
   display: flex;
   flex-direction: column;
   width: 100%;
   height: 100%;
-  border-left: 1px solid black;
-  border-right: 1px solid black;
-  overflow-y: scroll;
+  border-left: 2px solid var(--disabled-color);
+  overflow-y: auto;
 }
 
 .section-header {
@@ -62,7 +80,7 @@ main {
   width: 100%;
   margin: 0;
   padding: 10px;
-  border-bottom: 2px solid #000;
+  border-bottom: 2px solid var(--disabled-color);
   box-sizing: border-box;
 }
 
@@ -90,25 +108,21 @@ main {
   display: flex;
   height: 50px;
   width: 100%;
-  padding: 0 10px;
-  box-sizing: border-box;
-  border: 1px solid #000;
+  padding: 0 1rem;
+  border: 2px solid var(--disabled-color);
+  margin-bottom: 0.5rem;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
 }
 
-/* #race-list li:first-child {
-  border-right: 1px solid #000;
-} */
+.race-list li:hover {
+  background-color: #ddd;
+}
 
 .race-sessions li {
-  /* height: 50px; */
   padding: 0.25rem 0rem 0.25rem 0.25rem;
   width: 100%;
   box-sizing: border-box;
-  border-bottom: 1px solid #000;
-}
-
-.race-sessions li:first-child {
-  border-top: 1px solid #000;
 }
 
 h2 {
@@ -129,16 +143,23 @@ h2 {
   padding: 0.5rem 1rem;
   border-radius: 4px;
   font-weight: 400;
-  border: 1px solid #000;
   cursor: pointer;
-  background-color: #bde6b1;
+  background-color: transparent;
+  border: 2px solid var(--button-color);
+  color: var(--button-color);
+  transition: background-color 0.3s ease;
+}
+
+.btn:hover {
+  background-color: var(--button-text-color);
 }
 
 #current-race {
-  background-color: aliceblue;
+  background-color: var(--menu-color);
   display: flex;
-  width: 100%;
-  /* align-items: center; */
+  width: 100%; 
+  border-radius: 8px;
+  margin-top: 0.5rem;
 }
 
 #race-info {
@@ -146,15 +167,11 @@ h2 {
 }
 
 #race-data {
-  background-color: bisque;
   flex: 1;
   display: flex;
-  /* flex-direction: column; */
   justify-content: space-between;
-  /* width: 100%; */
   align-items: end;
-  border-bottom: 1px solid #000;
-  padding: 10px 10px 0 10px;
+  padding: 1rem;
 }
 
 #race-data h3 {
@@ -166,65 +183,143 @@ h2 {
   display: inline-block;
 }
 
+.upcoming-races-section {
+  padding: 1rem;
+  flex: 1;
+  overflow: hidden;
+  display:flex;
+  flex-direction: column; 
+}
+
 .driver-row {
-  /* display: inline-block; */
   width: 50%;
-  border-bottom: 1px solid #000;
+  border-bottom: 2px solid var(--disabled-color);
   padding: 5px 10px 0 10px;
+}
+
+.driver-row:nth-child(7) {
+  border-bottom: none;
+}
+
+.driver-row:last-child {
+  border-bottom: none;
 }
 
 #drivers-in-current {
   display: flex;
   flex-wrap: wrap;
+  margin-bottom: 0.5rem;
 }
 
 #drivers-in-current div:nth-child(even) {
-  border-left: 1px solid #000;
+  border-left: 2px solid var(--disabled-color);
+}
+
+#race-list {
+  overflow-y: auto;
+  margin-top: 0.5rem;
 }
 
 #race-list li {
   display: flex;
+  min-height: 50px; 
+  width: 100%;
+  padding: 0.5rem 1rem;
+  border: 2px solid var(--disabled-color);
+  margin-bottom: 0.5rem;
+  border-radius: 4px;
+  transition: color 0.3s ease;
   align-items: center;
+  gap: 0.5rem;
+  background-color: var(--menu-color);
+  color: var(--disabled-color);
 }
 
-#race-list > li > div {
+#race-list li:hover {
+  color: var(--text-color);
+}
+
+.race-drivers-grid {
   display: flex;
   flex-wrap: wrap;
-  padding-right: 10px;
-  height: 100%;
-  /* align-self: center; */
+  width: 100%;
 }
 
-#race-list > li > div > div {
-  padding: 0 10px;
-  border-right: 1px solid black;
-  height: 25px;
+.driver-slot {
+  border: 1px solid var(--disabled-color);
+  width: 25%; 
+  overflow-x: scroll;
+  overflow-y: hidden;
+  height: 1.5rem;
+  white-space: nowrap;
+  border-right: 1px solid var(--disabled-color);
+  border-bottom: 1px solid var(--disabled-color);
+  padding: 0.25rem;
+}
+
+/* Remove right border from every 4th element */
+.driver-slot:nth-child(4n) {
+  border-right: none;
+}
+
+/* Remove bottom border from last row */
+.driver-slot:nth-last-child(-n+4) {
+  border-bottom: none;
+}
+
+/* Remove left border from first element in each row */
+.driver-slot:nth-child(4n+1) {
+  border-left: none;
+}
+
+/* Remove top border from first row */
+.driver-slot:nth-child(-n+4) {
+  border-top: none;
+}
+
+.race-actions {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.race-actions .btn {
+  background-color: var(--button-color);
+  color: var(--button-text-color);
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+.race-actions .btn:hover {
+  background-color: var(--button-text-color);
+  color: var(--button-color);
+  border: 1px solid var(--button-color);
 }
 
 #race-list > li > div:first-child {
-  display: flex;
-  height: 100%;
   min-width: 80px;
-  align-items: center;
-  font-size: 24px;
-  border-right: 1px solid #000;
+  font-size: 1.5rem;  
+}
+
+#race-list .btn {
+  padding: 0.25rem 0.5rem;  
+  font-size: 0.875rem; 
+  white-space: nowrap;
+  margin: 0.25rem 0;  
 }
 
 #countdown {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
-  background-color: lightblue;
-  font-size: 48px;
-  padding: 10px;
-  border-bottom: 1px solid #000;
-  border-left: 1px solid black;
+  font-size: 2rem;
+  padding: 0.5rem 0.5rem;
+  text-align: center;
 }
 
 .driver-info {
   display: flex;
   flex-direction: column;
+  gap: 0.5rem;
+  padding: 1rem;
+  background-color: var(--menu-color);
+  margin: 0.5rem 1rem 1rem 1rem;
+  border-radius: 8px;
 }
 
 /* .drivers-in-current {
@@ -232,7 +327,7 @@ h2 {
 } */
 
 .highlight {
-  background-color: rgb(157, 249, 249);
+  color: var(--text-color) !important;
 }
 
 .hidden {
@@ -242,17 +337,19 @@ h2 {
 .management-section-parent {
   display: flex;
   flex-wrap: wrap;
+  border-bottom: 2px solid var(--disabled-color);
+  flex-shrink: 0;
 }
 
 .management-section {
   padding: 1rem;
-  border-bottom: 1px solid black;
-  width: 50%;
+  width: calc(50% - 2rem);
+  background-color: var(--menu-color);
+  border-radius: 8px;
+  box-sizing: border-box;
+  margin: 1rem;
 }
 
-.management-section:nth-child(even) {
-  border-left: 1px solid black;
-}
 
 .form-group {
   display: flex;
@@ -261,20 +358,46 @@ h2 {
   margin-top: 0.5rem;
 }
 
+.form-group input:active,
+.form-group input:focus,
+.form-group select:active,
+.form-group select:focus {
+  border: 2px solid var(--button-color);
+  outline: none;
+}
+
 .form-group input,
 .form-group select {
   padding: 0.5rem;
-  border: 1px solid gray;
+  border: 2px solid var(--disabled-color);
+  background-color: var(--menu-color);
+  color: var(--text-color);
   border-radius: 4px;
+  transition: border-color 0.3s ease;
 }
 
 .drivers-list {
-  max-height: 300px;
+  flex: 1;
   overflow-y: auto;
-  border: 1px solid black;
   border-radius: 4px;
-  margin-top: 0.5rem;
-  }
+  max-height: 400px;
+}
+
+.race-drivers {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+}
+
+.race-drivers h2 {
+  padding-left: 1rem;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px dashed var(--disabled-color);
+}
+
+
 
 /* section {
   display: grid;

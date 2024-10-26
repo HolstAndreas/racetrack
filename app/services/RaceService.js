@@ -184,3 +184,14 @@ export const removeDriverFromRace = async (raceId, driverId) => {
     return { error: "UNKNOWN_ERROR" };
   }
 };
+
+export const deleteRace = async (raceId) => {
+  try {
+    logger.info(`RaceService.deleteRace(raceId:${raceId})`);
+    const result = await RaceRepository.deleteRace(raceId);
+    return result;
+  } catch (error) {
+    logger.error(`RaceService.deleteRace() | Error: ${error}`);
+    return { error: "UNKNOWN_ERROR" };
+  }
+};

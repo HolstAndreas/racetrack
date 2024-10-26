@@ -1,5 +1,5 @@
 export class Race {
-    constructor(startTime, drivers) {
+    constructor(drivers) {
         this.id = 0;
         this.startTime = startTime;
         this.drivers = drivers; //gets array of drivers from...
