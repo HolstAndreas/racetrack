@@ -126,8 +126,8 @@ h2 {
   text-align: center;
   text-decoration: none;
   font-size: 14px;
-  padding: 4px 8px;
-  border-radius: 9px;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
   font-weight: 400;
   border: 1px solid #000;
   cursor: pointer;
@@ -237,6 +237,31 @@ h2 {
 
 .hidden {
   display: none;
+}
+
+.management-section-parent {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.management-section {
+  padding: 1rem;
+  border-bottom: 1px solid black;
+  width: 50%;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.form-group input,
+.form-group select {
+  padding: 0.5rem;
+  border: 1px solid gray;
+  border-radius: 4px;
 }
 
 /* section {
