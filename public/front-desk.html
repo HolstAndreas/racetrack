@@ -47,46 +47,45 @@
         <!-- Right side, managment -->
         <div class="race-sessions">
 
-          <!-- Add Race Section -->
-          <div class="management-section">
-            <h2>Add Race</h2>
-            <div class="form-group">
-              <input type="text" id="race-drivers" placeholder="Driver IDs (comma-separated, max 8)" required />
-              <button onclick="createRace()" class="btn">Add Race</button>
+          <div class="management-section-parent">
+            <!-- Add Race Section -->
+            <div class="management-section">
+              <h2>Add Race</h2>
+              <div class="form-group">
+                <input type="text" id="race-drivers" placeholder="Driver IDs (comma-separated, max 8)" required />
+                <button onclick="createRace()" class="btn">Add Race</button>
+              </div>
             </div>
-          </div>
-
-          <!-- Add Driver Section -->
-          <div class="management-section">
-            <h2>Add Driver</h2>
-            <div class="form-group">
-              <input type="text" id="driver-name" placeholder="Driver Name" required />
-              <button onclick="createDriver()" class="btn">Add Driver</button>
+            <!-- Add Driver Section -->
+            <div class="management-section">
+              <h2>Add Driver</h2>
+              <div class="form-group">
+                <input type="text" id="driver-name" placeholder="Driver Name" required />
+                <button onclick="createDriver()" class="btn">Add Driver</button>
+              </div>
             </div>
-          </div>
-
-          <!-- Assign Car Section -->
-          <div class="management-section">
-            <h2>Assign Car to Driver</h2>
-            <div class="form-group">
-              <select id="driver-select">
-                <option value="">Select Driver</option>
-              </select>
-              <input type="number" id="car-id" placeholder="Car ID" min="1" max="8" required />
-              <button onclick="assignCar()" class="btn">Assign Car</button>
+            <!-- Assign Car Section -->
+            <div class="management-section">
+              <h2>Assign Car to Driver</h2>
+              <div class="form-group">
+                <select id="driver-select">
+                  <option value="">Select Driver</option>
+                </select>
+                <input type="number" id="car-id" placeholder="Car ID" min="1" max="8" required />
+                <button onclick="assignCar()" class="btn">Assign Car</button>
+              </div>
             </div>
-          </div>
-
-          <!-- Edit Driver Section -->
-          <div class="management-section">
-            <h2>Edit Driver</h2>
-            <div class="form-group">
-              <select id="edit-driver-select">
-                <option value="">Select Driver</option>
-              </select>
-              <input type="text" id="edit-driver-name" placeholder="New Name" />
-              <button onclick="updateDriver()" class="btn">Update Driver</button>
-              <button onclick="deleteDriver()" class="btn btn-danger">Delete Driver</button>
+            <!-- Edit Driver Section -->
+            <div class="management-section">
+              <h2>Edit Driver</h2>
+              <div class="form-group">
+                <select id="edit-driver-select">
+                  <option value="">Select Driver</option>
+                </select>
+                <input type="text" id="edit-driver-name" placeholder="New Name" />
+                <button onclick="updateDriver()" class="btn">Update Driver</button>
+                <button onclick="deleteDriver()" class="btn btn-danger">Delete Driver</button>
+              </div>
             </div>
           </div>
 
