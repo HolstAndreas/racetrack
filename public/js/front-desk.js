@@ -79,73 +79,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
   // Second fetch for race list
-  fetch("/api/upcomingraces")
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error("Response went wrong");
-      }
-      return response.json();
-    })
-    .then((data) => {
-      const raceList = document.getElementById("race-list");
-      const newData = data.data;
-
-      if (newData.length > 0) {
-        let counter = 0;
-        newData.forEach((race) => {
-          console.log(race);
-          const listItem = document.createElement("li");
-          listItem.addEventListener("click", (event) => {
-            const targetElement = event.target;
-            const raceEventTarget = targetElement.closest("li");
-            if (raceEventTarget.classList.contains("highlight")) {
-              raceEventTarget.classList.remove("highlight");
-              document.getElementById("drivers-list").innerHTML = "";
-            } else {
-              document.querySelectorAll(".highlight").forEach((item) => {
-                item.classList.remove("highlight");
-              });
-              raceEventTarget.classList.toggle("highlight");
-              selectRace(race.id);
-            }
-          });
-          const listItemId = document.createElement("div");
-          const listItemDrivers = document.createElement("div");
-
-          if (counter === 0) {
-            listItemId.innerHTML = `<strong>Next race: ${race.id}</strong>`;
-          } else {
-            listItemId.innerHTML = `<strong>ID | ${race.id}</strong>`;
-          }
-          listItem.append(listItemId);
-
-          for (let i = 0; i < race.drivers.length; i++) {
-            fetchDriver(race.drivers[i]).then((driver) => {
-              let { name, car, id } = driver.data;
-              const oneDriver = document.createElement("div");
-              if (car === null) {
-                car = "_";
-              }
-              oneDriver.innerHTML = `<strong>${car} |</strong> ${name} (${id})`;
-              listItemDrivers.append(oneDriver);
-            });
-          }
-
-          listItem.append(listItemDrivers);
-          // }
-          raceList.append(listItem);
-          counter++;
-        });
-      } else {
-        raceList.innerHTML = "<li>No upcoming races available.</li>";
-      }
-    })
-    .catch((error) => {
-      console.error("Error loading race list:", error);
-      document.getElementById(
-        "race-list"
-      ).innerHTML = `<li>Error loading race data: ${error}</li>`;
-    });
+  fetchUpcomingRaces();
 });
 
 async function fetchDriver(id) {
@@ -194,7 +128,7 @@ async function selectRace(raceId) {
           <button onclick="editDriverCar(${id})">Edit Car</button>
           <button class="hidden" id="save-car${id}" onclick="saveDriverCar(${id})">Save Car</button>
         </span>
-        <button onclick="removeDriverFromRace(${id})">Remove driver from race</button>
+        <button onclick="removeDriverFromRace(${id}, ${raceId})">Remove driver from race</button>
         <button onclick="deleteDriver(${id})">Delete Driver</button>
       </div>`;
     driversList.append(driverLi);
@@ -246,12 +180,44 @@ const saveDriverCar = async (id) => {
   }
 };
 
-const removeDriverFromRace = async (id) => {
+const removeDriverFromRace = async (driverId, raceId) => {
   try {
-    const response = await fetch(`/api/race-sessions/${id}/drivers/${id}`);
+    const response = await fetch(
+      `/api/race-sessions/${raceId}/drivers/${driverId}`,
+      {
+        method: "DELETE",
+      }
+    );
+    const data = await handleResponse(response);
+    if (data.status === "success") {
+      const driverToRemove = document.getElementById(`driver${driverId}`);
+      driverToRemove.parentElement.remove();
+    }
   } catch (error) {
     alert(error);
     console.error(`Error removing driver from race: ${error}`);
+  }
+};
+
+const deleteDriver = async (id) => {
+  try {
+    const confirmDelete = confirm(
+      `Are you sure you want to delete driver ${id}?`
+    );
+
+    if (confirmDelete) {
+      const response = await fetch(`/api/drivers/${id}`, {
+        method: "DELETE",
+      });
+      if (response.status === 204) {
+        const driverToRemove = document.getElementById(`driver${id}`);
+        driverToRemove.parentElement.remove();
+        await fetchUpcomingRaces(); // Refresh the upcoming races list
+      }
+    }
+  } catch (error) {
+    alert(error);
+    console.error(`Error deleting driver: ${error}`);
   }
 };
 
@@ -289,3 +255,67 @@ const postDriverCar = async (id, car) => {
     console.error(`Error updating driver car: ${error}`);
   }
 };
+
+async function fetchUpcomingRaces() {
+  try {
+    const response = await fetch("/api/upcomingraces");
+    const data = await handleResponse(response);
+
+    const raceList = document.getElementById("race-list");
+    raceList.innerHTML = ""; // Clear existing list
+    const newData = data.data;
+
+    if (newData.length > 0) {
+      let counter = 0;
+      newData.forEach((race) => {
+        const listItem = document.createElement("li");
+        listItem.addEventListener("click", (event) => {
+          const targetElement = event.target;
+          const raceEventTarget = targetElement.closest("li");
+          if (raceEventTarget.classList.contains("highlight")) {
+            raceEventTarget.classList.remove("highlight");
+            document.getElementById("drivers-list").innerHTML = "";
+          } else {
+            document.querySelectorAll(".highlight").forEach((item) => {
+              item.classList.remove("highlight");
+            });
+            raceEventTarget.classList.toggle("highlight");
+            selectRace(race.id);
+          }
+        });
+        const listItemId = document.createElement("div");
+        const listItemDrivers = document.createElement("div");
+
+        if (counter === 0) {
+          listItemId.innerHTML = `<strong>Next race: ${race.id}</strong>`;
+        } else {
+          listItemId.innerHTML = `<strong>ID | ${race.id}</strong>`;
+        }
+        listItem.append(listItemId);
+
+        for (let i = 0; i < race.drivers.length; i++) {
+          fetchDriver(race.drivers[i]).then((driver) => {
+            let { name, car, id } = driver.data;
+            const oneDriver = document.createElement("div");
+            if (car === null) {
+              car = "_";
+            }
+            oneDriver.innerHTML = `<strong>${car} |</strong> ${name} (${id})`;
+            listItemDrivers.append(oneDriver);
+          });
+        }
+
+        listItem.append(listItemDrivers);
+        raceList.append(listItem);
+        counter++;
+      });
+    } else {
+      raceList.innerHTML = "<li>No upcoming races available.</li>";
+    }
+  } catch (error) {
+    console.error("Error loading race list:", error);
+    document.getElementById(
+      "race-list"
+    ).innerHTML = `<li>Error loading race data: ${error}</li>`;
+  }
+}

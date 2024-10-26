@@ -198,6 +198,7 @@ h2 {
 #race-list > li > div > div {
   padding: 0 10px;
   border-right: 1px solid black;
+  height: 25px;
 }
 
 #race-list > li > div:first-child {
