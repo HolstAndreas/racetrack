@@ -250,6 +250,10 @@ h2 {
   width: 50%;
 }
 
+.management-section:nth-child(even) {
+  border-left: 1px solid black;
+}
+
 .form-group {
   display: flex;
   flex-direction: column;
@@ -263,6 +267,14 @@ h2 {
   border: 1px solid gray;
   border-radius: 4px;
 }
+
+.drivers-list {
+  max-height: 300px;
+  overflow-y: auto;
+  border: 1px solid black;
+  border-radius: 4px;
+  margin-top: 0.5rem;
+  }
 
 /* section {
   display: grid;

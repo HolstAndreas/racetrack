@@ -324,8 +324,6 @@ async function removeDriverFromRace() {
   }
 }
 
-// Optional: Add event listeners when the document loads
 document.addEventListener("DOMContentLoaded", () => {
-  // You could add keyboard shortcuts or other initialization here
-  fetchAllDrivers(); // Optional: Load all drivers when the page loads
+  fetchAllDrivers(); 
 });
