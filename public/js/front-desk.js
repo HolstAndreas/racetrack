@@ -51,12 +51,7 @@ document.addEventListener("DOMContentLoaded", () => {
       mode.innerHTML = `Mode: ${data.data[0].mode}`;
       raceData.append(mode);
 
-      //raceInfo.append(raceData);
-
-      const drivers = document.getElementById("drivers-in-current");
-
       const newData = data.data[0].drivers;
-      console.log(newData);
 
       for (let i = 0; i < 8; i++) {
         const driverRow = document.getElementById(`driver-row-${i}`);
@@ -71,30 +66,10 @@ document.addEventListener("DOMContentLoaded", () => {
         } else {
           driverRow.innerHTML = "No Driver";
         }
-        // fetchDriver(newData[0]).then((driver) => {});
-        // newData.forEach((driverId) => {
-        //   const driverRow = document.getElementById(`driver-row-${i}`);
-
-        //   fetchDriver(driverId).then((driver) => {
-        //     let { name, car } = driver.data;
-        //     if (car === null) {
-        //       car = "_";
-        //     }
-        //     driverRow.innerHTML = `<strong>${car} |</strong> ${name} (${driverId})`;
-        //     drivers.append(driverRow);
-        //     const did = driver.data.id;
-
-        //     console.log(`${did}`);
-        // });
-        // });
       }
-      //raceInfo.append(drivers);
 
       const countdown = document.getElementById("countdown");
       countdown.innerHTML = `00.00`;
-
-      // currentRace.append(raceInfo);
-      // currentRace.append(countdown);
     })
     .catch((error) => {
       console.error("Error loading current race data:", error);
@@ -118,9 +93,11 @@ document.addEventListener("DOMContentLoaded", () => {
       if (newData.length > 0) {
         let counter = 0;
         newData.forEach((race) => {
+          console.log(race);
           const listItem = document.createElement("li");
           listItem.addEventListener("click", (event) => {
-            const raceEventTarget = event.target;
+            const targetElement = event.target;
+            const raceEventTarget = targetElement.closest("li");
             if (raceEventTarget.classList.contains("highlight")) {
               raceEventTarget.classList.remove("highlight");
               document.getElementById("drivers-list").innerHTML = "";
@@ -132,15 +109,30 @@ document.addEventListener("DOMContentLoaded", () => {
               selectRace(race.id);
             }
           });
-          if (race.start_time != null) {
-            listItem.innerHTML = `<strong>Current race: ${race.id}</strong> - ${race.drivers}`;
+          const listItemId = document.createElement("div");
+          const listItemDrivers = document.createElement("div");
+
+          if (counter === 0) {
+            listItemId.innerHTML = `<strong>Next race: ${race.id}</strong>`;
           } else {
-            if (counter === 0) {
-              listItem.innerHTML = `<strong>Next race: ${race.id}</strong> - ${race.drivers}`;
-            } else {
-              listItem.innerHTML = `<strong>${race.id}</strong> - ${race.drivers}`;
-            }
+            listItemId.innerHTML = `<strong>ID | ${race.id}</strong>`;
           }
+          listItem.append(listItemId);
+
+          for (let i = 0; i < race.drivers.length; i++) {
+            fetchDriver(race.drivers[i]).then((driver) => {
+              let { name, car, id } = driver.data;
+              const oneDriver = document.createElement("div");
+              if (car === null) {
+                car = "_";
+              }
+              oneDriver.innerHTML = `<strong>${car} |</strong> ${name} (${id})`;
+              listItemDrivers.append(oneDriver);
+            });
+          }
+
+          listItem.append(listItemDrivers);
+          // }
           raceList.append(listItem);
           counter++;
         });
@@ -254,12 +246,12 @@ const saveDriverCar = async (id) => {
   }
 };
 
-const removeDriverFromRace = (id) => {
+const removeDriverFromRace = async (id) => {
   try {
-    const response = await fetch(/api/race-sessions/:raceId/drivers/:driverId)
+    const response = await fetch(`/api/race-sessions/${id}/drivers/${id}`);
   } catch (error) {
     alert(error);
-    console.error(`Error removing driver from race: $`)
+    console.error(`Error removing driver from race: ${error}`);
   }
 };
 

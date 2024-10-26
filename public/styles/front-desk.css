@@ -52,6 +52,7 @@ main {
   height: 100%;
   border-left: 1px solid black;
   border-right: 1px solid black;
+  overflow-y: scroll;
 }
 
 .section-header {
@@ -72,7 +73,6 @@ main {
 
 .race-list ol {
   list-style-type: none;
-  padding: 0;
   margin: 0;
   width: 100%;
   flex: 1;
@@ -87,11 +87,17 @@ main {
 }
 
 .race-list li {
+  display: flex;
   height: 50px;
   width: 100%;
+  padding: 0 10px;
   box-sizing: border-box;
   border: 1px solid #000;
 }
+
+/* #race-list li:first-child {
+  border-right: 1px solid #000;
+} */
 
 .race-sessions li {
   /* height: 50px; */
@@ -161,18 +167,46 @@ h2 {
 }
 
 .driver-row {
-  display: flex;
+  /* display: inline-block; */
   width: 50%;
   border-bottom: 1px solid #000;
-  padding: 5px 10px;
+  padding: 5px 10px 0 10px;
 }
 
 #drivers-in-current {
   display: flex;
+  flex-wrap: wrap;
 }
 
-#drivers-in-current p:nth-child(even) {
+#drivers-in-current div:nth-child(even) {
   border-left: 1px solid #000;
+}
+
+#race-list li {
+  display: flex;
+  align-items: center;
+}
+
+#race-list > li > div {
+  display: flex;
+  flex-wrap: wrap;
+  padding-right: 10px;
+  height: 100%;
+  /* align-self: center; */
+}
+
+#race-list > li > div > div {
+  padding: 0 10px;
+  border-right: 1px solid black;
+}
+
+#race-list > li > div:first-child {
+  display: flex;
+  height: 100%;
+  min-width: 80px;
+  align-items: center;
+  font-size: 24px;
+  border-right: 1px solid #000;
 }
 
 #countdown {
