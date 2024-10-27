@@ -7,17 +7,30 @@
     <script src="js/socket/llt.socket.io.js" type="module"></script>
     <script src="js/lap-line-tracker.js"></script>
     <link rel="stylesheet" href="styles/lap-line-tracker.css" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=SUSE:wght@100..800&display=swap" rel="stylesheet">
     <title>Lap-Line Tracker</title>
   </head>
   <body>
-    <a style="position: fixed; top: 25px; left: 25px" href="/logout">Log out</a>
-    <span style="position: fixed; top: 50px; left: 25px" id="logs"></span>
+    <a class="logout-btn" href="/logout">Log out</a>
+    <span id="logs"></span>
     <div class="car-number-buttons">
       <div class="race-info">
-        <span>RACE INFO</span><br />
-        <span id="raceId">6</span>
-        <span id="status">WAITING</span>
-        <span id="timer">04:21</span>
+        <span class="title">RACE INFO</span>
+        <div class="info-container">
+          <div class="info-item">
+            <span class="label">ID</span>
+            <span class="value" id="raceId"></span>
+          </div>
+          <div class="info-item">
+            <span class="label">Status</span>
+            <span class="value" id="status"></span>
+          </div>
+          <div class="info-item">
+            <span class="label">Time remaining</span>
+            <span class="value" id="timer"></span>
+          </div>
+        </div>
       </div>
       <div class="buttonsDiv">
         <button id="car-btn1">1</button>

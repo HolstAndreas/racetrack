@@ -26,48 +26,124 @@ body {
 }
 
 .car-number-buttons {
-  width: 50%;
-  max-width: 500px;
-  padding: 20px;
-  background-color: aliceblue;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  width: 65%;
+  max-width: 700px;
+  padding: 32px;
+  background-color: var(--menu-color);
+  border-radius: 12px;
 }
 
 .race-info {
   width: 100%;
   text-align: center;
-  font-weight: bold;
-  margin-bottom: 1.5rem;
-  color: #333;
-  font-size: 1.5rem;
+  margin-bottom: 2rem;
+  color: var(--text-color);
+  display: grid;
+  gap: 1rem;
+}
+
+.race-info .title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--disabled-color);
+  letter-spacing: 0.075em;
+}
+
+.race-info .info-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.race-info .info-item {
+  flex: 1;
+  padding: 1rem;
+  background-color: var(--background-color);
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.race-info .info-item .label {
+  font-size: 0.9rem;
+  color: var(--disabled-color);
+  font-weight: 500;
+}
+
+.race-info .info-item .value {
+  font-weight: 600;
+  font-size: 1.75rem;
 }
 
 .buttonsDiv {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 10px;
+  gap: 15px;
 }
 
 .buttonsDiv button {
-  padding: 10px;
-  font-size: 1.2rem;
+  padding: 16px;
+  font-size: 1.5rem;
   font-weight: bold;
-  border: 2px solid #008cba;
-  background-color: #f0f8ff;
-  color: #008cba;
-  border-radius: 5px;
+  border: 2px solid var(--button-color);
+  background-color: transparent;
+  color: var(--text-color);
+  border-radius: 8px;
   transition: all 0.3s;
   cursor: pointer;
 }
 
 .buttonsDiv button:hover {
-  background-color: #008cba;
-  color: #fff;
+  background-color: var(--button-text-color);
+  color: var(--text-color);
   transform: scale(1.05);
 }
 
 .buttonsDiv button:active {
-  background-color: #006994;
+  background-color: var(--button-text-color);
   transform: scale(0.95);
+}
+
+.buttonsDiv button.disabled {
+  border-color: var(--disabled-color);
+  color: var(--disabled-color);
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.buttonsDiv button.disabled:hover {
+  background-color: transparent;
+  transform: none;
+}
+
+.logout-btn {
+  position: fixed;
+  top: 25px;
+  right: 25px;
+  padding: 0.75rem 1.25rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-decoration: none;
+  color: var(--button-text-color);
+  background-color: var(--button-color);
+  border: 2px solid var(--button-color);
+  border-radius: 6px;
+  transition: all 0.3s;
+}
+
+.logout-btn:hover {
+  background-color: transparent;
+  color: var(--button-color);
+  border-color: var(--button-color);
+}
+
+#logs {
+  position: fixed;
+  top: 10px;
+  left: 25px;
+  font-size: 1rem;
+  color: var(--disabled-color);
+  font-family: monospace;
 }
