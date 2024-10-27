@@ -24,7 +24,7 @@ const authMiddleware = (requiredRole) => {
         // return res.status(403).send("Insufficient permissions");
         logger.warning("authMiddleware.js | Insufficient permissions");
         const error = new Error("Insufficient permissions");
-        error.status = 401;
+        error.status = 403;
         return next(error);
       }
       req.user = decoded;

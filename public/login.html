@@ -37,6 +37,21 @@
     </div>
 
     <script>
+      document.getElementById("role").addEventListener("change", function () {
+        var accessKeyInput = document.getElementById("accessKey");
+        switch (this.value) {
+          case "receptionist":
+            accessKeyInput.value = "8ded6076";
+            break;
+          case "observer":
+            accessKeyInput.value = "662e0f6c";
+            break;
+          case "safety":
+            accessKeyInput.value = "a2d393bc";
+            break;
+        }
+      });
+
       document
         .getElementById("login-form")
         .addEventListener("submit", async (e) => {

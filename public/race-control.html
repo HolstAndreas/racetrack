@@ -3,12 +3,14 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <title>Race Control</title>
     <script src="/socket.io/socket.io.js"></script>
-    <script src="js/socket/rc.socket.io.js"></script>
+    <script src="js/race-control.js" type="module" defer></script>
+    <script src="js/socket/rc.socket.io.js" type="module"></script>
     <link rel="stylesheet" href="styles/race-control.css" />
   </head>
   <body>
+    <a style="position: fixed; top: 25px; left: 25px" href="/logout">Log out</a>
     <div class="roomTestDiv">
       <label for="room-name">Room Name</label>
       <input type="text" id="room-name" />
@@ -18,10 +20,10 @@
     <div class="ctrlButtonsDiv">
       <div class="ctrlDivTitle">CHANGE MODE</div>
       <div class="ctrlButtonDiv">
-        <button id="safeButton" onclick="changeMode('safe')">SAFE</button>
-        <button id="hazardButton" onclick="changeMode('hazard')">HAZARD</button>
-        <button id="dangerButton" onclick="changeMode('danger')">DANGER</button>
-        <button id="finishButton" onclick="changeMode('finish')">FINISH</button>
+        <button id="safeButton" >SAFE</button>
+        <button id="hazardButton" >HAZARD</button>
+        <button id="dangerButton" >DANGER</button>
+        <button id="finishButton" >FINISH</button>
       </div>
       <div class="currentStateTitle">
         <span>CURRENT MODE:</span>
@@ -30,9 +32,9 @@
     <div class="controlButtonsDiv">
       <div class="ctrlDivTitle">CHANGE STATUS</div>
       <div class="ctrlButtonDiv">
-        <button onclick="changeStatus('waiting')">WAITING</button>
-        <button onclick="changeStatus('started')">STARTED</button>
-        <button onclick="changeStatus('finished')">FINISH</button>
+        <button id="waitingBtn">WAITING</button>
+        <button id="startBtn">STARTED</button>
+        <button id="finishBtn">FINISH</button>
       </div>
       <div class="currentStateTitle">
         <span>CURRENT STATUS:</span>

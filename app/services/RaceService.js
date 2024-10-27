@@ -62,10 +62,74 @@ export const findDriversByCar = async (carId) => {
   return drivers;
 };
 
-export const addRace = async (race) => {
-  logger.info(`RaceService.addRace(race:${race.toString()})`);
-  const result = await RaceRepository.insertRace(race);
+export const addRace = async (drivers) => {
+  logger.info(`RaceService.addRace(drivers:${drivers.toString()})`);
+
+  try {
+    for (const DriverId of drivers) {
+      const driverExists = await RaceRepository.checkDriverExists(DriverId);
+      if (!driverExists) {
+        logger.error(`RaceService.addRace() | Driver ${DriverId} not found `);
+        return { error: "DRIVER_NOT_FOUND", driver: DriverId };
+      }
+    }
+    const result = await RaceRepository.insertRace(drivers);
+    return result[0];
+  } catch (err) {
+    logger.error(`RaceService.addRace() | Error: ${err}`);
+    return { error: "UNKNOWN_ERROR" };
+  }
+};
+
+export const startCurrentRace = async (raceId) => {
+  logger.info(`RaceService.startCurrentRace(raceId:${raceId})`);
+
+  // Check if race has drivers
+  const drivers = await RaceRepository.getDriversByRace(raceId);
+  if (!drivers[0].drivers || drivers[0].drivers.length === 0) {
+    logger.error(
+      `RaceService.startCurrentRace() | No drivers in race ${raceId}`
+    );
+    return { error: "NO_DRIVERS_IN_RACE" };
+  }
+
+  await RaceRepository.updateRaceMode(raceId, "SAFE");
+  const result = await RaceRepository.updateTimeStamp(raceId);
   return result[0];
+};
+
+export const updateRaceStatus = async (raceId, status) => {
+  logger.info(
+    `RaceService.updateRaceStatus(raceId:${raceId}, status:${status})`
+  );
+  try {
+    const raceExists = await RaceRepository.checkRaceExists(raceId);
+    if (!raceExists) {
+      return { error: "RACE_NOT_FOUND" };
+    }
+
+    const result = await RaceRepository.updateRaceStatus(raceId, status);
+    return result[0];
+  } catch (err) {
+    logger.error(`RaceService.updateRaceStatus() | Error: ${err}`);
+    return { error: "UNKNOWN_ERROR" };
+  }
+};
+
+export const updateRaceMode = async (raceId, mode) => {
+  logger.info(`RaceService.updateRaceMode(raceId:${raceId}, mode:${mode})`);
+  try {
+    const raceExists = await RaceRepository.checkRaceExists(raceId);
+    if (!raceExists) {
+      return { error: "RACE_NOT_FOUND" };
+    }
+
+    const result = await RaceRepository.updateRaceMode(raceId, mode);
+    return result[0];
+  } catch (err) {
+    logger.error(`RaceService.updateRaceMode() | Error: ${err}`);
+    return { error: "UNKNOWN_ERROR" };
+  }
 };
 
 export const addDriverToRace = async (raceId, driverId) => {

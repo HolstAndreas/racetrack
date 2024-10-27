@@ -19,6 +19,9 @@ import {
   getUpcomingRaces,
   getCurrentRace,
   deleteRace,
+  startCurrentRace,
+  updateRaceMode,
+  updateRaceStatus,
 } from "./app/controllers/RaceController.js"; // import all methods from RaceController.js
 import {
   getAllDrivers,
@@ -38,6 +41,7 @@ import validateIsNumber from "./app/middleware/ValidateIsNumber.js";
 import logger from "./app/utils/logger.js";
 import authMiddleware from "./app/middleware/authMiddleware.js";
 import authRouter from "./app/utils/authentication.js";
+import * as RaceService from "./app/services/RaceService.js";
 
 dotenv.config();
 
@@ -76,14 +80,43 @@ io.on("connection", (socket) => {
     io.to(roomName).emit("newUserJoined", socket.id);
   });
 
-  socket.on("changeMode", (mode) => {
-    logger.info(`Socket mode in service: ${mode}`);
-    io.emit("updatedRaceMode", mode);
+  socket.on("changeMode", async (data) => {
+    logger.info(`Socket mode in service: ${data.mode}`);
+    try {
+      await RaceService.updateRaceMode(data.raceId, data.mode);
+      io.emit("updatedRaceMode", data.mode);
+    } catch (err) {
+      logger.error(`Error updating race mode: ${err}`);
+    }
   });
 
-  socket.on("changeStatus", (status) => {
-    logger.info(`Socket status in service: ${status}`);
-    io.emit("updatedRaceStatus", status);
+  socket.on("raceStarted", (race) => {
+    logger.info(`Socket got the info that race started.`);
+    io.emit("newRaceStarted", race);
+  });
+
+  socket.on("changeStatus", async (data) => {
+    //vb peaks status update lihtsalt endpointiga lahendama?
+    // if (status.equals("started")) {
+    //   // add a timestamp to the race and return the race.
+    //   const startedRace = setTimeStamp(raceId);
+    //   io.emit("raceStarted", startedRace);
+    // start race countdown
+    // mode -> safe
+    // leaderboard changes to the current race
+    //next race screen switches to next
+    // Safety-official sees race mode controls - they become active.
+    logger.info(`Socket status in service: ${data.status}`);
+    try {
+      await RaceService.updateRaceStatus(data.raceId, data.status);
+      if (data.status === "started") {
+        io.emit("updatedRaceStatus", data.status);
+        io.emit("raceStarted", data.raceId);
+        await RaceService.updateRaceMode(data.raceId, "safe");
+      }
+    } catch (err) {
+      logger.error(`Error updating race status: ${err}`);
+    }
   });
 });
 
@@ -118,6 +151,7 @@ app.get(
 ); // get race remaining time | DONE
 app.get("/api/upcomingraces", getUpcomingRaces); // create a list of races, current + upcoming
 app.get("/api/currentrace", getCurrentRace);
+app.patch("/api/start-current-race/:raceId", startCurrentRace);
 
 app.post("/api/race-sessions/:raceId/drivers/:driverId", postDriverToRace); // add driver to race | Done
 app.post("/api/drivers/:driverId/assign-car/:carId", assignCarToDriver); // assign a car to driver | Done
@@ -144,6 +178,8 @@ app.get(
 ); // Get all lap times for a driver in a specific race,
 
 app.patch("/api/drivers/:driverId", patchDriverById);
+app.patch("/api/race-sessions/:raceId/status", updateRaceStatus);
+app.patch("/api/race-sessions/:raceId/mode", updateRaceMode);
 app.delete("/api/drivers/:driverId", deleteDriverById);
 
 app.get("/", function (req, res) {
@@ -160,7 +196,7 @@ app.get("/login", (req, res) => {
 // Logout route
 app.get("/logout", (req, res) => {
   res.clearCookie("token");
-  res.send("Logged out successfully.");
+  res.send(`Logged out successfully.<br><a href="/login">login</a>`);
 });
 
 // Protected routes
