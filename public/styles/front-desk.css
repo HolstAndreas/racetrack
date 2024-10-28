@@ -1,24 +1,7 @@
-:root {
-  --background-color: #252a32;
-  --text-color: #f5f5f5;
-  --menu-color: #2f343c;
-  --disabled-color: #6a6e76;
-  --button-color: #dcf900;
-  --button-text-color: #101419;
-}
-
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-  font-family: 'Inter', sans-serif;
-}
-
 html,
 body {
   height: 100%;
   width: 100%;
-  background-color: #252a32;
 }
 
 header {
@@ -52,7 +35,7 @@ main {
   flex-direction: column;
 }
 
-.race-list {
+.current-race-list {
   display: flex;
   flex-direction: column;
   width: 100%;
@@ -84,12 +67,12 @@ main {
   box-sizing: border-box;
 }
 
-.race-list .race-content {
+.current-race-list .race-content {
   overflow-y: auto;
   flex: 1;
 }
 
-.race-list ol {
+.current-race-list ol {
   list-style-type: none;
   margin: 0;
   width: 100%;
@@ -104,7 +87,7 @@ main {
   flex: 1;
 }
 
-.race-list li {
+.current-race-list li {
   display: flex;
   height: 50px;
   width: 100%;
@@ -115,8 +98,8 @@ main {
   transition: background-color 0.3s ease;
 }
 
-.race-list li:hover {
-  background-color: #ddd;
+.current-race-list li:hover {
+  border-color: var(--text-color);
 }
 
 .race-sessions li {
@@ -142,12 +125,12 @@ h2 {
   font-size: 14px;
   padding: 0.5rem 1rem;
   border-radius: 4px;
-  font-weight: 400;
+  font-weight: 600;
   cursor: pointer;
   background-color: transparent;
   border: 2px solid var(--button-color);
   color: var(--button-color);
-  transition: background-color 0.3s ease;
+  transition: background-color 0.15s ease;
 }
 
 .btn:hover {
@@ -156,10 +139,53 @@ h2 {
 
 #current-race {
   background-color: var(--menu-color);
-  display: flex;
-  width: 100%; 
+  width: 100%;
   border-radius: 8px;
-  margin-top: 0.5rem;
+  padding: 32px;
+}
+
+.race-info {
+  width: 100%;
+  text-align: center;
+  margin-bottom: 2rem;
+  color: var(--text-color);
+  display: grid;
+  gap: 1rem;
+}
+
+.race-info .title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--disabled-color);
+  letter-spacing: 0.075em;
+}
+
+.race-info .info-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.race-info .info-item {
+  flex: 1;
+  padding: 1rem;
+  background-color: var(--background-color);
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.race-info .info-item .label {
+  font-size: 0.9rem;
+  color: var(--disabled-color);
+  font-weight: 500;
+}
+
+.race-info .info-item .value {
+  font-weight: 600;
+  font-size: 1.75rem;
 }
 
 #race-info {
@@ -184,17 +210,26 @@ h2 {
 }
 
 .upcoming-races-section {
-  padding: 1rem;
+
   flex: 1;
   overflow: hidden;
   display:flex;
   flex-direction: column; 
 }
 
+.upcoming-races-section h2 {
+  padding-top: 1rem;
+  padding-left: 1rem;
+}
+
 .driver-row {
+  display: flex;
+  align-items: center;
+  height: 2rem;
+  gap: 0.5rem;
   width: 50%;
   border-bottom: 2px solid var(--disabled-color);
-  padding: 5px 10px 0 10px;
+  padding: 0.5rem 1rem 0.5rem 0.5rem; 
 }
 
 .driver-row:nth-child(7) {
@@ -209,6 +244,8 @@ h2 {
   display: flex;
   flex-wrap: wrap;
   margin-bottom: 0.5rem;
+  border: 2px solid var(--disabled-color);
+  border-radius: 8px;
 }
 
 #drivers-in-current div:nth-child(even) {
@@ -218,25 +255,43 @@ h2 {
 #race-list {
   overflow-y: auto;
   margin-top: 0.5rem;
+  padding: 0 1rem;
+}
+
+.upcoming-race-id {
+  background-color: var(--background-color);
+  padding: 0.5rem;
+  border-radius: 8px;
+  margin: 0.5rem;
+  margin-left: 0;
+  width: 75px;
+  text-align: center;
+  font-size: 1.5rem;  
+  font-weight: 600;
 }
 
 #race-list li {
   display: flex;
-  min-height: 50px; 
   width: 100%;
   padding: 0.5rem 1rem;
-  border: 2px solid var(--disabled-color);
+  height: 75px;
+  /* border: 2px solid var(--disabled-color); */
+  /* border:none; */
   margin-bottom: 0.5rem;
-  border-radius: 4px;
+  border-radius: 8px;
   transition: color 0.3s ease;
   align-items: center;
   gap: 0.5rem;
   background-color: var(--menu-color);
   color: var(--disabled-color);
+  transition: border-color 0.3s ease, color 0.3s ease;
 }
 
 #race-list li:hover {
   color: var(--text-color);
+}
+#race-list li:hover .car-icon {
+  color: #FF5E5E;
 }
 
 .race-drivers-grid {
@@ -279,24 +334,22 @@ h2 {
 
 .race-actions {
   display: flex;
+  flex-direction: column;
   gap: 0.25rem;
 }
 
 .race-actions .btn {
-  background-color: var(--button-color);
-  color: var(--button-text-color);
+  margin: 0 !important;
+  background-color: transparent;
+  background-color: rgba(0, 212, 171, 0.2);
+  color: rgb(0, 212, 171);
+  border: 2px solid rgb(0, 212, 171);
   transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
 }
 
 .race-actions .btn:hover {
-  background-color: var(--button-text-color);
-  color: var(--button-color);
-  border: 1px solid var(--button-color);
-}
-
-#race-list > li > div:first-child {
-  min-width: 80px;
-  font-size: 1.5rem;  
+  background-color: rgb(0, 212, 171);
+  color: var(--menu-color);
 }
 
 #race-list .btn {
@@ -308,8 +361,23 @@ h2 {
 
 #countdown {
   font-size: 2rem;
-  padding: 0.5rem 0.5rem;
   text-align: center;
+}
+
+.driver-id {
+  background-color: var(--background-color);
+  color: var(--disabled-color);
+  font-weight: 600;
+  padding: 0.125rem;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  width: 2rem;
+  text-align: center;
+}
+
+.driver-car {
+  color: var(--disabled-color);
+  font-weight: 600;
 }
 
 .driver-info {
@@ -322,12 +390,22 @@ h2 {
   border-radius: 8px;
 }
 
-/* .drivers-in-current {
-  padding: 5px 10px;
-} */
-
 .highlight {
   color: var(--text-color) !important;
+  border: 2px solid var(--text-color) !important;
+}
+
+.car-icon {
+  color: #A63939;
+  transition: color 0.3s ease;
+}
+
+.highlight .car-icon {
+  color: #FF5E5E;
+}
+
+.car-icon-highlight {
+  color: #FF5E5E;
 }
 
 .hidden {
@@ -358,9 +436,7 @@ h2 {
   margin-top: 0.5rem;
 }
 
-.form-group input:active,
 .form-group input:focus,
-.form-group select:active,
 .form-group select:focus {
   border: 2px solid var(--button-color);
   outline: none;
@@ -374,6 +450,10 @@ h2 {
   color: var(--text-color);
   border-radius: 4px;
   transition: border-color 0.3s ease;
+}
+
+::placeholder {
+  color: var(--disabled-color);
 }
 
 .drivers-list {
@@ -397,69 +477,12 @@ h2 {
   border-bottom: 2px dashed var(--disabled-color);
 }
 
-
-
-/* section {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: 1fr 4fr;
-  height: 100%;
-  width: 100%;
-  padding: 10px;
+.btn-filled {
+  background-color: var(--button-color);
+  color: var(--button-text-color);
 }
 
-h2 {
-  display: inline-block;
+.btn-filled:hover {
+  background-color: var(--button-text-color);
+  color: var(--button-color);
 }
-
-ol {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  width: 100%;
-  padding: 0;
-  margin: 0;
-  list-style-position: inside;
-}
-
-li {
-  flex-grow: 1;
-  display: block;
-  width: 100%;
-  padding: 5px;
-  border: 1px solid #ccc;
-}
-
-.race-list {
-  display: grid;
-  background-color: aqua;
-  grid-row: 1/5;
-  grid-column: 1;
-}
-
-.race-sessions {
-  background-color: aquamarine;
-  grid-column: 2;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0 20px;
-}
-
-.btn {
-  display: inline-block;
-  text-align: center;
-  text-decoration: none;
-  font-size: 2rem;
-  padding: 1rem 1rem;
-  border-radius: 9px;
-  font-weight: 600;
-  border: 1px solid #000;
-  cursor: pointer;
-  background-color: #bde6b1;
-}
-
-.race-drivers {
-  background-color: lightblue;
-  grid-column: 2;
-} */

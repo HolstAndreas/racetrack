@@ -1,45 +1,54 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Race Control</title>
-    <script src="/socket.io/socket.io.js"></script>
-    <script src="js/race-control.js" type="module" defer></script>
-    <script src="js/socket/rc.socket.io.js" type="module"></script>
-    <link rel="stylesheet" href="styles/race-control.css" />
-  </head>
-  <body>
-    <a style="position: fixed; top: 25px; left: 25px" href="/logout">Log out</a>
-    <div class="roomTestDiv">
-      <label for="room-name">Room Name</label>
-      <input type="text" id="room-name" />
-      <button onclick="connectToRoom()">Connect to Room</button>
-      <span id="logs"></span>
-    </div>
-    <div class="ctrlButtonsDiv">
-      <div class="ctrlDivTitle">CHANGE MODE</div>
-      <div class="ctrlButtonDiv">
-        <button id="safeButton" >SAFE</button>
-        <button id="hazardButton" >HAZARD</button>
-        <button id="dangerButton" >DANGER</button>
-        <button id="finishButton" >FINISH</button>
-      </div>
-      <div class="currentStateTitle">
-        <span>CURRENT MODE:</span>
-        <span id="currentMode">NONE</span>
-      </div>
-    <div class="controlButtonsDiv">
-      <div class="ctrlDivTitle">CHANGE STATUS</div>
-      <div class="ctrlButtonDiv">
-        <button id="waitingBtn">WAITING</button>
-        <button id="startBtn">STARTED</button>
-        <button id="finishBtn">FINISH</button>
-      </div>
-      <div class="currentStateTitle">
-        <span>CURRENT STATUS:</span>
-        <span id="currentStatus">NONE</span>
-      </div>
-    </div>
-  </body>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Race Control</title>
+        <script src="/socket.io/socket.io.js"></script>
+        <script src="js/race-control.js" type="module" defer></script>
+        <script src="js/socket/rc.socket.io.js" type="module"></script>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=SUSE:wght@100..800&display=swap"
+            rel="stylesheet"
+        />
+        <link rel="stylesheet" href="styles/global.css" />
+        <link rel="stylesheet" href="styles/race-control.css" />
+    </head>
+    <body>
+        <a class="logout-btn" href="/logout">Log out</a>
+        <span id="logs"></span>
+        <div class="ctrlButtonsDiv" style="margin-bottom: 1rem">
+            <div class="race-info">
+                <span class="title">RACE STATUS</span>
+                <div class="info-container">
+                    <div class="info-item">
+                        <span class="label">Current Mode</span>
+                        <span class="value" id="currentMode"></span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">Current Status</span>
+                        <span class="value" id="currentStatus"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="ctrlButtonsDiv">
+            <div class="ctrlDivTitle">CHANGE MODE</div>
+            <div class="ctrlButtonDiv">
+                <button id="safeButton">SAFE</button>
+                <button id="hazardButton">HAZARD</button>
+                <button id="dangerButton">DANGER</button>
+                <button id="finishButton">FINISH</button>
+            </div>
+
+            <div class="ctrlDivTitle">CHANGE STATUS</div>
+            <div class="ctrlButtonDiv">
+                <button id="waitingBtn">WAITING</button>
+                <button id="startBtn">STARTED</button>
+                <button id="finishBtn">FINISH</button>
+            </div>
+        </div>
+    </body>
 </html>

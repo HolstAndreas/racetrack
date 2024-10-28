@@ -1,8 +1,6 @@
 import { startedRace, changeStatus } from "./socket/rc.socket.io.js";
 
-let race_id = 6;
-
-document.addEventListener("DOMContentLoaded", (event) => {
+document.addEventListener("DOMContentLoaded", async (event) => {
   // Add event listeners to buttons
   document
     .getElementById("waitingBtn")
@@ -27,7 +25,25 @@ document.addEventListener("DOMContentLoaded", (event) => {
   document
     .getElementById("finishButton")
     .addEventListener("click", () => changeMode("finish"));
+
+  const race = await getCurrentRace();
+  updateRaceInfo(race);
 });
+
+const getCurrentRace = async () => {
+  const response = await fetch(`/api/currentrace`);
+  const data = await handleResponse(response);
+  if (data.status === "success") {
+    return data.data[0];
+  } else {
+    alert(data.message);
+  }
+};
+
+const updateRaceInfo = async (race) => {
+  document.getElementById("currentMode").innerText = race.mode.toUpperCase();
+  document.getElementById("currentStatus").innerText = race.status.toUpperCase();
+};
 
 const startCurrentRace = async () => {
   console.log("Race-control.js: Starting of the event registered");
