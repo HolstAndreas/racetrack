@@ -5,8 +5,8 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon app.js",
-    "start": "node app.js"
+    "dev": "TIMER=60 nodemon app.js",
+    "start": "TIMER=600 node app.js"
   },
   "repository": {
     "type": "git",

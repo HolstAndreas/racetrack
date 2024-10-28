@@ -1,6 +1,12 @@
 import { raceUpdated } from "./socket/rc.socket.io.js";
 
-let race;
+let race = {};
+
+const fetchTimer = () => {
+  return 3600;
+};
+
+const TIME = fetchTimer();
 
 document.addEventListener("DOMContentLoaded", async (event) => {
   // Add event listeners to buttons
@@ -24,44 +30,76 @@ document.addEventListener("DOMContentLoaded", async (event) => {
   document
     .getElementById("finishButton")
     .addEventListener("click", () => changeMode("FINISH"));
+  document
+    .getElementById("reset-race")
+    .addEventListener("click", () => resetRace());
 
   race = await getCurrentRace();
+  console.log(race);
 });
+
+//temp
+const resetRace = async () => {
+  try {
+    const result = await fetch(`/api/reset-race/${race.id}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+  } catch (err) {
+    alert(err);
+    return;
+  }
+  location.reload();
+};
 
 const changeStatus = async (status) => {
   race.status = status;
-  await fetch(`/api/race-sessions/${race.id}/status`, {
-    method: "PATCH",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      status: status,
-    }),
-  });
-  if (race.status === "STARTED") {
-    await changeMode("SAFE");
+  try {
+    const result = await fetch(`/api/race-sessions/${race.id}/status`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        status: status,
+      }),
+    });
+    const data = await handleResponse(result);
+    race = data.data;
+    if (race.status === "STARTED") {
+      await changeMode("SAFE");
+    }
+    if (status === "FINISHED") {
+      await getCurrentRace();
+    }
+    updateRaceInfo(race);
+    raceUpdated(race.id);
+  } catch (err) {
+    alert(err);
+    return;
   }
-  if (status === "FINISHED") {
-    await getCurrentRace();
-  }
-  //await updateRaceInfo(race);
-  raceUpdated(race.id);
 };
 
 const changeMode = async (mode) => {
-  race.mode = mode;
-  await fetch(`/api/race-sessions/${race.id}/mode`, {
-    method: "PATCH",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      mode: mode,
-    }),
-  });
-  await updateRaceInfo(race);
-  raceUpdated(race.id);
+  try {
+    await fetch(`/api/race-sessions/${race.id}/mode`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        mode: mode,
+      }),
+    });
+    race = await getCurrentRace();
+    console.log(race);
+    updateRaceInfo(race);
+    raceUpdated(race.id);
+  } catch (err) {
+    alert(err);
+  }
 };
 
 const getCurrentRace = async () => {
@@ -86,28 +124,110 @@ const getNextRace = async () => {
   }
 };
 
-const updateRaceInfo = async (race) => {
+const updateRaceInfo = (raceData) => {
+  race = raceData;
   const raceId = document.getElementById("raceId");
-  raceId.innerHTML = race.id;
-
+  raceId.innerHTML = raceData.id;
   const drivers = document.getElementById("driver-names");
-  drivers.innerHTML = race.drivers;
+
+  Promise.all(
+    race.drivers.map(async (driver) => {
+      try {
+        const result = await fetch(`/api/drivers/${driver}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        const data = await handleResponse(result);
+        return `<span class="driver-id-box">#${driver}  <i class="fa-solid fa-car ${
+          !data.data.car ? `car-icon" title="Missing Car"` : ""
+        }"></i> ${data.data.car || ""}</span>`;
+      } catch (err) {
+        alert(`Driver ${driver} | ${err}`);
+        return "";
+      }
+    })
+  ).then((driverSpans) => {
+    drivers.innerHTML = driverSpans.join("");
+  });
 
   const currentMode = document.getElementById("currentMode");
-  currentMode.innerHTML = race.mode;
+  currentMode.innerHTML = raceData.mode;
 
   const currentStatus = document.getElementById("currentStatus");
-  currentStatus.innerHTML = race.status;
+  currentStatus.innerHTML = raceData.status;
+  disableButtons();
 
-  if (race.status === "STARTED" && race.mode !== "FINISH") {
+  if (raceData.status === "STARTED" && raceData.mode !== "FINISH") {
     console.log("Starting countdown");
-    startCountdown(race.start_time);
+    startCountdown(raceData.start_time);
   }
 
+  const minutes = Math.floor(TIME / 60);
+  const seconds = TIME % 60;
   const timer = document.getElementById("timer");
-  timer.innerHTML = race.remaining_time;
+  timer.innerHTML = `${minutes.toString().padStart(2, "0")}:${seconds
+    .toString()
+    .padStart(2, "0")}`;
 };
 
+const disableButtons = () => {
+  console.log(race.mode);
+  console.log(race.status);
+  const startRaceButton = document.getElementById("startBtn");
+  const endRaceButton = document.getElementById("finishBtn");
+  const safeButton = document.getElementById("safeButton");
+  const hazardButton = document.getElementById("hazardButton");
+  const dangerButton = document.getElementById("dangerButton");
+  const finishButton = document.getElementById("finishButton");
+
+  if (race.status === "STARTED") {
+    safeButton.classList.remove("disabled");
+    hazardButton.classList.remove("disabled");
+    dangerButton.classList.remove("disabled");
+    finishButton.classList.remove("disabled");
+    if (!startRaceButton.classList.contains("disabled")) {
+      startRaceButton.classList.add("disabled");
+    }
+  }
+
+  if (race.mode !== "FINISH") {
+    if (!endRaceButton.classList.contains("disabled")) {
+      endRaceButton.classList.add("disabled");
+    }
+  }
+  if (race.mode === "FINISH") {
+    endRaceButton.classList.remove("disabled");
+    if (!safeButton.classList.contains("disabled")) {
+      safeButton.classList.add("disabled");
+    }
+    if (!hazardButton.classList.contains("disabled")) {
+      hazardButton.classList.add("disabled");
+    }
+    if (!dangerButton.classList.contains("disabled")) {
+      dangerButton.classList.add("disabled");
+    }
+    if (!finishButton.classList.contains("disabled")) {
+      finishButton.classList.add("disabled");
+    }
+  }
+
+  if (race.status !== "STARTED") {
+    if (!safeButton.classList.contains("disabled")) {
+      safeButton.classList.add("disabled");
+    }
+    if (!hazardButton.classList.contains("disabled")) {
+      hazardButton.classList.add("disabled");
+    }
+    if (!dangerButton.classList.contains("disabled")) {
+      dangerButton.classList.add("disabled");
+    }
+    if (!finishButton.classList.contains("disabled")) {
+      finishButton.classList.add("disabled");
+    }
+  }
+};
 // const startCurrentRace = async () => {
 //   console.log("Race-control.js: Starting of the event registered");
 //   try {
@@ -123,7 +243,7 @@ const updateRaceInfo = async (race) => {
 // };
 
 const startCountdown = (startTime) => {
-  const endTime = Date.parse(startTime) + 60 * 1000; // 600 asendada global var
+  const endTime = Date.parse(startTime) + TIME * 1000;
   const countdownElement = document.getElementById("timer");
 
   const interval = setInterval(() => {

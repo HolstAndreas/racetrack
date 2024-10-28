@@ -25,6 +25,20 @@ export const checkRaceExists = async (id) => {
   }
 };
 
+export const checkDriversHaveCars = async (raceId) => {
+  logger.info(`RaceRepository.checkDriversHaveCars(drivers:${raceId})`);
+  try {
+    const res = await pool.query(
+      "SELECT d.id AS driver_id, d.name FROM drivers d JOIN races r ON d.id = ANY(r.drivers) WHERE r.id = $1 AND d.car IS NULL;",
+      [raceId]
+    );
+    return res.rows.length <= 0;
+  } catch (err) {
+    logger.error(err);
+    throw err;
+  }
+};
+
 export const getDriversByRace = async (id) => {
   logger.info(`RaceRepository.getDriversByRace(id:${id})`);
   try {
@@ -259,3 +273,22 @@ export const postDriverToRace = async (raceId, drivers) => {
 // VALUES ('2023-10-01 12:00:00', 600, 'WAITING', 'DANGER');
 
 // SELECT * FROM races;
+
+export const resetRace = async (raceId) => {
+  logger.debug(`reset race ${raceId})`);
+  try {
+    const res = await pool.query(
+      `UPDATE races 
+       SET start_time = NULL, 
+           mode = 'DANGER', 
+           status = 'WAITING' 
+       WHERE id = $1 
+       RETURNING *;`,
+      [raceId]
+    );
+    return res.rows;
+  } catch (err) {
+    logger.error(err);
+    throw err;
+  }
+};

@@ -53,7 +53,6 @@
   -webkit-text-stroke-color: black;
 }
 
-#waitingBtn,
 #startBtn,
 #finishBtn {
   flex-basis: calc(33% - 0.25rem);
@@ -141,6 +140,18 @@
 #driver-names {
   flex-grow: 1; /* Allows Drivers to take remaining space */
   text-align: left; /* Optional: align content left if desired */
+  display: flex;
+  justify-content: center;
+  gap: 0.25rem;
+}
+
+.driver-id-box {
+  padding: 0.125rem;
+  border-radius: 4px;
+  color: var(--disabled-color);
+  background: var(--menu-color);
+  font-weight: 600;
+  font-size: 0.875rem;
 }
 
 .roomTestDiv {
@@ -196,6 +207,7 @@ body {
   border: 2px solid var(--button-color);
   border-radius: 6px;
   transition: all 0.3s;
+  cursor: pointer;
 }
 .logout-btn:hover {
   background-color: transparent;
@@ -210,4 +222,58 @@ body {
   font-size: 1rem;
   color: var(--disabled-color);
   font-family: monospace;
+}
+
+.car-icon {
+  color: #ff5e5e;
+}
+
+#startBtn.disabled,
+#finishBtn.disabled,
+#safeButton.disabled,
+#hazardButton.disabled,
+#dangerButton.disabled,
+#finishButton.disabled {
+  border-color: var(--disabled-color);
+  color: var(--disabled-color);
+  cursor: not-allowed;
+  pointer-events: all !important;
+  background-color: transparent;
+  border: 1px solid var(--button-color);
+}
+
+#startBtn.disabled:hover,
+#finishBtn.disabled:hover,
+#safeButton.disabled:hover,
+#hazardButton.disabled:hover,
+#dangerButton.disabled:hover,
+#finishButton.disabled:hover {
+  background-color: transparent;
+  transform: none;
+}
+
+#finishButton.disabled {
+  background-image: none;
+  background-position: none;
+  background-size: none;
+  font-weight: bold;
+  border-radius: 6px;
+  padding: 12px;
+}
+
+@keyframes skeleton-loading {
+  0% {
+    background-color: rgba(128, 128, 128, 0.1);
+  }
+  100% {
+    background-color: rgba(128, 128, 128, 0.3);
+  }
+}
+
+.skeleton {
+  animation: skeleton-loading 1s linear infinite alternate;
+  border-radius: 4px;
+  width: 120px;
+  height: 2rem;
+  margin: 0 auto;
 }

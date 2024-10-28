@@ -112,6 +112,12 @@ export const updateRaceStatus = async (raceId, status) => {
     if (!raceExists) {
       return { error: "RACE_NOT_FOUND" };
     }
+    if (status !== "WAITING") {
+      const driversHaveCars = await RaceRepository.checkDriversHaveCars(raceId);
+      if (!driversHaveCars) {
+        return { error: "DRIVER_UNASSIGNED_CAR" };
+      }
+    }
     await RaceRepository.updateTimeStamp(raceId);
     const result = await RaceRepository.updateRaceStatus(raceId, status);
     return result[0];
@@ -261,6 +267,16 @@ export const deleteRace = async (raceId) => {
     return result;
   } catch (error) {
     logger.error(`RaceService.deleteRace() | Error: ${error}`);
+    return { error: "UNKNOWN_ERROR" };
+  }
+};
+
+export const resetRace = async (raceId) => {
+  try {
+    const result = await RaceRepository.resetRace(raceId);
+    return result;
+  } catch (error) {
+    logger.error(`reset race | Error: ${error}`);
     return { error: "UNKNOWN_ERROR" };
   }
 };

@@ -209,8 +209,15 @@ export const updateRaceStatus = async (req, res, next) => {
     }
 
     const result = await RaceService.updateRaceStatus(raceId, status);
-    if (result.error === "RACE_NOT_FOUND") {
-      throw ApiError.notFound("Race not found");
+    if (result.error) {
+      switch (result.error) {
+        case "RACE_NOT_FOUND":
+          throw ApiError.notFound("Race not found");
+        case "DRIVER_UNASSIGNED_CAR":
+          throw ApiError.badRequest("Driver in race is missing car");
+        default:
+          throw ApiError.internal("Internal server error.");
+      }
     }
 
     return ApiResponse.success(result, "Race status updated successfully").send(
@@ -320,6 +327,22 @@ export const deleteRace = async (req, res, next) => {
       }
     }
     return ApiResponse.noContent(result, "Race deleted successfully").send(res);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const resetRace = async (req, res, next) => {
+  const { raceId } = req.params;
+  try {
+    const result = await RaceService.resetRace(raceId);
+    if (result.error) {
+      switch (result.error) {
+        default:
+          throw ApiError.internal("Internal server error.");
+      }
+    }
+    return ApiResponse.noContent(result, "Race reset successfully").send(res);
   } catch (error) {
     next(error);
   }

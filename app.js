@@ -22,6 +22,7 @@ import {
   startCurrentRace,
   updateRaceMode,
   updateRaceStatus,
+  resetRace,
 } from "./app/controllers/RaceController.js"; // import all methods from RaceController.js
 import {
   getAllDrivers,
@@ -44,6 +45,9 @@ import authRouter from "./app/utils/authentication.js";
 import * as RaceService from "./app/services/RaceService.js";
 
 dotenv.config();
+
+// const time = process.env.TIME;
+console.log(process.env.TIMER);
 
 const requiredKeys = [
   "JWT_SECRET",
@@ -190,6 +194,9 @@ app.patch("/api/drivers/:driverId", patchDriverById);
 app.patch("/api/race-sessions/:raceId/status", updateRaceStatus);
 app.patch("/api/race-sessions/:raceId/mode", updateRaceMode);
 app.delete("/api/drivers/:driverId", deleteDriverById);
+
+//temp
+app.get("/api/reset-race/:raceId", resetRace);
 
 app.get("/", function (req, res) {
   res.sendFile(path.join(__dirname, "public/index.html"));
