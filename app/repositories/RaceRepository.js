@@ -66,6 +66,7 @@ export const getCurrentRace = async () => {
     const res = await pool.query(
       "SELECT * from races WHERE status = 'STARTED';"
     );
+    if (res.rows.length === 0) return []; // no started race;
     return res.rows;
   } catch (err) {
     logger.error(err);
@@ -77,7 +78,7 @@ export const getUpcomingRaces = async () => {
   logger.info(`RaceRepository.getUpcomingRaces`);
   try {
     const res = await pool.query(
-      "SELECT * from races WHERE start_time IS NULL;"
+      "SELECT * from races WHERE start_time IS NULL ORDER BY id ASC;"
     );
     return res.rows;
   } catch (err) {
@@ -111,13 +112,35 @@ export const getRemainingTimeById = async (id) => {
   }
 };
 
-export const getNextRace = async (id) => {
-  logger.info(`RaceRepository.getNextRace(id:${id})`);
+export const getNextRace = async () => {
+  logger.info(`RaceRepository.getNextRace()`);
   try {
-    const res = await pool.query("SELECT * FROM races WHERE id = $1;", [
-      id + 1,
-    ]);
-    return res.rows;
+    // find race with STARTED status
+    const currentRace = await pool.query(
+      "SELECT id FROM races WHERE status = 'STARTED' LIMIT 1;"
+    );
+
+    let currentId;
+    if (currentRace.rows.length > 0) {
+      currentId = currentRace.rows[0].id;
+    } else {
+      // if no started race, get the earliest WAITING race
+      const waitingRace = await pool.query(
+        "SELECT id FROM races WHERE status = 'WAITING' ORDER BY id ASC LIMIT 1;"
+      );
+      if (waitingRace.rows.length === 0) return [];
+      const nextRace = await pool.query("SELECT * FROM races WHERE id = $1;", [
+        waitingRace.rows[0].id,
+      ]);
+      return nextRace.rows;
+    }
+    console.log(currentId);
+    // Find the next race after the current one
+    const nextRace = await pool.query(
+      "SELECT * FROM races WHERE id > $1 ORDER BY id ASC LIMIT 1;",
+      [currentId]
+    );
+    return nextRace.rows;
   } catch (err) {
     logger.error(err);
     throw err;
@@ -142,7 +165,7 @@ export async function updateTimeStamp(id) {
   logger.info(`RaceRepository.updateStartTime(raceId:${id})`);
   try {
     const res = await pool.query(
-      "UPDATE races SET start_time = CURRENT_TIMESTAMP WHERE id = $1 RETURNING *;",
+      "UPDATE races SET start_time = CURRENT_TIMESTAMP WHERE id = $1;",
       [id]
     );
     return res.rows;
@@ -166,6 +189,7 @@ export async function updateRaceMode(raceId, mode) {
   }
 }
 
+// '2023-10-01 12:00:00'
 export async function updateRaceStatus(raceId, status) {
   logger.info(
     `RaceRepository.updateRaceStatus(raceId: ${raceId}, status: ${status})`
@@ -185,10 +209,23 @@ export async function updateRaceStatus(raceId, status) {
 export async function deleteRace(id) {
   logger.info(`RaceRepository.deleteRace(id:${id})`);
   try {
-    const res = await pool.query("DELETE FROM races WHERE id = $1", [id]);
+    // Start a transaction since we are making multiple changes
+    await pool.query("BEGIN");
+
+    // Remove driver from races drivers array
+    await pool.query(
+      "UPDATE drivers SET current_race = NULL WHERE current_race = $1",
+      [id]
+    );
+
+    // Delete the driver
+    const res = await pool.query("DELETE FROM races WHERE id = $1;", [id]);
+
+    await pool.query("COMMIT");
     logger.info(`Deleted race with ID: ${id}`);
     return res.rowCount > 0;
   } catch (err) {
+    await pool.query("ROLLBACK");
     logger.error(err);
     throw err;
   }

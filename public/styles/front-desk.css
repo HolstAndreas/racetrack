@@ -20,8 +20,6 @@ main {
   color: var(--text-color);
 }
 
-
-
 .content {
   display: flex;
   height: 100%;
@@ -210,11 +208,10 @@ h2 {
 }
 
 .upcoming-races-section {
-
   flex: 1;
   overflow: hidden;
-  display:flex;
-  flex-direction: column; 
+  display: flex;
+  flex-direction: column;
 }
 
 .upcoming-races-section h2 {
@@ -229,7 +226,7 @@ h2 {
   gap: 0.5rem;
   width: 50%;
   border-bottom: 2px solid var(--disabled-color);
-  padding: 0.5rem 1rem 0.5rem 0.5rem; 
+  padding: 0.5rem 1rem 0.5rem 0.5rem;
 }
 
 .driver-row:nth-child(7) {
@@ -266,7 +263,7 @@ h2 {
   margin-left: 0;
   width: 75px;
   text-align: center;
-  font-size: 1.5rem;  
+  font-size: 1.5rem;
   font-weight: 600;
 }
 
@@ -291,7 +288,7 @@ h2 {
   color: var(--text-color);
 }
 #race-list li:hover .car-icon {
-  color: #FF5E5E;
+  color: #ff5e5e;
 }
 
 .race-drivers-grid {
@@ -302,9 +299,8 @@ h2 {
 
 .driver-slot {
   border: 1px solid var(--disabled-color);
-  width: 25%; 
-  overflow-x: scroll;
-  overflow-y: hidden;
+  width: 25%;
+  overflow: hidden;
   height: 1.5rem;
   white-space: nowrap;
   border-right: 1px solid var(--disabled-color);
@@ -318,17 +314,17 @@ h2 {
 }
 
 /* Remove bottom border from last row */
-.driver-slot:nth-last-child(-n+4) {
+.driver-slot:nth-last-child(-n + 4) {
   border-bottom: none;
 }
 
 /* Remove left border from first element in each row */
-.driver-slot:nth-child(4n+1) {
+.driver-slot:nth-child(4n + 1) {
   border-left: none;
 }
 
 /* Remove top border from first row */
-.driver-slot:nth-child(-n+4) {
+.driver-slot:nth-child(-n + 4) {
   border-top: none;
 }
 
@@ -344,7 +340,8 @@ h2 {
   background-color: rgba(0, 212, 171, 0.2);
   color: rgb(0, 212, 171);
   border: 2px solid rgb(0, 212, 171);
-  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+  transition: background-color 0.3s ease, color 0.3s ease,
+    border-color 0.3s ease;
 }
 
 .race-actions .btn:hover {
@@ -353,10 +350,10 @@ h2 {
 }
 
 #race-list .btn {
-  padding: 0.25rem 0.5rem;  
-  font-size: 0.875rem; 
+  padding: 0.25rem 0.5rem;
+  font-size: 0.875rem;
   white-space: nowrap;
-  margin: 0.25rem 0;  
+  margin: 0.25rem 0;
 }
 
 #countdown {
@@ -396,16 +393,16 @@ h2 {
 }
 
 .car-icon {
-  color: #A63939;
+  color: #a63939;
   transition: color 0.3s ease;
 }
 
 .highlight .car-icon {
-  color: #FF5E5E;
+  color: #ff5e5e;
 }
 
 .car-icon-highlight {
-  color: #FF5E5E;
+  color: #ff5e5e;
 }
 
 .hidden {
@@ -427,7 +424,6 @@ h2 {
   box-sizing: border-box;
   margin: 1rem;
 }
-
 
 .form-group {
   display: flex;

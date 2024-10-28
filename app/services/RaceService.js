@@ -37,16 +37,21 @@ export const findUpcomingRaces = async () => {
 export const findCurrentRace = async () => {
   logger.info(`RaceService.findCurrentRace()`);
   const lastRaceStarted = await RaceRepository.getCurrentRace();
+
   if (lastRaceStarted.length > 1) {
     logger.error("Unexpected error: multiple races have status 'STARTED'");
+  } else if (lastRaceStarted.length === 0) {
+    const nextRace = await findNextRace();
+    if (nextRace.length === 0) return [];
+    return nextRace;
   } else {
     return lastRaceStarted;
   }
 };
 
-export const findNextRace = async (id) => {
-  logger.info(`RaceService.findNextRace(id:${id})`);
-  const nextRace = await RaceRepository.getNextRace(id);
+export const findNextRace = async () => {
+  logger.info(`RaceService.findNextRace()`);
+  const nextRace = await RaceRepository.getNextRace();
   return nextRace;
 };
 
@@ -107,7 +112,7 @@ export const updateRaceStatus = async (raceId, status) => {
     if (!raceExists) {
       return { error: "RACE_NOT_FOUND" };
     }
-
+    await RaceRepository.updateTimeStamp(raceId);
     const result = await RaceRepository.updateRaceStatus(raceId, status);
     return result[0];
   } catch (err) {

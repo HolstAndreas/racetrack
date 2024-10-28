@@ -78,10 +78,9 @@ export const getCurrentRace = async (req, res, next) => {
 };
 
 export const getNextRace = async (req, res, next) => {
-  const { raceId } = req.params;
-  logger.info(`RaceController.getNextRace(raceId:${raceId})`);
+  logger.info(`RaceController.getNextRace()`);
   try {
-    const result = await RaceService.findNextRace(raceId); // Fetches a next race
+    const result = await RaceService.findNextRace(); // Fetches a next race
     logger.success("RaceController | Got result: \n" + JSON.stringify(result));
     if (result.length === 0) {
       throw ApiError.notFound("No next race found.");
@@ -314,6 +313,12 @@ export const deleteRace = async (req, res, next) => {
   logger.info(`RaceController.deleteRace(raceId:${raceId})`);
   try {
     const result = await RaceService.deleteRace(raceId);
+    if (result.error) {
+      switch (result.error) {
+        default:
+          throw ApiError.internal("Internal server error.");
+      }
+    }
     return ApiResponse.noContent(result, "Race deleted successfully").send(res);
   } catch (error) {
     next(error);
