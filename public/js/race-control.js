@@ -123,17 +123,11 @@ const updateRaceInfo = async (race) => {
 // };
 
 const startCountdown = (startTime) => {
-  debugger;
-  // id7 starttime: 2024-10-28T14:25:09.345Z
-  // console.log(startTime);
-  // console.log(Date.parse(startTime)); //1730125743306
   const endTime = Date.parse(startTime) + 60 * 1000; // 600 asendada global var
-  // console.log(`endTime: ${endTime}`); // 1730125803306
   const countdownElement = document.getElementById("timer");
 
   const interval = setInterval(() => {
     const timeLeft = Math.round((endTime - Date.now()) / 1000);
-    // console.log(`${endTime} - ${Date.now()} / 1000 = ${timeLeft}`);
     const minutes = Math.floor(timeLeft / 60);
     const seconds = timeLeft % 60;
     countdownElement.innerHTML = `${minutes
