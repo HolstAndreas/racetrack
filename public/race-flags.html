@@ -6,7 +6,8 @@
     <title>Race Flags</title>
     <link rel="icon" type="image/png" sizes="192x192" href="favicon.png" />
     <script src="/socket.io/socket.io.js"></script>
-    <script src="js/socket/guest.socket.io.js" type="module"></script>
+    <script src="js/guest.js"></script>
+    <script src="js/socket/flag.socket.io.js" type="module"></script>
     <link rel="stylesheet" href="styles/global.css" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -122,33 +123,12 @@
       </div>
     </div>
     <script>
-      const fetchCurrentRace = async () => {
-        try {
-          const response = await fetch(`/api/currentrace`);
-          const data = await response.json();
-          return data;
-        } catch (error) {
-          alert(`Error fetching current race:`, error);
-        }
-      };
-      const fetchRace = async (raceId) => {
-        try {
-          const response = await fetch(`/api/race-sessions/${raceId}`);
-          const data = await response.json();
+      let race;
 
-          return data;
-        } catch (error) {
-          console.error(`Error fetching race ${raceId}:`, error);
-        }
-      };
-
-      const loadCurrentRace = async () => {
+      window.loadFlag = async (flag) => {
         try {
-          const data = await fetchRace(6);
-          const race = data.data[0];
-          let mode;
           const parent = document.getElementById("info-item");
-          switch (race.mode) {
+          switch (flag) {
             case "SAFE":
               parent.classList.remove("hazard", "danger", "finish");
               parent.classList.add("safe");
@@ -170,18 +150,15 @@
               mode = `<span>FINISH</span>`;
               break;
           }
-          document.getElementById("mode").innerHTML = mode;
+          document.getElementById("mode").innerHTML = flag;
         } catch (error) {
           alert(`Error: ${error.message}`);
         }
       };
 
       document.addEventListener("DOMContentLoaded", async () => {
-        try {
-          await loadCurrentRace();
-        } catch (error) {
-          alert(error);
-        }
+        race = await window.getCurrentRace();
+        loadFlag(race.mode);
       });
     </script>
   </body>

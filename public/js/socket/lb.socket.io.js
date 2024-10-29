@@ -21,20 +21,11 @@ socket.on("currentTimer", (timer) => {
   }
 });
 
-socket.on("connect", () => {
-  socket.emit("connectToRoom", "lap-line-tracker");
-  document.getElementById(
-    "logs"
-  ).innerHTML = `<br>Currently in room: lap-line-tracker`;
-  logger("socket.emit", "connectToRoom(lap-line-tracker)");
+socket.on("updateLeaderBoard", async (raceId) => {
+  window.getLeaderboardById(raceId);
 });
 
-window.registerLapTime = (driver) => {
-  // get current time
-  let timestamp = new Date().toISOString();
-  socket.emit("registerLapTime", {
-    driverId: driver,
-    currentTimestamp: timestamp,
-  });
-  logger(`socket.emit(registerLapTime)`, driver, timestamp);
-};
+socket.on("connect", () => {
+  socket.emit("connectToRoom", "leader-board");
+  logger("socket.emit", "connectToRoom(leader-board)");
+});

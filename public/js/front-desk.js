@@ -1,3 +1,5 @@
+import { TIMER } from "./socket/fd.socket.io.js";
+
 const CURRENT_RACE_ID = 6;
 
 // Utility functions
@@ -357,29 +359,32 @@ const assignCar = async () => {
 };
 
 // race management functions
-const getCurrentRace = async () => {
-  const response = await fetch(`/api/currentrace`);
-  const data = await handleResponse(response);
-  if (data.status === "success") {
-    updateRaceInfo(data.data[0]);
-    return data.data[0];
-  } else {
-    alert(data.message);
-  }
-};
 
-const loadCurrentRace = async () => {
+export const loadCurrentRace = async () => {
   try {
-    const data = await fetchRace(6);
+    //const data2 = await fetchRace(6);
+    const data = await getCurrentRace();
+    console.log(data);
+    // console.log(data2);
     const race = data.data[0];
 
     // Update race info values
     document.getElementById("race-id").textContent = race.id;
     document.getElementById("race-status").textContent = race.status;
-    document.getElementById("countdown").textContent = "10:00"; //asendada global var duration?
-
+    const countdownElement = document.getElementById("countdown");
+    if (race.status === "WAITING") {
+      const minutes = Math.floor(TIMER / 60);
+      const seconds = TIMER % 60;
+      countdownElement.innerHTML = `${minutes
+        .toString()
+        .padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+    } else if (race.status === "STARTED") {
+      startCountdown(race.start_time);
+    } else {
+      countdownElement.textContent = "00:00"; //asendada global var duration?
+    }
     // TEMPORARY TESTING TIMER
-    startTimer(600);
+    //startTimer(TIMER);
 
     const driversContainer = document.getElementById("drivers-in-current");
     driversContainer.innerHTML = "";
@@ -415,6 +420,16 @@ const loadCurrentRace = async () => {
     document.getElementById(
       "current-race"
     ).innerHTML = `<div>${error.message}</div>`;
+  }
+};
+
+const getCurrentRace = async () => {
+  const response = await fetch(`/api/currentrace`);
+  const data = await handleResponse(response);
+  if (data.status === "success") {
+    return data; //data[0]
+  } else {
+    alert(data.message);
   }
 };
 
@@ -477,19 +492,6 @@ const deleteRace = async (raceId) => {
   } catch (error) {
     alert(`Error: ${error.message}`);
   }
-};
-
-const startCountdown = async (startTime) => {
-  const endTime = startTime + 600 * 1000; // 600 asendada global var
-  const countdownElement = document.getElementById("Countdown");
-  const interval = setInterval(() => {
-    const timeLeft = Math.round((endTime - Date.now()) / 1000);
-    countdownElement.innerHTML(timeLeft);
-    if (timeLeft <= 0) {
-      clearInterval(interval);
-      countdownElement.innerHTML("00:00");
-    }
-  }, 100);
 };
 
 // validation functions
@@ -565,4 +567,22 @@ const startTimer = (durationInSeconds) => {
 
   updateTimer();
   const interval = setInterval(updateTimer, 1000);
+};
+
+const startCountdown = (startTime) => {
+  const endTime = Date.parse(startTime) + TIMER * 1000;
+  const countdownElement = document.getElementById("countdown");
+
+  const interval = setInterval(() => {
+    if (race.mode === "FINISH" || timeLeft <= 0) {
+      clearInterval(interval);
+      countdownElement.innerHTML = "00:00";
+    }
+    const timeLeft = Math.round((endTime - Date.now()) / 1000);
+    const minutes = Math.floor(timeLeft / 60);
+    const seconds = timeLeft % 60;
+    countdownElement.innerHTML = `${minutes
+      .toString()
+      .padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+  }, 1000);
 };

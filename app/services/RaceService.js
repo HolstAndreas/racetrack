@@ -14,7 +14,11 @@ export const findById = async (id) => {
   return race;
 };
 
-// export const getLeaderBoard = async (id) => {}
+export const getLeaderBoard = async (id) => {
+  logger.info(`RaceService.getLeaderBoard(id:${id})`);
+  const leaderboard = await RaceRepository.getLeaderboard(id);
+  return leaderboard;
+};
 
 export const findModeById = async (id) => {
   logger.info(`RaceService.findModeById(id:${id})`);

@@ -161,6 +161,20 @@ export const getNextRace = async () => {
   }
 };
 
+export const getLeaderboard = async (id) => {
+  logger.info(`RaceRepository.getLeaderboard(raceId:${id})`);
+  try {
+    const res = await pool.query(
+      "SELECT * FROM lap_times WHERE race_id = $1 ORDER BY lap_time ASC;",
+      [id]
+    );
+    return res.rows;
+  } catch (err) {
+    logger.error(err);
+    throw err;
+  }
+};
+
 export async function insertRace(drivers) {
   logger.info(`RaceRepository.insertRace(drivers:${drivers})`);
   try {

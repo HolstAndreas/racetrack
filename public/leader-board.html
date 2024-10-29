@@ -1,16 +1,120 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Race Leaderboard</title>
-        <link rel="icon" type="image/png" sizes="192x192" href="favicon.png" />
-        <link rel="stylesheet" href="styles/global.css" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-        <link
-            href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=SUSE:wght@100..800&display=swap"
-            rel="stylesheet"
-        />
-    </head>
-    <body></body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Race Leaderboard</title>
+    <link rel="icon" type="image/png" sizes="192x192" href="favicon.png" />
+    <link rel="stylesheet" href="styles/global.css" />
+    <link rel="stylesheet" href="styles/leader-board.css" />
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="js/guest.js"></script>
+    <script src="js/socket/lb.socket.io.js" type="module"></script>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=SUSE:wght@100..800&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div id="raceinfo">
+      <div class="info-item">
+        <span class="label">ID</span>
+        <span class="value" id="raceId"><div class="skeleton"></div></span>
+      </div>
+      <div class="info-item">
+        <span class="label">Mode</span>
+        <span class="value" id="raceMode"><div class="skeleton"></div></span>
+      </div>
+      <div class="info-item">
+        <span class="label">Status</span>
+        <span class="value" id="raceStatus"><div class="skeleton"></div></span>
+      </div>
+      <div class="info-item">
+        <span class="label">Countdown</span>
+        <span class="value" id="timer"><div class="skeleton"></div></span>
+      </div>
+    </div>
+
+    <div id="leaderboard">
+      <table>
+        <thead>
+          <tr>
+            <th>Position</th>
+            <th>Car</th>
+            <th>Driver</th>
+            <th>Lap Number</th>
+            <th>Fastest Lap Time</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr id="driver-1">
+            <td><div id="driver-1-position" class="skeleton"></div></td>
+            <td><div id="driver-1-car" class="skeleton"></div></td>
+            <td><div id="driver-1-driver" class="skeleton"></div></td>
+            <td><div id="driver-1-lap-number" class="skeleton"></div></td>
+            <td><div id="driver-1-fastest-lap-time" class="skeleton"></div></td>
+          </tr>
+          <tr id="driver-2">
+            <td><div id="driver-2-position" class="skeleton"></div></td>
+            <td><div id="driver-2-car" class="skeleton"></div></td>
+            <td><div id="driver-2-driver" class="skeleton"></div></td>
+            <td><div id="driver-2-lap-number" class="skeleton"></div></td>
+            <td><div id="driver-2-fastest-lap-time" class="skeleton"></div></td>
+          </tr>
+          <tr id="driver-3">
+            <td><div id="driver-3-position" class="skeleton"></div></td>
+            <td><div id="driver-3-car" class="skeleton"></div></td>
+            <td><div id="driver-3-driver" class="skeleton"></div></td>
+            <td><div id="driver-3-lap-number" class="skeleton"></div></td>
+            <td><div id="driver-3-fastest-lap-time" class="skeleton"></div></td>
+          </tr>
+          <tr id="driver-4">
+            <td><div id="driver-4-position" class="skeleton"></div></td>
+            <td><div id="driver-4-car" class="skeleton"></div></td>
+            <td><div id="driver-4-driver" class="skeleton"></div></td>
+            <td><div id="driver-4-lap-number" class="skeleton"></div></td>
+            <td><div id="driver-4-fastest-lap-time" class="skeleton"></div></td>
+          </tr>
+          <tr id="driver-5">
+            <td><div id="driver-5-position" class="skeleton"></div></td>
+            <td><div id="driver-5-car" class="skeleton"></div></td>
+            <td><div id="driver-5-driver" class="skeleton"></div></td>
+            <td><div id="driver-5-lap-number" class="skeleton"></div></td>
+            <td><div id="driver-5-fastest-lap-time" class="skeleton"></div></td>
+          </tr>
+          <tr id="driver-6">
+            <td><div id="driver-6-position" class="skeleton"></div></td>
+            <td><div id="driver-6-car" class="skeleton"></div></td>
+            <td><div id="driver-6-driver" class="skeleton"></div></td>
+            <td><div id="driver-6-lap-number" class="skeleton"></div></td>
+            <td><div id="driver-6-fastest-lap-time" class="skeleton"></div></td>
+          </tr>
+          <tr id="driver-7">
+            <td><div id="driver-7-position" class="skeleton"></div></td>
+            <td><div id="driver-7-car" class="skeleton"></div></td>
+            <td><div id="driver-7-driver" class="skeleton"></div></td>
+            <td><div id="driver-7-lap-number" class="skeleton"></div></td>
+            <td><div id="driver-7-fastest-lap-time" class="skeleton"></div></td>
+          </tr>
+          <tr id="driver-8">
+            <td><div id="driver-8-position" class="skeleton"></div></td>
+            <td><div id="driver-8-car" class="skeleton"></div></td>
+            <td><div id="driver-8-driver" class="skeleton"></div></td>
+            <td><div id="driver-8-lap-number" class="skeleton"></div></td>
+            <td><div id="driver-8-fastest-lap-time" class="skeleton"></div></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <script>
+      document.addEventListener("DOMContentLoaded", async () => {
+        try {
+          await window.loadRaceInfo();
+        } catch (err) {
+          alert(err);
+        }
+      });
+    </script>
+  </body>
 </html>

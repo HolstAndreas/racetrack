@@ -1,5 +1,7 @@
 const socket = io();
 
+export let TIMER;
+
 // client-side
 socket.on("connect", () => {
   socket.emit("connectToRoom", "race-control");
@@ -52,5 +54,11 @@ socket.on("updatedRaceStatus", (newStatus) => {
 export const raceUpdated = (raceId) => {
   socket.emit("raceUpdated", raceId);
 };
+
+socket.on("currentTimer", (timer) => {
+  const timerElement = document.getElementById("timer");
+  timerElement.innerHTML = timer;
+  TIMER = timer;
+});
 
 //socket.on("updateCurrentRace", (raceId) => {});

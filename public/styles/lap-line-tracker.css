@@ -148,3 +148,25 @@ body {
     gap: 0.5rem;
   }
 }
+
+@keyframes skeleton-loading {
+  0% {
+    background-color: rgba(128, 128, 128, 0.1);
+  }
+  100% {
+    background-color: rgba(128, 128, 128, 0.3);
+  }
+}
+
+.skeleton {
+  animation: skeleton-loading 1s linear infinite alternate;
+  border-radius: 4px;
+  width: 120px;
+  height: 2rem;
+  margin: 0 auto;
+}
+
+.buttonsDiv > button > .skeleton {
+  width: 25%;
+  height: 1.75rem;
+}

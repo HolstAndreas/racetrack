@@ -324,7 +324,6 @@ async function removeDriverFromRace() {
   }
 }
 
-
 document.addEventListener("DOMContentLoaded", () => {
-  fetchAllDrivers(); 
+  fetchAllDrivers();
 });

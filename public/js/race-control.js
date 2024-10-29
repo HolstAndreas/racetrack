@@ -1,12 +1,12 @@
-import { raceUpdated } from "./socket/rc.socket.io.js";
+import { raceUpdated, TIMER } from "./socket/rc.socket.io.js";
 
 let race = {};
 
-const fetchTimer = () => {
-  return 3600;
-};
+// const fetchTimer = () => {
+//   return 3600;
+// };
 
-const TIME = fetchTimer();
+// const TIME = fetchTimer();
 
 document.addEventListener("DOMContentLoaded", async (event) => {
   // Add event listeners to buttons
@@ -162,14 +162,17 @@ const updateRaceInfo = (raceData) => {
   if (raceData.status === "STARTED" && raceData.mode !== "FINISH") {
     console.log("Starting countdown");
     startCountdown(raceData.start_time);
+  } else {
+    if (raceData.status === "WAITING") {
+      const timer = document.getElementById("timer");
+      const TIME = TIMER;
+      const minutes = Math.floor(TIME / 60);
+      const seconds = TIME % 60;
+      timer.innerHTML = `${minutes.toString().padStart(2, "0")}:${seconds
+        .toString()
+        .padStart(2, "0")}`;
+    }
   }
-
-  const minutes = Math.floor(TIME / 60);
-  const seconds = TIME % 60;
-  const timer = document.getElementById("timer");
-  timer.innerHTML = `${minutes.toString().padStart(2, "0")}:${seconds
-    .toString()
-    .padStart(2, "0")}`;
 };
 
 const disableButtons = () => {
@@ -228,22 +231,9 @@ const disableButtons = () => {
     }
   }
 };
-// const startCurrentRace = async () => {
-//   console.log("Race-control.js: Starting of the event registered");
-//   try {
-//     const response = await fetch(`/api/start-current-race/${race_id}`);
-//     const updatedRace = await handleResponse(response);
-//     if (updatedRace) {
-//       startedRace(updatedRace);
-//       await updateRaceInfo(updatedRace);
-//     }
-//   } catch (error) {
-//     console.error("Error starting race:", error);
-//   }
-// };
 
 const startCountdown = (startTime) => {
-  const endTime = Date.parse(startTime) + TIME * 1000;
+  const endTime = Date.parse(startTime) + TIMER * 1000;
   const countdownElement = document.getElementById("timer");
 
   const interval = setInterval(() => {
@@ -253,8 +243,10 @@ const startCountdown = (startTime) => {
     countdownElement.innerHTML = `${minutes
       .toString()
       .padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
-
-    if (timeLeft <= 0) {
+    if (race.mode === "FINISH") {
+      clearInterval(interval);
+      countdownElement.innerHTML = "00:00";
+    } else if (timeLeft <= 0) {
       clearInterval(interval);
       //race.mode = "FINISH";
       changeMode("FINISH");
@@ -262,6 +254,7 @@ const startCountdown = (startTime) => {
     }
   }, 1000);
 };
+
 // Utility functions
 const handleResponse = async (response) => {
   const contentType = response.headers.get("content-type");

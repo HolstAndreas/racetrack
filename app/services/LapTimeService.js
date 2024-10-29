@@ -45,6 +45,36 @@ export const postLapTime = async (driverId, raceId, lapTime, lapNumber) => {
   }
 };
 
+export const postLapTime2 = async (driverId, lapTime) => {
+  try {
+    const currentRace = await RaceRepository.getCurrentRace();
+    const previousLapTimes = await LapTimeRepository.getLapTimesByDriverAndRace(
+      driverId,
+      currentRace[0].id
+    );
+
+    let lapTimeSum = 0;
+    for (let i = 0; i < previousLapTimes.length; i++) {
+      lapTimeSum += previousLapTimes[i].lap_time;
+    }
+    const currentLapTime =
+      Date.parse(lapTime) -
+      (Date.parse(currentRace[0].start_time) + lapTimeSum);
+    logger.info(
+      `LapTimeService.postLapTime2(driverId:${driverId}, raceId:${currentRace[0].id}, lapTime:${currentLapTime}, lapNumber:${previousLapTimes.length})`
+    );
+
+    return await LapTimeRepository.insertLapTime(
+      driverId,
+      currentRace[0].id,
+      currentLapTime,
+      previousLapTimes.length
+    );
+  } catch (err) {
+    logger.error(err);
+  }
+};
+
 export const getLapTimesByRace = async (raceId) => {
   logger.info(`LapTimeService.getLapTimesByRace(raceId:${raceId})`);
   return await LapTimeRepository.getLapTimesByRace(raceId);
@@ -68,6 +98,8 @@ export const getFastestLapByDriver = async (driverId, raceId) => {
 };
 
 export const getLapTimesByDriverAndRace = async (driverId, raceId) => {
-    logger.info(`LapTimeService.getLapTimesByDriverAndRace(driverId:${driverId}, raceId:${raceId})`);
-    return await LapTimeRepository.getLapTimesByDriverAndRace(driverId, raceId);
+  logger.info(
+    `LapTimeService.getLapTimesByDriverAndRace(driverId:${driverId}, raceId:${raceId})`
+  );
+  return await LapTimeRepository.getLapTimesByDriverAndRace(driverId, raceId);
 };

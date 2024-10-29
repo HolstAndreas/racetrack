@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Next Race</title>
     <link rel="icon" type="image/png" sizes="192x192" href="favicon.png" />
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="js/guest.js"></script>
+    <script src="js/socket/next.socket.io.js" type="module"></script>
     <link rel="stylesheet" href="styles/global.css" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -200,6 +203,10 @@
       </div>
     </div>
     <script>
+      window.loadNextRace = async () => {
+        await loadCurrentRace();
+      };
+
       const fetchCurrentRace = async () => {
         try {
           const response = await fetch(`/api/next-race`);
@@ -219,18 +226,31 @@
           console.error(`Error fetching driver ${id}:`, error);
         }
       };
-      const wait = (seconds) => {
-        return new Promise((resolve) => setTimeout(resolve, seconds * 1000));
-      };
+      // const wait = (seconds) => {
+      // return new Promise((resolve) => setTimeout(resolve, seconds * 1000));
+      // };
       const loadCurrentRace = async () => {
-        await wait(1.25);
+        // await wait(1.25);
         try {
           const data = await fetchCurrentRace();
+          if (
+            !data ||
+            !data.data ||
+            data.data.length === 0 ||
+            data.status === "fail"
+          ) {
+            alert("Currently there is no next race.");
+            return;
+          }
           const race = data.data[0];
 
           const driversContainer =
             document.getElementById("drivers-in-current");
-          // driversContainer.innerHTML = "";
+
+          for (let i = 0; i < 8; i++) {
+            const driverRow = document.getElementById(`driver-row-${i}`);
+            driverRow.innerHTML = `<div class="skeleton"></div>`;
+          }
 
           // Then populate the rows with driver data
           for (let i = 0; i < 8; i++) {
@@ -250,7 +270,7 @@
                   `Error loading driver ${race.drivers[i]}:`,
                   error
                 );
-                driverRow.innerHTML = "Error loading driver";
+                driverRow.innerHTML = `<i class="fa-solid fa-triangle-exclamation" style="color: #FFD43B;"></i>`;
               }
             } else {
               driverRow.innerHTML = "";

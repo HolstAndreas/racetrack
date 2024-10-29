@@ -38,16 +38,14 @@ import {
   getLapTimesByDriver,
   getLapTimesByRaceAndDriver,
 } from "./app/controllers/LapTimeController.js";
-import validateIsNumber from "./app/middleware/ValidateIsNumber.js";
+import * as LapTimeService from "./app/services/LapTimeService.js";
+import { validateIsNumber } from "./app/middleware/ValidateIsNumber.js";
 import logger from "./app/utils/logger.js";
 import authMiddleware from "./app/middleware/authMiddleware.js";
 import authRouter from "./app/utils/authentication.js";
 import * as RaceService from "./app/services/RaceService.js";
 
 dotenv.config();
-
-// const time = process.env.TIME;
-console.log(process.env.TIMER);
 
 const requiredKeys = [
   "JWT_SECRET",
@@ -77,6 +75,7 @@ const io = new Server(httpServer, {});
 
 io.on("connection", (socket) => {
   logger.debug(`User connected: ${socket.id}`);
+  io.emit("currentTimer", process.env.TIMER);
 
   socket.on("connectToRoom", (roomName) => {
     socket.join(roomName);
@@ -86,6 +85,12 @@ io.on("connection", (socket) => {
 
   socket.on("raceUpdated", (raceId) => {
     io.emit("updateCurrentRace", raceId);
+  });
+
+  socket.on("registerLapTime", async ({ driverId, currentTimestamp }) => {
+    await LapTimeService.postLapTime2(driverId, currentTimestamp);
+    // logic here
+    // update time -> emit new time added (leaderboard updates)
   });
 
   // socket.on("changeMode", async (data) => {

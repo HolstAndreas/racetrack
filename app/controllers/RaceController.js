@@ -39,7 +39,7 @@ export const getRaceById = async (req, res, next) => {
 export const getLeaderboard = async (req, res, next) => {
   const { raceId } = req.params;
   try {
-    const leaderboard = await RaceService.getLeaderboard(raceId);
+    const leaderboard = await RaceService.getLeaderBoard(raceId);
     return ApiResponse.success(
       leaderboard,
       "Leaderboard retrieved successfully"
