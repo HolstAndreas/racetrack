@@ -113,16 +113,16 @@ const getCurrentRace = async () => {
   }
 };
 
-const getNextRace = async () => {
-  const response = await fetch(`/api/currentrace`);
-  const data = await handleResponse(response);
-  if (data.status === "success") {
-    updateRaceInfo(data.data[0]);
-    return data.data[0];
-  } else {
-    alert(data.message);
-  }
-};
+// const getNextRace = async () => {
+//   const response = await fetch(`/api/currentrace`);
+//   const data = await handleResponse(response);
+//   if (data.status === "success") {
+//     updateRaceInfo(data.data[0]);
+//     return data.data[0];
+//   } else {
+//     alert(data.message);
+//   }
+// };
 
 const updateRaceInfo = (raceData) => {
   race = raceData;
@@ -162,17 +162,18 @@ const updateRaceInfo = (raceData) => {
   if (raceData.status === "STARTED" && raceData.mode !== "FINISH") {
     console.log("Starting countdown");
     startCountdown(raceData.start_time);
-  } else {
-    if (raceData.status === "WAITING") {
-      const timer = document.getElementById("timer");
-      const TIME = TIMER;
-      const minutes = Math.floor(TIME / 60);
-      const seconds = TIME % 60;
-      timer.innerHTML = `${minutes.toString().padStart(2, "0")}:${seconds
-        .toString()
-        .padStart(2, "0")}`;
-    }
-  }
+  } // else {
+  //   if (raceData.status === "WAITING") {
+  //     const timer = document.getElementById("timer");
+  //     const TIME = TIMER;
+  //     console.log("TIMER value:", TIME);
+  //     const minutes = Math.floor(TIME / 60);
+  //     const seconds = TIME % 60;
+  //     timer.innerHTML = `${minutes.toString().padStart(2, "0")}:${seconds
+  //       .toString()
+  //       .padStart(2, "0")}`;
+  //   }
+  // }
 };
 
 const disableButtons = () => {

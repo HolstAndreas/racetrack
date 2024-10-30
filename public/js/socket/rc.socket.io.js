@@ -57,7 +57,11 @@ export const raceUpdated = (raceId) => {
 
 socket.on("currentTimer", (timer) => {
   const timerElement = document.getElementById("timer");
-  timerElement.innerHTML = timer;
+  const minutes = Math.floor(timer / 60);
+  const seconds = timer % 60;
+  timerElement.innerHTML = `${minutes.toString().padStart(2, "0")}:${seconds
+    .toString()
+    .padStart(2, "0")}`;
   TIMER = timer;
 });
 

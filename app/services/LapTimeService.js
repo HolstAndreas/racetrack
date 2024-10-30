@@ -48,6 +48,10 @@ export const postLapTime = async (driverId, raceId, lapTime, lapNumber) => {
 export const postLapTime2 = async (driverId, lapTime) => {
   try {
     const currentRace = await RaceRepository.getCurrentRace();
+    if (currentRace.length === 0) {
+      logger.error(`Could not post laptime. No race has status 'STARTED'`);
+      return;
+    }
     const previousLapTimes = await LapTimeRepository.getLapTimesByDriverAndRace(
       driverId,
       currentRace[0].id

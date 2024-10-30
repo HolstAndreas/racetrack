@@ -80,7 +80,10 @@ export const getCurrentRace = async () => {
     const res = await pool.query(
       "SELECT * from races WHERE status = 'STARTED';"
     );
-    if (res.rows.length === 0) return []; // no started race;
+    // logger.info(
+    //   `RaceRepository.getCurrentRace query result: ${typeof res.rows[0]}`
+    // );
+    if (res.rows[0] === undefined) return []; // no started race;
     return res.rows;
   } catch (err) {
     logger.error(err);

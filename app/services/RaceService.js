@@ -41,6 +41,7 @@ export const findUpcomingRaces = async () => {
 export const findCurrentRace = async () => {
   logger.info(`RaceService.findCurrentRace()`);
   const lastRaceStarted = await RaceRepository.getCurrentRace();
+  console.log(lastRaceStarted);
 
   if (lastRaceStarted.length > 1) {
     logger.error("Unexpected error: multiple races have status 'STARTED'");

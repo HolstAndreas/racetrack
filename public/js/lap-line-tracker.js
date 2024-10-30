@@ -133,8 +133,21 @@ window.loadRaceInfo = async () => {
         }
       }
     }
+    disableButtons(race.mode, race.status);
   } else {
     alert("No current race.");
+  }
+};
+
+const disableButtons = (raceMode, raceStatus) => {
+  const buttonsDiv = document.getElementById("buttonsDiv");
+  if (raceMode === "FINISH" || raceStatus !== "STARTED") {
+    // if (!buttonsDiv.classList.includes("disabled")) {
+    //   buttonsDiv.classList.add("disabled");
+    // }
+    buttonsDiv.disabled = true;
+  } else {
+    buttonsDiv.disabled = false;
   }
 };
 
