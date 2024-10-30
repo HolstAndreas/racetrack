@@ -1,101 +1,99 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Race Control</title>
-        <link rel="icon" type="image/png" sizes="192x192" href="favicon.png" />
-        <script src="/socket.io/socket.io.js"></script>
-        <script src="js/socket/rc.socket.io.js" type="module"></script>
-        <script src="js/race-control.js" type="module" defer></script>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-        <link
-            href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=SUSE:wght@100..800&display=swap"
-            rel="stylesheet"
-        />
-        <link
-            rel="stylesheet"
-            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
-            integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
-            crossorigin="anonymous"
-            referrerpolicy="no-referrer"
-        />
-        <link rel="stylesheet" href="styles/global.css" />
-        <link rel="stylesheet" href="styles/race-control.css" />
-    </head>
-    <body>
-        <a class="logout-btn" href="/logout">Log out</a>
-        <button
-            class="logout-btn"
-            id="reset-race"
-            style="right: 150px !important"
-        >
-            reset race
-        </button>
-        <span id="logs"></span>
-        <div class="ctrlButtonsDiv" style="margin-bottom: 1rem">
-            <div class="race-info">
-                <div class="info-container">
-                    <div class="info-item">
-                        <span class="label">Race ID</span>
-                        <span class="title" id="raceId"></span>
-                    </div>
-                    <div class="info-item">
-                        <span class="label">Drivers</span>
-                        <span class="driver-names" id="driver-names"></span>
-                    </div>
-                </div>
-                <div class="info-container">
-                    <div class="info-item">
-                        <span class="label">Current Mode</span>
-                        <span class="value" id="currentMode"
-                            ><div class="skeleton"></div
-                        ></span>
-                    </div>
-                    <div class="info-item">
-                        <span class="label">Current Status</span>
-                        <span class="value" id="currentStatus"
-                            ><div class="skeleton"></div
-                        ></span>
-                    </div>
-                    <div class="info-item">
-                        <span class="label">Countdown</span>
-                        <span class="value" id="countdown"
-                            ><div class="skeleton"></div
-                        ></span>
-                    </div>
-                </div>
-            </div>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Race Control</title>
+    <link rel="icon" type="image/png" sizes="192x192" href="favicon.png" />
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="js/socket/rc.socket.io.js" type="module"></script>
+    <script src="js/race-control.js" type="module" defer></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=SUSE:wght@100..800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+      integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <link rel="stylesheet" href="styles/global.css" />
+    <link rel="stylesheet" href="styles/race-control.css" />
+  </head>
+  <body>
+    <a class="logout-btn" href="/logout">Log out</a>
+    <button class="logout-btn" id="reset-race" style="right: 150px !important">
+      reset race
+    </button>
+    <span id="logs"></span>
+    <div class="ctrlButtonsDiv" style="margin-bottom: 1rem">
+      <div class="race-info">
+        <div class="info-container">
+          <div class="info-item">
+            <span class="label">Race ID</span>
+            <span class="title" id="raceId"><div class="skeleton"></div></span>
+          </div>
+          <div class="info-item">
+            <span class="label">Drivers</span>
+            <span class="driver-names" id="driver-names"
+              ><div class="skeleton"></div
+            ></span>
+          </div>
         </div>
-        <div class="ctrlButtonsDiv">
-            <div class="ctrlDivTitle">CHANGE MODE</div>
-            <fieldset class="ctrlButtonDiv" id="ctrlButtonDiv" disabled>
-                <button id="safeButton">SAFE</button>
-                <button id="hazardButton">HAZARD</button>
-                <button id="dangerButton">DANGER</button>
-                <button id="finishButton">FINISH</button>
-            </fieldset>
-
-            <div class="ctrlDivTitle">CHANGE STATUS</div>
-            <div class="ctrlButtonDiv">
-                <button id="startBtn">START RACE</button>
-                <button id="finishBtn">END RACE</button>
-            </div>
+        <div class="info-container">
+          <div class="info-item">
+            <span class="label">Current Mode</span>
+            <span class="value" id="currentMode"
+              ><div class="skeleton"></div
+            ></span>
+          </div>
+          <div class="info-item">
+            <span class="label">Current Status</span>
+            <span class="value" id="currentStatus"
+              ><div class="skeleton"></div
+            ></span>
+          </div>
+          <div class="info-item">
+            <span class="label">Countdown</span>
+            <span class="value" id="countdown"
+              ><div class="skeleton"></div
+            ></span>
+          </div>
         </div>
-        <script type="module">
-            import { initializeTimer } from "./js/socket/timer.socket.io.js";
+      </div>
+    </div>
+    <div class="ctrlButtonsDiv">
+      <div class="ctrlDivTitle">CHANGE MODE</div>
+      <fieldset class="ctrlButtonDiv" id="ctrlButtonDiv" disabled>
+        <button id="safeButton">SAFE</button>
+        <button id="hazardButton">HAZARD</button>
+        <button id="dangerButton">DANGER</button>
+        <button id="finishButton">FINISH</button>
+      </fieldset>
 
-            document.addEventListener("DOMContentLoaded", async () => {
-                const timer = initializeTimer("countdown");
+      <div class="ctrlDivTitle">CHANGE STATUS</div>
+      <div class="ctrlButtonDiv">
+        <button id="startBtn">START RACE</button>
+        <button id="finishBtn">END RACE</button>
+      </div>
+    </div>
+    <script type="module">
+      import { initializeTimer } from "./js/socket/timer.socket.io.js";
 
-                const race = await window.getCurrentRace();
-                if (race.status === "STARTED" && race.mode !== "FINISH") {
-                    timer.startRace(race.id);
-                } else {
-                    document.getElementById("countdown").innerHTML = "00:00";
-                }
-            });
-        </script>
-    </body>
+      document.addEventListener("DOMContentLoaded", async () => {
+        const timer = initializeTimer("countdown");
+
+        const race = await window.getCurrentRace();
+        if (race.status === "STARTED" && race.mode !== "FINISH") {
+          timer.startRace(race.id);
+        } else {
+          document.getElementById("countdown").innerHTML = "00:00";
+        }
+      });
+    </script>
+  </body>
 </html>
