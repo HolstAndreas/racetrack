@@ -1,68 +1,88 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <script src="/socket.io/socket.io.js"></script>
-    <script src="js/lap-line-tracker.js"></script>
-    <script src="js/socket/llt.socket.io.js" type="module"></script>
-    <link rel="stylesheet" href="styles/lap-line-tracker.css" />
-    <link rel="stylesheet" href="styles/global.css" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=SUSE:wght@100..800&display=swap"
-      rel="stylesheet"
-    />
-    <title>Lap-Line Tracker</title>
-    <link rel="icon" type="image/png" sizes="192x192" href="favicon.png" />
-  </head>
-  <body>
-    <a class="logout-btn" href="/logout">Log out</a>
-    <span id="logs"></span>
-    <div class="car-number-buttons">
-      <div class="race-info">
-        <span class="title">RACE INFO</span>
-        <div class="info-container">
-          <div class="info-item">
-            <span class="label">ID</span>
-            <span class="value" id="raceId"><div class="skeleton"></div></span>
-          </div>
-          <div class="info-item">
-            <span class="label">Status</span>
-            <span class="value" id="status"><div class="skeleton"></div></span>
-          </div>
-          <div class="info-item">
-            <span class="label">Time remaining</span>
-            <span class="value" id="timer"><div class="skeleton"></div></span>
-          </div>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <script src="/socket.io/socket.io.js"></script>
+        <script src="js/lap-line-tracker.js"></script>
+        <script src="js/socket/llt.socket.io.js" type="module"></script>
+        <link rel="stylesheet" href="styles/lap-line-tracker.css" />
+        <link rel="stylesheet" href="styles/global.css" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=SUSE:wght@100..800&display=swap"
+            rel="stylesheet"
+        />
+        <title>Lap-Line Tracker</title>
+        <link rel="icon" type="image/png" sizes="192x192" href="favicon.png" />
+    </head>
+    <body>
+        <a class="logout-btn" href="/logout">Log out</a>
+        <span id="logs"></span>
+        <div class="car-number-buttons">
+            <div class="race-info">
+                <span class="title">RACE INFO</span>
+                <div class="info-container">
+                    <div class="info-item">
+                        <span class="label">ID</span>
+                        <span class="value" id="raceId"
+                            ><div class="skeleton"></div
+                        ></span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">Status</span>
+                        <span class="value" id="status"
+                            ><div class="skeleton"></div
+                        ></span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">Time remaining</span>
+                        <span class="value" id="countdown"
+                            ><div class="skeleton"></div
+                        ></span>
+                    </div>
+                </div>
+            </div>
+            <fieldset class="buttonsDiv" id="buttonsDiv">
+                <button id="car-btn1" class="disabled" disabled>
+                    <div class="skeleton"></div>
+                </button>
+                <button id="car-btn2" class="disabled" disabled>
+                    <div class="skeleton"></div>
+                </button>
+                <button id="car-btn3" class="disabled" disabled>
+                    <div class="skeleton"></div>
+                </button>
+                <button id="car-btn4" class="disabled" disabled>
+                    <div class="skeleton"></div>
+                </button>
+                <button id="car-btn5" class="disabled" disabled>
+                    <div class="skeleton"></div>
+                </button>
+                <button id="car-btn6" class="disabled" disabled>
+                    <div class="skeleton"></div>
+                </button>
+                <button id="car-btn7" class="disabled" disabled>
+                    <div class="skeleton"></div>
+                </button>
+                <button id="car-btn8" class="disabled" disabled>
+                    <div class="skeleton"></div>
+                </button>
+            </fieldset>
         </div>
-      </div>
-      <fieldset class="buttonsDiv" id="buttonsDiv">
-        <button id="car-btn1" class="disabled" disabled>
-          <div class="skeleton"></div>
-        </button>
-        <button id="car-btn2" class="disabled" disabled>
-          <div class="skeleton"></div>
-        </button>
-        <button id="car-btn3" class="disabled" disabled>
-          <div class="skeleton"></div>
-        </button>
-        <button id="car-btn4" class="disabled" disabled>
-          <div class="skeleton"></div>
-        </button>
-        <button id="car-btn5" class="disabled" disabled>
-          <div class="skeleton"></div>
-        </button>
-        <button id="car-btn6" class="disabled" disabled>
-          <div class="skeleton"></div>
-        </button>
-        <button id="car-btn7" class="disabled" disabled>
-          <div class="skeleton"></div>
-        </button>
-        <button id="car-btn8" class="disabled" disabled>
-          <div class="skeleton"></div>
-        </button>
-      </fieldset>
-    </div>
-  </body>
+        <script type="module">
+            import { initializeTimer } from "./js/socket/timer.socket.io.js";
+
+            document.addEventListener("DOMContentLoaded", async () => {
+                const timer = initializeTimer("countdown");
+
+                const race = await window.getCurrentRace();
+                if (race.status === "STARTED" && race.mode !== "FINISH") {
+                    timer.startRace(race.id);
+                } else {
+                    document.getElementById("countdown").innerHTML = "00:00";
+                }
+            });
+        </script>
+    </body>
 </html>

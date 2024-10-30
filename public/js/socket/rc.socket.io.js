@@ -1,68 +1,47 @@
+import { logger } from "../utils/logger.js";
+import { changeMode, changeStatus } from "../race-control.js";
+
 const socket = io();
 
-export let TIMER;
-
-// client-side
 socket.on("connect", () => {
-  socket.emit("connectToRoom", "race-control");
-  document.getElementById(
-    "logs"
-  ).innerHTML = `<br>Currently in room: race-control`;
+    socket.emit("connectToRoom", "race-control");
+    document.getElementById(
+        "logs"
+    ).innerHTML = `<br>Currently in room: race-control`;
 });
-
-// const connectToRoom = () => {
-//   const roomNameInput = document.getElementById("room-name");
-//   console.log(`Trying to connect to room ${roomNameInput.value}`);
-//   socket.emit("connectToRoom", roomNameInput.value);
-//   document.getElementById(
-//     "logs"
-//   ).innerHTML = `Currently in room: ${roomNameInput.value}`;
-// };
-
-// socket.on("newUserJoined", (socketId) => {
-//   const logsElement = document.getElementById("logs");
-//   logsElement.innerHTML += `<br>New user joined: ${socketId}`;
-// });
-
-// const changeMode = (mode) => {
-//   console.log(`Mode is: ${mode}`);
-//   socket.emit("changeMode", mode);
-// };
 
 socket.on("updatedRaceMode", (newMode) => {
-  const modeElement = document.getElementById("currentMode");
-  modeElement.innerHTML = newMode;
+    logger(`socket.on(updatedRaceMode)`, newMode);
+    const modeElement = document.getElementById("currentMode");
+    modeElement.innerHTML = newMode;
 });
-
-// export const changeStatus = (status) => {
-//   console.log(`Status is: ${status}`);
-//   socket.emit("changeStatus", status);
-// };
 
 socket.on("updatedRaceStatus", (newStatus) => {
-  const statusElement = document.getElementById("currentStatus");
-  console.log(`New status is: ${newStatus}`);
-  statusElement.innerHTML = newStatus;
+    const statusElement = document.getElementById("currentStatus");
+    logger(`socket.on(updatedRaceStatus)`, newStatus);
+    statusElement.innerHTML = newStatus;
 });
 
-// export const startedRace = (race) => {
-//   console.log(`Race: ${race}`);
-//   socket.emit("raceStarted", race);
-//   updateRaceInfo(race);
-// };
+socket.on("raceEnded", async () => {
+    logger(`socket.on(raceEnded)`);
+    try {
+        const race = await window.getCurrentRace();
+        await changeMode("FINISH");
+        await changeStatus("FINISHED");
+        raceUpdated(race.id);
+    } catch (err) {
+        console.error(err);
+    }
+});
 
 export const raceUpdated = (raceId) => {
-  socket.emit("raceUpdated", raceId);
+    socket.emit("raceUpdated", raceId);
 };
 
-socket.on("currentTimer", (timer) => {
-  const timerElement = document.getElementById("timer");
-  const minutes = Math.floor(timer / 60);
-  const seconds = timer % 60;
-  timerElement.innerHTML = `${minutes.toString().padStart(2, "0")}:${seconds
-    .toString()
-    .padStart(2, "0")}`;
-  TIMER = timer;
-});
+export const startRace = () => {
+    socket.emit("startRace");
+};
 
-//socket.on("updateCurrentRace", (raceId) => {});
+export const endRace = () => {
+    socket.emit("raceEnded");
+};
