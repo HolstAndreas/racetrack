@@ -22,14 +22,20 @@ router.post("/", (req, res) => {
     logger.warning(
       `authentication.js | Access key or role is required: ${accessKey} on role ${role}`
     );
-    return res.status(400).json({ message: "Access key is required" });
+    setTimeout(() => {
+      return res.status(400).json({ message: `Access key is required` });
+    }, 500);
+    return;
   }
 
   if (VALID_ACCESS_KEYS[role + "_key"] !== accessKey) {
     logger.warning(
       `authentication.js | Invalid access key: ${accessKey} on role ${role}`
     );
-    return res.status(401).json({ message: "Invalid access key" });
+    setTimeout(() => {
+      return res.status(401).json({ message: `Invalid access key` });
+    }, 500);
+    return;
   }
 
   const payload = { role };
