@@ -1,3 +1,9 @@
+fieldset {
+  border: none;
+  padding: 0;
+  margin: 0;
+}
+
 .ctrlButtonDiv {
   display: flex;
   flex-wrap: wrap;
@@ -228,37 +234,31 @@ body {
   color: #ff5e5e;
 }
 
-#startBtn.disabled,
-#finishBtn.disabled,
-#safeButton.disabled,
-#hazardButton.disabled,
-#dangerButton.disabled,
-#finishButton.disabled {
+.ctrlButtonDiv:disabled #safeButton,
+.ctrlButtonDiv:disabled #hazardButton,
+.ctrlButtonDiv:disabled #dangerButton,
+.ctrlButtonDiv:disabled #finishButton {
+  background-image: none;
+  background-position: none;
+  background-size: none;
   border-color: var(--disabled-color);
   color: var(--disabled-color);
   cursor: not-allowed;
-  pointer-events: all !important;
+  pointer-events: none; /* Prevent interaction */
+  transform: none;
   background-color: transparent;
   border: 1px solid var(--button-color);
 }
 
-#startBtn.disabled:hover,
-#finishBtn.disabled:hover,
-#safeButton.disabled:hover,
-#hazardButton.disabled:hover,
-#dangerButton.disabled:hover,
-#finishButton.disabled:hover {
-  background-color: transparent;
+#startBtn:disabled,
+#finishBtn:disabled {
+  border-color: var(--disabled-color);
+  color: var(--disabled-color);
+  cursor: not-allowed;
+  pointer-events: none; /* Prevent interaction */
   transform: none;
-}
-
-#finishButton.disabled {
-  background-image: none;
-  background-position: none;
-  background-size: none;
-  font-weight: bold;
-  border-radius: 6px;
-  padding: 12px;
+  background-color: transparent;
+  border: 1px solid var(--button-color);
 }
 
 @keyframes skeleton-loading {

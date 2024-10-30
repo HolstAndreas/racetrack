@@ -181,55 +181,25 @@ const disableButtons = () => {
   console.log(race.status);
   const startRaceButton = document.getElementById("startBtn");
   const endRaceButton = document.getElementById("finishBtn");
-  const safeButton = document.getElementById("safeButton");
-  const hazardButton = document.getElementById("hazardButton");
-  const dangerButton = document.getElementById("dangerButton");
-  const finishButton = document.getElementById("finishButton");
 
-  if (race.status === "STARTED") {
-    safeButton.classList.remove("disabled");
-    hazardButton.classList.remove("disabled");
-    dangerButton.classList.remove("disabled");
-    finishButton.classList.remove("disabled");
-    if (!startRaceButton.classList.contains("disabled")) {
-      startRaceButton.classList.add("disabled");
-    }
+  const modeControl = document.getElementById("ctrlButtonDiv");
+
+  if (race.status === "STARTED" && race.mode !== "FINISH") {
+    modeControl.disabled = false;
+  } else {
+    modeControl.disabled = true;
   }
 
-  if (race.mode !== "FINISH") {
-    if (!endRaceButton.classList.contains("disabled")) {
-      endRaceButton.classList.add("disabled");
-    }
-  }
-  if (race.mode === "FINISH") {
-    endRaceButton.classList.remove("disabled");
-    if (!safeButton.classList.contains("disabled")) {
-      safeButton.classList.add("disabled");
-    }
-    if (!hazardButton.classList.contains("disabled")) {
-      hazardButton.classList.add("disabled");
-    }
-    if (!dangerButton.classList.contains("disabled")) {
-      dangerButton.classList.add("disabled");
-    }
-    if (!finishButton.classList.contains("disabled")) {
-      finishButton.classList.add("disabled");
-    }
+  if (race.status === "WAITING") {
+    startRaceButton.disabled = false;
+  } else {
+    startRaceButton.disabled = true;
   }
 
-  if (race.status !== "STARTED") {
-    if (!safeButton.classList.contains("disabled")) {
-      safeButton.classList.add("disabled");
-    }
-    if (!hazardButton.classList.contains("disabled")) {
-      hazardButton.classList.add("disabled");
-    }
-    if (!dangerButton.classList.contains("disabled")) {
-      dangerButton.classList.add("disabled");
-    }
-    if (!finishButton.classList.contains("disabled")) {
-      finishButton.classList.add("disabled");
-    }
+  if (race.mode === "FINISH" && race.status === "STARTED") {
+    endRaceButton.disabled = false;
+  } else {
+    endRaceButton.disabled = true;
   }
 };
 
