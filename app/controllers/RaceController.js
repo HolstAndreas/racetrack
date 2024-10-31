@@ -107,7 +107,7 @@ export const getRaceFlags = async (req, res, next) => {
     const { raceId } = req.params;
     logger.info(`RaceController.getRaceFlags(raceId:${raceId})`);
     try {
-        const result = await RaceService.findModeById(raceId); // Fetches a race mode by ID
+        const result = await RaceService.getMode();
         logger.success(
             "RaceController | Got result: \n" + JSON.stringify(result, null, 2)
         );
@@ -140,6 +140,33 @@ export const getRemainingTime = async (req, res, next) => {
                 "Remaining time retrieved successfully"
             ).send(res);
         }
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const getMode = async (req, res, next) => {
+    logger.info(`RaceController.getMode`);
+    try {
+        const mode = await RaceService.getMode();
+        return ApiResponse.success(
+            mode,
+            "Global mode retrieved successfully"
+        ).send(res);
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const setMode = async (req, res, next) => {
+    const { mode } = req.body;
+    logger.info(`RaceController.setMode(mode:${mode})`);
+    try {
+        const updatedMode = await RaceService.setMode(mode);
+        return ApiResponse.success(
+            updatedMode,
+            "Global mode updated successfully"
+        ).send(res);
     } catch (error) {
         next(error);
     }
@@ -254,14 +281,20 @@ export const updateRaceMode = async (req, res, next) => {
             throw ApiError.badRequest("Mode is required.");
         }
 
-        const result = await RaceService.updateRaceMode(raceId, mode);
-        if (result.error === "RACE_NOT_FOUND") {
-            throw ApiError.notFound("Race not found");
+        // Set global mode instead of race-specific mode
+        const result = await RaceService.setMode(mode);
+        if (result.error) {
+            switch (result.error) {
+                case "RACE_NOT_FOUND":
+                    throw ApiError.notFound("Race not found");
+                default:
+                    throw ApiError.internal("Internal server error.");
+            }
         }
 
         return ApiResponse.success(
             result,
-            "Race mode updated successfully"
+            "Global race mode updated successfully"
         ).send(res);
     } catch (err) {
         next(err);

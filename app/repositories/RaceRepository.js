@@ -74,8 +74,7 @@ export const getRaceById = async (id) => {
           r.id AS id,
           r.start_time,
           json_agg(json_build_object('id', d.id, 'name', d.name, 'car', d.car)) AS drivers,
-          r.status,
-          r.mode
+          r.status
       FROM 
           races r
       JOIN 
@@ -104,8 +103,7 @@ export const getCurrentRace = async () => {
                 r.start_time,
                 r.remaining_time,
                 json_agg(json_build_object('id', d.id, 'name', d.name, 'car', d.car)) AS drivers,
-                r.status,
-                r.mode
+                r.status
             FROM 
                 races r
             JOIN 
@@ -136,8 +134,7 @@ export const getUpcomingRaces = async () => {
         r.id AS id,
         r.start_time,
         json_agg(json_build_object('id', d.id, 'name', d.name, 'car', d.car)) AS drivers,
-        r.status,
-        r.mode
+        r.status
       FROM 
         races r
       JOIN 
@@ -151,19 +148,6 @@ export const getUpcomingRaces = async () => {
       ORDER BY 
         id ASC;`
         );
-        return res.rows;
-    } catch (err) {
-        logger.error(err);
-        throw err;
-    }
-};
-
-export const getRaceModeById = async (id) => {
-    logger.info(`RaceRepository.getRaceModeById(id:${id})`);
-    try {
-        const res = await pool.query("SELECT mode FROM races WHERE id = $1;", [
-            id,
-        ]);
         return res.rows;
     } catch (err) {
         logger.error(err);
@@ -207,8 +191,7 @@ export const getNextRace = async () => {
               r.id AS id,
               r.start_time,
               json_agg(json_build_object('id', d.id, 'name', d.name, 'car', d.car)) AS drivers,
-              r.status,
-              r.mode
+              r.status
           FROM 
               races r
           JOIN 
@@ -232,8 +215,7 @@ export const getNextRace = async () => {
               r.id AS id,
               r.start_time,
               json_agg(json_build_object('id', d.id, 'name', d.name, 'car', d.car)) AS drivers,
-              r.status,
-              r.mode
+              r.status
           FROM 
               races r
           JOIN 
@@ -298,19 +280,32 @@ export async function updateTimeStamp(id) {
     }
 }
 
-export async function updateRaceMode(raceId, mode) {
-    logger.info(`RaceRepository.setRaceMode(raceId: ${raceId}, mode: ${mode})`);
+export const getMode = async () => {
+    logger.info(`RaceRepository.getMode`);
     try {
         const res = await pool.query(
-            "UPDATE races SET mode = $1 WHERE id = $2 RETURNING *;",
-            [mode, raceId]
+            "SELECT mode FROM global_state WHERE id = 1;"
         );
-        return res.rows;
+        return res.rows[0].mode;
     } catch (err) {
         logger.error(err);
         throw err;
     }
-}
+};
+
+export const updateMode = async (mode) => {
+    logger.info(`RaceRepository.updateMode(mode:${mode})`);
+    try {
+        const res = await pool.query(
+            "UPDATE global_state SET mode = $1 WHERE id = 1 RETURNING *;",
+            [mode]
+        );
+        return res.rows[0];
+    } catch (err) {
+        logger.error(err);
+        throw err;
+    }
+};
 
 // '2023-10-01 12:00:00'
 export async function updateRaceStatus(raceId, status) {
@@ -402,10 +397,14 @@ export const postDriverToRace = async (raceId, drivers) => {
 export const resetRace = async (raceId) => {
     logger.debug(`reset race ${raceId})`);
     try {
+        await pool.query(
+            `UPDATE global_state 
+             SET mode = 'DANGER' 
+             WHERE id = 1;`
+        );
         const res = await pool.query(
             `UPDATE races 
        SET start_time = NULL, 
-           mode = 'DANGER', 
            status = 'WAITING' 
        WHERE id = $1 
        RETURNING *;`,

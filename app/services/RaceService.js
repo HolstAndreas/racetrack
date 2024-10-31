@@ -72,6 +72,30 @@ export const findDriversByCar = async (carId) => {
     return drivers;
 };
 
+export const getMode = async () => {
+    logger.info(`RaceService.getMode`);
+    try {
+        const mode = await RaceRepository.getMode();
+        return mode;
+    } catch (err) {
+        logger.error(err);
+        throw err;
+    }
+};
+
+export const setMode = async (mode) => {
+    logger.info(`RaceService.setMode(mode:${mode})`);
+    try {
+        const updatedMode = await RaceRepository.updateMode(mode);
+        // Emit the global mode update to all connected clients
+        io.emit("modeUpdate", updatedMode.mode);
+        return updatedMode;
+    } catch (err) {
+        logger.error(err);
+        throw err;
+    }
+};
+
 export const addRace = async (drivers) => {
     logger.info(`RaceService.addRace(drivers:${drivers.toString()})`);
 
@@ -107,7 +131,7 @@ export const startCurrentRace = async (raceId) => {
         return { error: "NO_DRIVERS_IN_RACE" };
     }
 
-    await RaceRepository.updateRaceMode(raceId, "SAFE");
+    await RaceService.setMode("SAFE");
     const result = await RaceRepository.updateTimeStamp(raceId);
     return result[0];
 };
@@ -131,6 +155,7 @@ export const updateRaceStatus = async (raceId, status) => {
         }
         if (status === "STARTED") {
             await RaceRepository.updateTimeStamp(raceId);
+            await setMode("SAFE");
         }
         const result = await RaceRepository.updateRaceStatus(raceId, status);
         const updatedRace = await findCurrentRace();
@@ -138,24 +163,6 @@ export const updateRaceStatus = async (raceId, status) => {
         return result[0];
     } catch (err) {
         logger.error(`RaceService.updateRaceStatus() | Error: ${err}`);
-        return { error: "UNKNOWN_ERROR" };
-    }
-};
-
-export const updateRaceMode = async (raceId, mode) => {
-    logger.info(`RaceService.updateRaceMode(raceId:${raceId}, mode:${mode})`);
-    try {
-        const raceExists = await RaceRepository.checkRaceExists(raceId);
-        if (!raceExists) {
-            return { error: "RACE_NOT_FOUND" };
-        }
-
-        const result = await RaceRepository.updateRaceMode(raceId, mode);
-        const updatedRace = await findCurrentRace();
-        io.emit("raceUpdate", updatedRace);
-        return result[0];
-    } catch (err) {
-        logger.error(`RaceService.updateRaceMode() | Error: ${err}`);
         return { error: "UNKNOWN_ERROR" };
     }
 };

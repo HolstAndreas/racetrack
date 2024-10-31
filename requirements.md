@@ -1,10 +1,10 @@
 [Tasks](#tasks)
 
 ✓ The server waits 500ms to respond if an incorrect access key is entered in the interface.
-The Front Desk, Race Control and Lap-line Tracker require access codes to function correctly.
-The interface re-prompts the user to enter a correct access key when an incorrect access key is inserted.
-The environment variable access codes match the accepted access codes entered into the interfaces.
-The server will not start unless environment variables are set for interface access keys.
+✓ The Front Desk, Race Control and Lap-line Tracker require access codes to function correctly.
+✓ The interface re-prompts the user to enter a correct access key when an incorrect access key is inserted.
+✓ The environment variable access codes match the accepted access codes entered into the interfaces.
+✓ The server will not start unless environment variables are set for interface access keys.
 
 When the race session is ended, the Next Race display shows an additional message to proceed to the paddock.
 
@@ -12,7 +12,7 @@ Race sessions disappear from the Front Desk interface once it is safe to start.
 
 When the race is started, the following happens:
 
-- The race mode is changed to "Safe"
+✓ - The race mode is changed to "Safe"
 - The leader board changes to the current race.
 - The Next Race screen switches to the subsequent race session.
 - The Safety Official sees race mode controls.
@@ -23,7 +23,7 @@ The leaderboard shows the flag color for the current race mode.
 The leaderboard is ordered by fastest lap times
 The leaderboard shows the fastest lap time for each car.
 The leaderboard shows the current lap for each car.
-The first lap starts when the car crosses the leader board for the first time.
+[?] The first lap starts when the car crosses the leader board for the first time.
 When the lap button is pressed for a car, the leader board is updated.
 
 If there are no upcoming races, no sessions are displayed.
@@ -35,12 +35,13 @@ The receptionist can delete an upcoming race.
 The receptionist can assign drivers to specific cars.
 
 The Race Control interface is designed for a mobile interface.
-When the Safety Official ends the race session, the next session appears on their interface.
-The safety official has one active button, which starts the race when pressed.
+✓ The safety official has one active button, which starts the race when pressed.
 ✓ When the Safety Official selects "Hazard", the Flag screen is yellow. 
 ✓ When the Safety Official selects "Finish", the Flag screen is chequered. 
 ✓ When the Safety Official selects "Danger", the Flag screen is red. 
 ✓ When the Safety Official selects "Safe", the Flag screen is green. 
+✓ When the race mode changes to "Finish", `the race controls disappear`, and a button appears to end the race session.
+✓ When the Safety Official ends the race session, the next session appears on their interface.
 If there is no upcoming race after the last session is ended, the Safety Official sees no upcoming races message.
 
 The lap button for each car has a large tappable area.
@@ -57,7 +58,12 @@ For example, when the race mode is changed by the Safety Official, the flag disp
 Communication between interfaces utilises messages sent via Socket.IO.
 Communication between the interfaces certainly does not use a polling convention.
 
+The interfaces are reachable by devices on other networks (not just localhost).
+The interfaces must be reachable by devices on other networks. For example, the interface must be reachable from a mobile phone browser, while the server and interfaces are served from a computer.
+
 The Next Race display shows the drivers names, and the cars they're assigned to.
+The Next Race display switches to the subsequent race, once the current race is safe to start.
+The upcoming race session, is displayed on the Next Race display.
 
 The README.md file at the root of the project describes how to launch the project.
 The README.md file at the root of the project has a user guide, describing the core functionality of the user interfaces
@@ -67,8 +73,8 @@ When the race session is ended, the race mode changes to "Danger".
 
 The buttons disappear or are visibly disabled between races.
 
-The server is written in Node.JS
-The server can be started with npm start
+✓ The server is written in Node.JS
+✓ The server can be started with npm start
 
 The interfaces are reachable via their correct paths.
 | Interface | Persona | Route |
@@ -81,14 +87,9 @@ The interfaces are reachable via their correct paths.
 | Race Countdown | Race Driver | `race-countdown` |
 | Race Flag | Race Driver | `race-flags` |
 
-The interfaces are reachable by devices on other networks (not just localhost).
-The interfaces must be reachable by devices on other networks. For example, the interface must be reachable from a mobile phone browser, while the server and interfaces are served from a computer.
 
-When the race mode changes to "Finish", `the race controls disappear`, and a button appears to end the race session.
 
-The upcoming race session, is displayed on the Next Race display.
 
-The Next Race display switches to the subsequent race, once the current race is safe to start.
 
 The system state is persisted.
 When the server is restarted, the system resumes with the exact same. I.e. the race counter continues counting down, and upcoming races are not lost.
