@@ -15,7 +15,7 @@ When the race is started, the following happens:
 ✓ - The race mode is changed to "Safe"
 - The leader board changes to the current race.
 - The Next Race screen switches to the subsequent race session.
-- The Safety Official sees race mode controls.
+✓ - The Safety Official sees race mode controls.
 
 The leaderboard shows the remaining time on the timer.
 The leaderboard shows the drivers name and car number.
@@ -49,7 +49,7 @@ The Lap-line Tracker is designed for a tablet, featuring large tappable buttons 
 It should work in Landscape or Portrait
 When the race session starts, the Lap-Line Observer sees a button for each car.
 
-The countdown timer is 1 minute in dev mode (instead of 10 minutes).
+✓ The countdown timer is 1 minute in dev mode (instead of 10 minutes).
 The server can be started in developer mode with npm run dev.
 The countdown timer runs for 1 minute instead on 10 minutes.
 
@@ -76,7 +76,7 @@ It is not possible to have two drivers with the same name.
 ✓ The server is written in Node.JS
 ✓ The server can be started with npm start
 
-The interfaces are reachable via their correct paths.
+✓ The interfaces are reachable via their correct paths.
 | Interface | Persona | Route |
 | ---------------- | ----------------- | ------------------- |
 | Front Desk | Receptionist | `/front-desk` |
