@@ -405,7 +405,8 @@ export const resetRace = async (raceId) => {
         const res = await pool.query(
             `UPDATE races 
        SET start_time = NULL, 
-           status = 'WAITING' 
+           status = 'WAITING',
+           remaining_time = NULL
        WHERE id = $1 
        RETURNING *;`,
             [raceId]

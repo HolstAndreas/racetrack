@@ -133,6 +133,15 @@ const startRaceTimer = async (raceId) => {
 
     timerInterval = setInterval(async () => {
         if (globalTimer > 0) {
+            // THIS IS A TEST BLOCK FOR RESET RACE BTN TO REMOVE LATER
+            const TESTrace = await RaceService.findCurrentRace();
+            if (typeof TESTrace[0].remaining_time === "undefined") {
+                clearInterval(timerInterval);
+                io.emit("timerUpdate", parseInt(process.env.TIMER));
+                globalTimer = parseInt(process.env.TIMER);
+                return;
+            }
+
             globalTimer--;
             // update remaining time in database
             await RaceService.updateRemainingTime(race[0].id, globalTimer);
