@@ -115,9 +115,7 @@ export const disableButtons = () => {
     } else {
         modeControl.disabled = true;
     }
-    console.log(race.status);
-    console.log(race.mode);
-    console.log(race);
+
     if (race.status === "WAITING") {
         startRaceButton.disabled = false;
     } else {

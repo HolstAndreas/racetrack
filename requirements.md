@@ -1,6 +1,6 @@
 [Tasks](#tasks)
 
-The server waits 500ms to respond if an incorrect access key is entered in the interface.
+✓ The server waits 500ms to respond if an incorrect access key is entered in the interface.
 The Front Desk, Race Control and Lap-line Tracker require access codes to function correctly.
 The interface re-prompts the user to enter a correct access key when an incorrect access key is inserted.
 The environment variable access codes match the accepted access codes entered into the interfaces.
@@ -36,11 +36,11 @@ The receptionist can assign drivers to specific cars.
 
 The Race Control interface is designed for a mobile interface.
 When the Safety Official ends the race session, the next session appears on their interface.
-When the Safety Official selects "Hazard", the Flag screen is yellow.
 The safety official has one active button, which starts the race when pressed.
-When the Safety Official selects "Finish", the Flag screen is chequered.
-When the Safety Official selects "Danger", the Flag screen is red.
-When the Safety Official selects "Safe", the Flag screen is green.
+✓ When the Safety Official selects "Hazard", the Flag screen is yellow. 
+✓ When the Safety Official selects "Finish", the Flag screen is chequered. 
+✓ When the Safety Official selects "Danger", the Flag screen is red. 
+✓ When the Safety Official selects "Safe", the Flag screen is green. 
 If there is no upcoming race after the last session is ended, the Safety Official sees no upcoming races message.
 
 The lap button for each car has a large tappable area.

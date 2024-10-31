@@ -3,7 +3,6 @@ import * as RaceService from "../services/RaceService.js";
 import logger from "../utils/logger.js";
 import ApiResponse from "../utils/ApiResponse.js";
 import ApiError from "../utils/ApiError.js";
-import { io } from "../../app.js";
 
 export const getAll = async (req, res, next) => {
     logger.info("RaceController.getAll()");
@@ -167,8 +166,6 @@ export const postDriverToRace = async (req, res, next) => {
                     throw ApiError.internal("Internal server error.");
             }
         } else {
-            const updatedRace = await RaceService.findCurrentRace();
-            io.emit("raceUpdate", updatedRace);
             return ApiResponse.success(
                 result,
                 "Driver added to race successfully"
@@ -234,8 +231,7 @@ export const updateRaceStatus = async (req, res, next) => {
                     throw ApiError.internal("Internal server error.");
             }
         }
-        const updatedRace = await RaceService.findCurrentRace();
-        io.emit("raceUpdate", updatedRace);
+
         return ApiResponse.success(
             result,
             "Race status updated successfully"
@@ -262,8 +258,7 @@ export const updateRaceMode = async (req, res, next) => {
         if (result.error === "RACE_NOT_FOUND") {
             throw ApiError.notFound("Race not found");
         }
-        const updatedRace = await RaceService.findCurrentRace();
-        io.emit("raceUpdate", updatedRace);
+
         return ApiResponse.success(
             result,
             "Race mode updated successfully"
@@ -329,8 +324,7 @@ export const deleteDriverFromRace = async (req, res, next) => {
                     throw ApiError.internal("Internal server error.");
             }
         }
-        const updatedRace = await RaceService.findCurrentRace();
-        io.emit("raceUpdate", updatedRace);
+
         return ApiResponse.noContent(
             result,
             "Driver removed from race successfully"
@@ -369,8 +363,7 @@ export const resetRace = async (req, res, next) => {
                     throw ApiError.internal("Internal server error.");
             }
         }
-        const updatedRace = await RaceService.findCurrentRace();
-        io.emit("raceUpdate", updatedRace);
+
         return ApiResponse.noContent(result, "Race reset successfully").send(
             res
         );

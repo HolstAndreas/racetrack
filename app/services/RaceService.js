@@ -1,15 +1,16 @@
 import Race from "../entities/Race.js";
 import * as RaceRepository from "../repositories/RaceRepository.js";
 import logger from "../utils/logger.js";
+import { io } from "../../app.js";
 
 export const findAll = async () => {
-    logger.info(`RaceService.findAll()`);
+    logger.info(`findAll()`);
     const races = await RaceRepository.findAll();
     return races;
 };
 
 export const findById = async (id) => {
-    logger.info(`RaceService.findById(id:${id})`);
+    logger.info(`findById(id:${id})`);
     const race = await RaceRepository.getRaceById(id);
     return race;
 };
@@ -21,25 +22,25 @@ export const getLeaderBoard = async (id) => {
 };
 
 export const findModeById = async (id) => {
-    logger.info(`RaceService.findModeById(id:${id})`);
+    logger.info(`findModeById(id:${id})`);
     const mode = await RaceRepository.getRaceModeById(id);
     return mode;
 };
 
 export const findRemainingTimeById = async (id) => {
-    logger.info(`RaceService.findRemainingTimeById(id:${id})`);
+    logger.info(`findRemainingTimeById(id:${id})`);
     const remainingTime = await RaceRepository.getRemainingTimeById(id);
     return remainingTime;
 };
 
 export const findUpcomingRaces = async () => {
-    logger.info(`RaceService.findUpcomingRaces()`);
+    logger.info(`findUpcomingRaces()`);
     const upcomingRaces = await RaceRepository.getUpcomingRaces();
     return upcomingRaces;
 };
 
 export const findCurrentRace = async () => {
-    logger.info(`RaceService.findCurrentRace()`);
+    logger.info(`findCurrentRace()`);
     const lastRaceStarted = await RaceRepository.getCurrentRace();
 
     if (lastRaceStarted.length > 1) {
@@ -54,19 +55,19 @@ export const findCurrentRace = async () => {
 };
 
 export const findNextRace = async () => {
-    logger.info(`RaceService.findNextRace()`);
+    logger.info(`findNextRace()`);
     const nextRace = await RaceRepository.getNextRace();
     return nextRace;
 };
 
 export const findDrivers = async () => {
-    logger.info("RaceService.findDrivers()");
+    logger.info("findDrivers()");
     const drivers = await RaceRepository.getDrivers();
     return drivers;
 };
 
 export const findDriversByCar = async (carId) => {
-    logger.info("RaceService.findDriversByCar()");
+    logger.info("findDriversByCar()");
     const drivers = await RaceRepository.getDriversByCar(carId);
     return drivers;
 };
@@ -128,8 +129,12 @@ export const updateRaceStatus = async (raceId, status) => {
                 return { error: "DRIVER_UNASSIGNED_CAR" };
             }
         }
-        await RaceRepository.updateTimeStamp(raceId);
+        if (status === "STARTED") {
+            await RaceRepository.updateTimeStamp(raceId);
+        }
         const result = await RaceRepository.updateRaceStatus(raceId, status);
+        const updatedRace = await findCurrentRace();
+        io.emit("raceUpdate", updatedRace);
         return result[0];
     } catch (err) {
         logger.error(`RaceService.updateRaceStatus() | Error: ${err}`);
@@ -146,10 +151,28 @@ export const updateRaceMode = async (raceId, mode) => {
         }
 
         const result = await RaceRepository.updateRaceMode(raceId, mode);
+        const updatedRace = await findCurrentRace();
+        io.emit("raceUpdate", updatedRace);
         return result[0];
     } catch (err) {
         logger.error(`RaceService.updateRaceMode() | Error: ${err}`);
         return { error: "UNKNOWN_ERROR" };
+    }
+};
+
+export const updateRemainingTime = async (raceId, remainingTime) => {
+    logger.info(
+        `RaceService.updateRemainingTime(raceId:${raceId}, remainingTime:${remainingTime})`
+    );
+    try {
+        const result = await RaceRepository.updateRemainingTime(
+            raceId,
+            remainingTime
+        );
+        return result;
+    } catch (err) {
+        logger.error(err);
+        throw err;
     }
 };
 
@@ -206,7 +229,8 @@ export const addDriverToRace = async (raceId, driverId) => {
             raceId,
             drivers[0].drivers
         );
-
+        const updatedRace = await findCurrentRace();
+        io.emit("raceUpdate", updatedRace);
         // Return new drivers
         return result[0];
     } catch (err) {
@@ -268,7 +292,8 @@ export const removeDriverFromRace = async (raceId, driverId) => {
             raceId,
             newDrivers
         );
-
+        const updatedRace = await findCurrentRace();
+        io.emit("raceUpdate", updatedRace);
         // Return new drivers
         return result[0];
     } catch (err) {
@@ -291,6 +316,8 @@ export const deleteRace = async (raceId) => {
 export const resetRace = async (raceId) => {
     try {
         const result = await RaceRepository.resetRace(raceId);
+        const updatedRace = await findCurrentRace();
+        io.emit("raceUpdate", updatedRace);
         return result;
     } catch (error) {
         logger.error(`reset race | Error: ${error}`);
