@@ -171,9 +171,9 @@
   <body>
     <div class="race-info-parent">
       <div class="race-info">
-        <span class="title">NEXT RACE DRIVERS</span>
-        <div id="drivers-in-current">
-          <div id="driver-row-0" class="driver-row">
+        <span class="title" id="raceId">NEXT RACE: </span>
+        <div id="driverTable">
+          <!-- <div id="driver-row-0" class="driver-row">
             <div class="skeleton"></div>
           </div>
           <div id="driver-row-1" class="driver-row">
@@ -198,11 +198,21 @@
 
           <div id="driver-row-7" class="driver-row">
             <div class="skeleton"></div>
-          </div>
+          </div> -->
         </div>
       </div>
     </div>
-    <script>
+    <script type="module">
+      import raceStore from "./js/store/race-store.js";
+
+      document.addEventListener("DOMContentLoaded", async () => {
+        try {
+          await updateNextRaceData(0);
+        } catch (error) {
+          alert(error);
+        }
+      });
+
       window.loadNextRace = async () => {
         await loadCurrentRace();
       };
@@ -226,6 +236,7 @@
           console.error(`Error fetching driver ${id}:`, error);
         }
       };
+
       // const wait = (seconds) => {
       // return new Promise((resolve) => setTimeout(resolve, seconds * 1000));
       // };
@@ -283,14 +294,6 @@
           ).innerHTML = `<div>${error.message}</div>`;
         }
       };
-
-      document.addEventListener("DOMContentLoaded", async () => {
-        try {
-          await loadCurrentRace();
-        } catch (error) {
-          alert(error);
-        }
-      });
     </script>
   </body>
 </html>

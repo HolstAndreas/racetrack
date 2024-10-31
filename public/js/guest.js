@@ -97,13 +97,14 @@ const updateLeaderBoard = async (data) => {
       }</span></td>
     `;
     } else {
-      row.innerHTML = `
-      <td><span id="driver-${index + 1}-position"></span></td>
-      <td><span id="driver-${index + 1}-car"></span></td>
-      <td><span id="driver-${index + 1}-driver"></span></td>
-      <td><span id="driver-${index + 1}-lap-number"></span></td>
-      <td><span id="driver-${index + 1}-fastest-lap-time"></span></td>
-    `;
+      //   row.innerHTML = `
+      //   <td><span id="driver-${index + 1}-position"></span></td>
+      //   <td><span id="driver-${index + 1}-car"></span></td>
+      //   <td><span id="driver-${index + 1}-driver"></span></td>
+      //   <td><span id="driver-${index + 1}-lap-number"></span></td>
+      //   <td><span id="driver-${index + 1}-fastest-lap-time"></span></td>
+      // `;
+      row.innerHTML = "";
     }
   }
 
@@ -152,6 +153,154 @@ const updateLeaderBoard = async (data) => {
   // });
 };
 
+const generateTestLeaderboard = () => {
+  const leaderboard = document.getElementById("leaderboard");
+  if (!leaderboard) return;
+
+  const testData = Array.from({ length: 8 }, (_, i) => ({
+    driver_id: i + 1,
+    lap_time: 75000 + Math.random() * 5000, // Random time between 75-80 seconds
+    lap_number: Math.floor(Math.random() * 20) + 1, // Random lap 1-20
+    driver: {
+      name: `Test Driver ${i + 1}`,
+      car: `Car #${(i + 1) * 11}`,
+    },
+  }));
+
+  const formatLapTime = (milliseconds) => {
+    const minutes = Math.floor(Math.floor(milliseconds / 1000) / 60);
+    const seconds = Math.floor(milliseconds / 1000) % 60;
+    const ms = Math.floor(milliseconds % 1000);
+
+    return minutes > 0
+      ? `${minutes}:${seconds.toString().padStart(2, "0")}.${ms
+          .toString()
+          .padStart(3, "0")}`
+      : `${seconds.toString().padStart(2, "0")}.${ms
+          .toString()
+          .padStart(3, "0")}`;
+  };
+
+  const tbody = leaderboard.querySelector("tbody");
+  testData.forEach((driver, index) => {
+    const row = document.getElementById(`driver-${index + 1}`);
+    if (row) {
+      const displayTime = formatLapTime(driver.lap_time);
+      row.innerHTML = `
+        <td><span id="driver-${index + 1}-position">${index + 1}</span></td>
+        <td><span id="driver-${index + 1}-car">${driver.driver.car}</span></td>
+        <td><span id="driver-${index + 1}-driver">${
+        driver.driver.name
+      }</span></td>
+        <td><span id="driver-${index + 1}-lap-number">${
+        driver.lap_number
+      }</span></td>
+        <td><span id="driver-${
+          index + 1
+        }-fastest-lap-time">${displayTime}</span></td>
+      `;
+    }
+  });
+};
+
+const simulatePositionChanges = () => {
+  const tbody = document.querySelector("#leaderboard tbody");
+  const rows = Array.from(tbody.children);
+
+  setInterval(() => {
+    const activeRows = rows.filter((row) => row.innerHTML.trim() !== "");
+    if (activeRows.length < 2) return;
+
+    const pos1 = Math.floor(Math.random() * activeRows.length);
+    let pos2 = Math.floor(Math.random() * activeRows.length);
+    while (pos2 === pos1) {
+      pos2 = Math.floor(Math.random() * activeRows.length);
+    }
+
+    const row1 = activeRows[pos1];
+    const row2 = activeRows[pos2];
+
+    const rect1 = row1.getBoundingClientRect();
+    const rect2 = row2.getBoundingClientRect();
+    const distance = rect2.top - rect1.top;
+
+    // Add blur effect before animation starts
+    row1.classList.add("position-changing");
+    row2.classList.add("position-changing");
+
+    // Set initial positions
+    row1.style.transform = `translateY(0)`;
+    row2.style.transform = `translateY(0)`;
+    row1.offsetHeight;
+
+    // Start movement animation
+    row1.style.transform = `translateY(${distance}px)`;
+    row2.style.transform = `translateY(${-distance}px)`;
+
+    // Calculate new positions
+    const newPos1 = Array.from(tbody.children).indexOf(row2) + 1;
+    const newPos2 = Array.from(tbody.children).indexOf(row1) + 1;
+
+    // Update IDs for styling
+    row1.id = `driver-${newPos1}`;
+    row2.id = `driver-${newPos2}`;
+
+    // Update content while blurred (halfway through animation)
+    setTimeout(() => {
+      // Update position numbers and element IDs
+      const elements1 = row1.querySelectorAll('[id*="driver-"]');
+      const elements2 = row2.querySelectorAll('[id*="driver-"]');
+
+      elements1.forEach((el) => {
+        const baseName = el.id.split("-").slice(-1)[0];
+        el.id = `driver-${newPos1}-${baseName}`;
+        if (baseName === "position") {
+          el.textContent = newPos1;
+        }
+      });
+
+      elements2.forEach((el) => {
+        const baseName = el.id.split("-").slice(-1)[0];
+        el.id = `driver-${newPos2}-${baseName}`;
+        if (baseName === "position") {
+          el.textContent = newPos2;
+        }
+      });
+    }, 250); // Update halfway through animation
+
+    // After animation completes
+    setTimeout(() => {
+      // Reset transforms
+      row1.style.transform = "";
+      row2.style.transform = "";
+
+      // Remove blur effect
+      row1.classList.remove("position-changing");
+      row2.classList.remove("position-changing");
+
+      // Swap DOM elements
+      const nextRow2 = row2.nextElementSibling;
+      tbody.insertBefore(row2, row1);
+      tbody.insertBefore(row1, nextRow2);
+
+      // Final position update for all rows
+      Array.from(tbody.children).forEach((row, index) => {
+        const position = index + 1;
+        row.id = `driver-${position}`;
+
+        const elements = row.querySelectorAll('[id*="driver-"]');
+        elements.forEach((el) => {
+          const baseName = el.id.split("-").slice(-1)[0];
+          el.id = `driver-${position}-${baseName}`;
+          if (baseName === "position") {
+            el.textContent = position;
+          }
+        });
+      });
+    }, 500);
+  }, 3000);
+};
+
 window.loadRaceInfo = async () => {
   const race = await getCurrentRace();
   if (race) {
@@ -160,6 +309,8 @@ window.loadRaceInfo = async () => {
     document.getElementById("raceStatus").textContent = `${race.status}`;
   }
   await getLeaderboardById(race.id);
+  simulatePositionChanges();
+  // generateTestLeaderboard();
 };
 
 window.getLeaderboardById = (raceId) => getLeaderboardById(raceId);

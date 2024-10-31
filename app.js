@@ -7,36 +7,36 @@ import { fileURLToPath } from "url"; // converts a file URL into an actual filep
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import {
-    getAll,
-    getRaceById,
-    getLeaderboard,
-    getNextRace,
-    getRaceFlags,
-    getRemainingTime,
-    postDriverToRace,
-    postRace,
-    deleteDriverFromRace,
-    getUpcomingRaces,
-    getCurrentRace,
-    deleteRace,
-    startCurrentRace,
-    updateRaceMode,
-    updateRaceStatus,
-    resetRace,
+  getAll,
+  getRaceById,
+  getLeaderboard,
+  getNextRace,
+  getRaceFlags,
+  getRemainingTime,
+  postDriverToRace,
+  postRace,
+  deleteDriverFromRace,
+  getUpcomingRaces,
+  getCurrentRace,
+  deleteRace,
+  startCurrentRace,
+  updateRaceMode,
+  updateRaceStatus,
+  resetRace,
 } from "./app/controllers/RaceController.js"; // import all methods from RaceController.js
 import {
-    getAllDrivers,
-    getDriverById,
-    postDriver,
-    patchDriverById,
-    deleteDriverById,
-    assignCarToDriver,
+  getAllDrivers,
+  getDriverById,
+  postDriver,
+  patchDriverById,
+  deleteDriverById,
+  assignCarToDriver,
 } from "./app/controllers/DriverController.js";
 import {
-    postLapTimes,
-    getLapTimesByRace,
-    getLapTimesByDriver,
-    getLapTimesByRaceAndDriver,
+  postLapTimes,
+  getLapTimesByRace,
+  getLapTimesByDriver,
+  getLapTimesByRaceAndDriver,
 } from "./app/controllers/LapTimeController.js";
 import * as LapTimeService from "./app/services/LapTimeService.js";
 import { validateIsNumber } from "./app/middleware/ValidateIsNumber.js";
@@ -48,18 +48,18 @@ import * as RaceService from "./app/services/RaceService.js";
 dotenv.config();
 
 const requiredKeys = [
-    "JWT_SECRET",
-    "receptionist_key",
-    "observer_key",
-    "safety_key",
+  "JWT_SECRET",
+  "receptionist_key",
+  "observer_key",
+  "safety_key",
 ];
 
 function checkEnvVariables() {
-    const unsetEnv = requiredKeys.filter((key) => !process.env[key]);
-    if (unsetEnv.length > 0) {
-        console.error("Missing access key");
-        process.exit(1);
-    }
+  const unsetEnv = requiredKeys.filter((key) => !process.env[key]);
+  if (unsetEnv.length > 0) {
+    console.error("Missing access key");
+    process.exit(1);
+  }
 }
 
 checkEnvVariables();
@@ -77,83 +77,86 @@ let globalTimer = null;
 let timerInterval = null;
 
 io.on("connection", (socket) => {
-    logger.debug(`User connected: ${socket.id}`);
+  logger.debug(`User connected: ${socket.id}`);
 
-    // Send initial timer value
-    io.emit("timerUpdate", globalTimer || process.env.TIMER);
+  // Send initial timer value
+  io.emit("timerUpdate", globalTimer || process.env.TIMER);
 
-    const updateInitialRace = async () => {
-        const race = await RaceService.findCurrentRace();
-        io.emit("raceUpdate", race);
-    };
-    updateInitialRace();
+  const updateInitialRace = async () => {
+    const race = await RaceService.findCurrentRace();
+    io.emit("raceUpdate", race);
 
-    socket.on("connectToRoom", (roomName) => {
-        socket.join(roomName);
-        logger.debug(`${socket.id} joined room: ${roomName}`);
-        io.to(roomName).emit("newUserJoined", socket.id);
-    });
+    const upcomingRaces = await RaceService.findUpcomingRaces();
+    io.emit("upcomingRacesUpdate", upcomingRaces);
+  };
+  updateInitialRace();
 
-    socket.on("startRace", (raceData) => {
-        // Clear any existing timer
-        if (timerInterval) clearInterval(timerInterval);
+  socket.on("connectToRoom", (roomName) => {
+    socket.join(roomName);
+    logger.debug(`${socket.id} joined room: ${roomName}`);
+    io.to(roomName).emit("newUserJoined", socket.id);
+  });
 
-        globalTimer = parseInt(process.env.TIMER);
+  socket.on("startRace", (raceData) => {
+    // Clear any existing timer
+    if (timerInterval) clearInterval(timerInterval);
 
-        timerInterval = setInterval(async () => {
-            if (globalTimer > 0) {
-                globalTimer--;
-                io.emit("timerUpdate", globalTimer);
-            } else {
-                clearInterval(timerInterval);
-                io.emit("timerUpdate", 0);
-                await RaceService.updateRaceStatus(race.id, "FINISHED");
-                await RaceService.updateRaceMode(race.id, "FINISH");
-                io.emit("raceEnded");
-            }
-        }, 1000);
-    });
+    globalTimer = parseInt(process.env.TIMER);
 
-    socket.on("raceUpdated", async (raceId) => {
-        // Get updated currentrace data
-        const updatedRace = await RaceService.findById(raceId);
-        io.emit("raceUpdate", updatedRace);
-    });
+    timerInterval = setInterval(async () => {
+      if (globalTimer > 0) {
+        globalTimer--;
+        io.emit("timerUpdate", globalTimer);
+      } else {
+        clearInterval(timerInterval);
+        io.emit("timerUpdate", 0);
+        await RaceService.updateRaceStatus(race.id, "FINISHED");
+        await RaceService.updateRaceMode(race.id, "FINISH");
+        io.emit("raceEnded");
+      }
+    }, 1000);
+  });
 
-    socket.on("registerLapTime", async ({ driverId, currentTimestamp }) => {
-        await LapTimeService.postLapTime2(driverId, currentTimestamp);
-        // logic here
-        // update time -> emit new time added (leaderboard updates)
-    });
+  socket.on("raceUpdated", async (raceId) => {
+    // Get updated currentrace data
+    const updatedRace = await RaceService.findById(raceId);
+    io.emit("raceUpdate", updatedRace);
+  });
 
-    // socket.on("changeMode", async (data) => {
-    //   logger.info(`Socket mode in service: ${data.mode}`);
-    //   try {
-    //     await RaceService.updateRaceMode(data.raceId, data.mode);
-    //     io.emit("updatedRaceMode", data.mode);
-    //   } catch (err) {
-    //     logger.error(`Error updating race mode: ${err}`);
-    //   }
-    // });
+  socket.on("registerLapTime", async ({ driverId, currentTimestamp }) => {
+    await LapTimeService.postLapTime2(driverId, currentTimestamp);
+    // logic here
+    // update time -> emit new time added (leaderboard updates)
+  });
 
-    socket.on("raceStarted", (raceId) => {
-        logger.info(`Socket got the info that race started.`);
-        io.emit("newRaceStarted", raceId);
-    });
+  // socket.on("changeMode", async (data) => {
+  //   logger.info(`Socket mode in service: ${data.mode}`);
+  //   try {
+  //     await RaceService.updateRaceMode(data.raceId, data.mode);
+  //     io.emit("updatedRaceMode", data.mode);
+  //   } catch (err) {
+  //     logger.error(`Error updating race mode: ${err}`);
+  //   }
+  // });
 
-    socket.on("changeStatus", async (data) => {
-        logger.info(`Socket status in service: ${data.status}`);
-        try {
-            await RaceService.updateRaceStatus(data.raceId, data.status);
-            if (data.status === "started") {
-                io.emit("updatedRaceStatus", data.status);
-                io.emit("raceStarted", data.raceId);
-                await RaceService.updateRaceMode(data.raceId, "safe");
-            }
-        } catch (err) {
-            logger.error(`Error updating race status: ${err}`);
-        }
-    });
+  socket.on("raceStarted", (raceId) => {
+    logger.info(`Socket got the info that race started.`);
+    io.emit("newRaceStarted", raceId);
+  });
+
+  socket.on("changeStatus", async (data) => {
+    logger.info(`Socket status in service: ${data.status}`);
+    try {
+      await RaceService.updateRaceStatus(data.raceId, data.status);
+      if (data.status === "started") {
+        io.emit("updatedRaceStatus", data.status);
+        io.emit("raceStarted", data.raceId);
+        await RaceService.updateRaceMode(data.raceId, "safe");
+      }
+    } catch (err) {
+      logger.error(`Error updating race status: ${err}`);
+    }
+  });
 });
 
 // Middleware Configuration:
@@ -168,7 +171,7 @@ app.use(express.static("public"));
 
 // Define route for /favicon.png
 app.get("/favicon.png", (req, res) => {
-    res.sendFile(path.join(__dirname, "public", "favicon.png"));
+  res.sendFile(path.join(__dirname, "public", "favicon.png"));
 });
 
 // Setting View Engine and Views Directory:
@@ -186,9 +189,9 @@ app.get("/api/leader-board/:raceId", validateIsNumber, getLeaderboard); // get l
 app.get("/api/next-race", getNextRace); // get next race | DONE
 app.get("/api/race-flags/:raceId", validateIsNumber, getRaceFlags); // get race mode | DONE
 app.get(
-    "/api/race-sessions/:raceId/remainingtime",
-    validateIsNumber,
-    getRemainingTime
+  "/api/race-sessions/:raceId/remainingtime",
+  validateIsNumber,
+  getRemainingTime
 ); // get race remaining time | DONE
 app.get("/api/upcomingraces", getUpcomingRaces); // create a list of races, current + upcoming
 app.get("/api/currentrace", getCurrentRace);
@@ -200,8 +203,8 @@ app.post("/api/race-sessions", postRace); // add race | Done
 app.post("/api/drivers", postDriver); // add driver | Done
 
 app.delete(
-    "/api/race-sessions/:raceId/drivers/:driverId",
-    deleteDriverFromRace
+  "/api/race-sessions/:raceId/drivers/:driverId",
+  deleteDriverFromRace
 ); // delete driver from race | Done
 // app.patch("/api/raceId/drivers/:driverId", patchRaceById); // edit driver from race
 app.delete("/api/race-sessions/:raceId", validateIsNumber, deleteRace); // delete race
@@ -214,8 +217,8 @@ app.post("/api/laptimes", postLapTimes); // Create new lap time | Done
 app.get("/api/laptimes/race/:raceId", getLapTimesByRace); // Get all lap times for a race | Done
 app.get("/api/laptimes/driver/:driverId/", getLapTimesByDriver); // Get all lap times for a driver in a specific race
 app.get(
-    "/api/laptimes/race/:raceId/driver/:driverId",
-    getLapTimesByRaceAndDriver
+  "/api/laptimes/race/:raceId/driver/:driverId",
+  getLapTimesByRaceAndDriver
 ); // Get all lap times for a driver in a specific race,
 
 app.patch("/api/drivers/:driverId", patchDriverById);
@@ -227,49 +230,49 @@ app.delete("/api/drivers/:driverId", deleteDriverById);
 app.get("/api/reset-race/:raceId", resetRace);
 
 app.get("/", function (req, res) {
-    res.sendFile(path.join(__dirname, "public/index.html"));
+  res.sendFile(path.join(__dirname, "public/index.html"));
 });
 
 app.use("/authenticate", authRouter);
 
 // Login route
 app.get("/login", (req, res) => {
-    res.sendFile(path.join(__dirname, "public/login.html"));
+  res.sendFile(path.join(__dirname, "public/login.html"));
 });
 
 // Logout route
 app.get("/logout", (req, res) => {
-    res.clearCookie("token");
-    res.sendFile(path.join(__dirname, "public/goodbye.html"));
+  res.clearCookie("token");
+  res.sendFile(path.join(__dirname, "public/goodbye.html"));
 });
 
 // Protected routes
 app.get("/front-desk", authMiddleware("receptionist"), function (req, res) {
-    res.sendFile(path.join(__dirname, "public/front-desk.html"));
+  res.sendFile(path.join(__dirname, "public/front-desk.html"));
 });
 
 app.get("/lap-line-tracker", authMiddleware("observer"), (req, res) => {
-    res.sendFile(path.join(__dirname, "public/lap-line-tracker.html"));
+  res.sendFile(path.join(__dirname, "public/lap-line-tracker.html"));
 });
 
 app.get("/race-control", authMiddleware("safety"), (req, res) => {
-    res.sendFile(path.join(__dirname, "public/race-control.html"));
+  res.sendFile(path.join(__dirname, "public/race-control.html"));
 });
 
 // guest persona
 app.get("/leader-board", (req, res) => {
-    res.sendFile(path.join(__dirname, "public/leader-board.html"));
+  res.sendFile(path.join(__dirname, "public/leader-board.html"));
 });
 
 // driver persona
 app.get("/race-flags", (req, res) => {
-    res.sendFile(path.join(__dirname, "public/race-flags.html"));
+  res.sendFile(path.join(__dirname, "public/race-flags.html"));
 });
 app.get("/next-race", (req, res) => {
-    res.sendFile(path.join(__dirname, "public/next-race.html"));
+  res.sendFile(path.join(__dirname, "public/next-race.html"));
 });
 app.get("/race-countdown", (req, res) => {
-    res.sendFile(path.join(__dirname, "public/race-countdown.html"));
+  res.sendFile(path.join(__dirname, "public/race-countdown.html"));
 });
 
 import errorHandler from "./app/middleware/errorHandler.js";
@@ -280,7 +283,7 @@ app.use(errorHandler);
 // Starts the server
 const PORT = process.env.PORT || 3000; // Sets the port number, checks for environment variables, default is 3000.
 httpServer.listen(PORT, () => {
-    logger.info(`Server is running on port ${PORT}`); // Start listening to requests at PORT
+  logger.info(`Server is running on port ${PORT}`); // Start listening to requests at PORT
 });
 // const app = require('express')();
 // const server = require('http').createServer(app);

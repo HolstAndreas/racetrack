@@ -1,119 +1,137 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Race Flags</title>
-        <link rel="icon" type="image/png" sizes="192x192" href="favicon.png" />
-        <script src="/socket.io/socket.io.js"></script>
-        <script src="js/guest.js"></script>
-        <script src="js/socket/flag.socket.io.js" type="module"></script>
-        <link rel="stylesheet" href="styles/global.css" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-        <link
-            href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=SUSE:wght@100..800&display=swap"
-            rel="stylesheet"
-        />
-    </head>
-    <style>
-        body {
-            display: flex;
-            align-items: center;
-            height: 100vh;
-        }
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Race Flags</title>
+    <link rel="icon" type="image/png" sizes="192x192" href="favicon.png" />
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="js/guest.js"></script>
+    <script src="js/socket/flag.socket.io.js" type="module"></script>
+    <link rel="stylesheet" href="styles/global.css" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=SUSE:wght@100..800&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <style>
+    body {
+      display: flex;
+      align-items: center;
+      height: 100vh;
+    }
 
-        .race-info-parent {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 65%;
-            max-width: 700px;
-            margin: 0 auto;
-            padding: 32px;
-            background-color: var(--menu-color);
-            border-radius: 12px;
-        }
+    .race-info-parent {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 65%;
+      max-width: 700px;
+      margin: 0 auto;
+      padding: 32px;
+      background-color: var(--menu-color);
+      border-radius: 12px;
+    }
 
-        .race-info {
-            width: 100%;
-            height: fit-content;
-            text-align: center;
-            color: var(--text-color);
-            display: grid;
-            gap: 1rem;
-        }
+    .race-info {
+      width: 100%;
+      height: fit-content;
+      text-align: center;
+      color: var(--text-color);
+      display: grid;
+      gap: 1rem;
+    }
 
-        .race-info .title {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: var(--disabled-color);
-            letter-spacing: 0.075em;
-        }
+    .race-info .title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--disabled-color);
+      letter-spacing: 0.075em;
+    }
 
-        .race-info .info-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 1.5rem;
-        }
+    .race-info .info-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1.5rem;
+    }
 
-        .race-info .info-item {
-            flex: 1;
-            padding: 1rem;
-            background-color: var(--background-color);
-            border-radius: 8px;
-            display: flex;
-            flex-direction: column;
-            gap: 0.4rem;
-            border: 2px dashed var(--disabled-color);
-        }
+    .race-info .info-item {
+      flex: 1;
+      padding: 1rem;
+      background-color: var(--background-color);
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+      border: 2px dashed var(--disabled-color);
+    }
 
-        .race-info .info-item .label {
-            font-size: 0.9rem;
-            color: var(--disabled-color);
-            font-weight: 500;
-        }
+    .race-info .info-item .label {
+      font-size: 0.9rem;
+      color: var(--disabled-color);
+      font-weight: 500;
+    }
 
-        .race-info .info-item .value {
-            font-weight: 600;
-            font-size: 1.75rem;
-        }
+    .race-info .info-item .value {
+      font-weight: 600;
+      font-size: 1.75rem;
+    }
 
+    .safe {
+      background-color: green;
+    }
+    .hazard {
+      background-color: yellow;
+    }
+    .danger {
+      background-color: red;
+    }
+    .finish {
+      body {
+        background-image: linear-gradient(45deg, #ccc 25%, transparent 25%),
+          linear-gradient(135deg, #ccc 25%, transparent 25%),
+          linear-gradient(45deg, transparent 75%, #ccc 75%),
+          linear-gradient(135deg, transparent 75%, #ccc 75%);
+        background-size: 25px 25px; /* Must be a square */
+        background-position: 0 0, 12.5px 0, 12.5px -12.5px, 0px 12.5px; /* Must be half of one side of the square */
+      }
+    }
 
+    @keyframes skeleton-loading {
+      0% {
+        background-color: rgba(128, 128, 128, 0.1);
+      }
+      100% {
+        background-color: rgba(128, 128, 128, 0.3);
+      }
+    }
 
-        @keyframes skeleton-loading {
-            0% {
-                background-color: rgba(128, 128, 128, 0.1);
-            }
-            100% {
-                background-color: rgba(128, 128, 128, 0.3);
-            }
-        }
+    .skeleton {
+      animation: skeleton-loading 1s linear infinite alternate;
+      border-radius: 4px;
+      width: 120px;
+      height: 2rem;
+      margin: 0 auto;
+    }
+  </style>
+  <body id="flag">
+    <div class="race-info-parent">
+      <div class="race-info">
+        <div class="info-container"></div>
+      </div>
+    </div>
+    <script type="module">
+      import { createMode } from "./js/components/Mode.js";
+      import raceStore from "./js/store/race-store.js";
 
-        .skeleton {
-            animation: skeleton-loading 1s linear infinite alternate;
-            border-radius: 4px;
-            width: 120px;
-            height: 2rem;
-            margin: 0 auto;
-        }
-    </style>
-    <body>
-        <div class="race-info-parent">
-            <div class="race-info">
-                <div class="info-container"></div>
-            </div>
-        </div>
-        <script type="module">
-            import { createMode } from "./js/components/Mode.js";
-            import raceStore from "./js/store/race-store.js";
-
-            document.addEventListener("DOMContentLoaded", () => {
-                // Add countdown to the page
-                const modeContainer = document.querySelector(".info-container");
-                const mode = createMode("raceMode");
-                modeContainer.appendChild(mode);
-            });
-        </script>
-    </body>
+      document.addEventListener("DOMContentLoaded", () => {
+        // Add countdown to the page
+        const modeContainer = document.querySelector(".info-container");
+        const mode = createMode("raceMode");
+        modeContainer.appendChild(mode);
+      });
+    </script>
+  </body>
 </html>
