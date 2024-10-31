@@ -157,6 +157,9 @@ export const updateRaceStatus = async (raceId, status) => {
             await RaceRepository.updateTimeStamp(raceId);
             await setMode("SAFE");
         }
+        if (status === "FINISHED") {
+            await setMode("DANGER");
+        }
         const result = await RaceRepository.updateRaceStatus(raceId, status);
         const updatedRace = await findCurrentRace();
         io.emit("raceUpdate", updatedRace);

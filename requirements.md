@@ -53,10 +53,10 @@ The countdown timer is 1 minute in dev mode (instead of 10 minutes).
 The server can be started in developer mode with npm run dev.
 The countdown timer runs for 1 minute instead on 10 minutes.
 
-Communication between interfaces is in real-time. API calls must not be used to send data.
-For example, when the race mode is changed by the Safety Official, the flag displays change in real time
-Communication between interfaces utilises messages sent via Socket.IO.
-Communication between the interfaces certainly does not use a polling convention.
+✓ Communication between interfaces is in real-time. API calls must not be used to send data.
+✓ For example, when the race mode is changed by the Safety Official, the flag displays change in real time
+✓ Communication between interfaces utilises messages sent via Socket.IO.
+✓ Communication between the interfaces certainly does not use a polling convention.
 
 The interfaces are reachable by devices on other networks (not just localhost).
 The interfaces must be reachable by devices on other networks. For example, the interface must be reachable from a mobile phone browser, while the server and interfaces are served from a computer.
@@ -69,9 +69,9 @@ The README.md file at the root of the project describes how to launch the projec
 The README.md file at the root of the project has a user guide, describing the core functionality of the user interfaces
 It is not possible to have two drivers with the same name.
 
-When the race session is ended, the race mode changes to "Danger".
+✓ When the race session is ended, the race mode changes to "Danger".
 
-The buttons disappear or are visibly disabled between races.
+✓ The buttons disappear or are visibly disabled between races.
 
 ✓ The server is written in Node.JS
 ✓ The server can be started with npm start
