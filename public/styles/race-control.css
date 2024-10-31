@@ -135,13 +135,6 @@ fieldset {
   font-size: 1.75rem;
 }
 
-#raceId {
-  flex-shrink: 0; /* Prevents the Race ID from growing */
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: var(--disabled-color);
-  letter-spacing: 0.075em;
-}
 
 #driver-names {
   flex-grow: 1; /* Allows Drivers to take remaining space */

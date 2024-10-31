@@ -38,7 +38,7 @@
             width: 100%;
             height: fit-content;
             text-align: center;
-            margin-bottom: 2rem;
+            /* margin-bottom: 2rem; */
             color: var(--text-color);
             display: grid;
             gap: 1rem;
@@ -99,29 +99,19 @@
     <body>
         <div class="race-info-parent">
             <div class="race-info">
-                <span class="title">RACE COUNTDOWN</span>
-                <div class="info-container">
-                    <div class="info-item">
-                        <!-- <span class="label">Flag</span> -->
-                        <span class="value" id="countdown"
-                            ><div class="skeleton"></div
-                        ></span>
-                    </div>
-                </div>
+                <div class="info-container"></div>
             </div>
         </div>
         <script type="module">
-            import { initializeTimer } from "./js/socket/timer.socket.io.js";
+            import { createCountdown } from "./js/components/Countdown.js";
+            import raceStore from "./js/store/race-store.js";
 
-            document.addEventListener("DOMContentLoaded", async () => {
-                const timer = initializeTimer("countdown");
-
-                const race = await window.getCurrentRace();
-                if (race.status === "STARTED" && race.mode !== "FINISH") {
-                    timer.startRace(race.id);
-                } else {
-                    document.getElementById("countdown").innerHTML = "00:00";
-                }
+            document.addEventListener("DOMContentLoaded", () => {
+                // Add countdown to the page
+                const countdownContainer =
+                    document.querySelector(".info-container");
+                const countdown = createCountdown("countdown");
+                countdownContainer.appendChild(countdown);
             });
         </script>
     </body>
