@@ -237,7 +237,7 @@ h2 {
   border-bottom: none;
 }
 
-#drivers-in-current {
+#drivers-table {
   display: flex;
   flex-wrap: wrap;
   margin-bottom: 0.5rem;
@@ -245,7 +245,7 @@ h2 {
   border-radius: 8px;
 }
 
-#drivers-in-current div:nth-child(even) {
+#drivers-table div:nth-child(even) {
   border-left: 2px solid var(--disabled-color);
 }
 

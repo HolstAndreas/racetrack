@@ -34,6 +34,19 @@ export const findAll = async () => {
   }
 };
 
+export const findByName = async (name) => {
+  logger.info(`DriverRepository.findByName(name:${name})`);
+  try {
+    const res = await pool.query("SELECT * FROM drivers WHERE name = $1;", [
+      name,
+    ]);
+    return res.rows;
+  } catch (err) {
+    logger.error(err);
+    throw err;
+  }
+};
+
 export const getDriversByCar = async (carId) => {
   logger.info(`DriverRepository.getDriversByCar(carId:${carId})`);
   try {

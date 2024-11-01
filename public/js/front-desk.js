@@ -1,3 +1,5 @@
+import raceStore from "./store/race-store.js";
+
 let race;
 
 // Utility functions
@@ -397,51 +399,53 @@ const assignCar = async () => {
 
 // race management functions
 
-export const loadCurrentRace = async () => {
-  try {
-    const data = await getCurrentRace();
-    race = data.data[0];
+// export const loadCurrentRace = async () => {
+//   try {
+//     const race = raceStore.data.currentRace;
+//     // const data = await getCurrentRace();
+//     // race = data.data[0];
 
-    // Update race info values
-    document.getElementById("race-id").textContent = race.id;
-    document.getElementById("race-status").textContent = race.status;
+//     // Update race info values
+//     console.log(race);
+//     document.getElementById("race-id").textContent = race.id;
+//     document.getElementById("race-status").textContent = race.status;
 
-    const driversContainer = document.getElementById("drivers-in-current");
-    driversContainer.innerHTML = "";
+//     const driversContainer = document.getElementById("drivers-in-current");
+//     driversContainer.innerHTML = "";
 
-    // Create the 8 fixed driver rows
-    for (let i = 0; i < 8; i++) {
-      const driverRow = document.createElement("div");
-      driverRow.id = `driver-row-${i}`;
-      driverRow.className = "driver-row";
-      driversContainer.appendChild(driverRow);
-    }
+//     // Create the 8 fixed driver rows
+//     for (let i = 0; i < 8; i++) {
+//       const driverRow = document.createElement("div");
+//       driverRow.id = `driver-row-${i}`;
+//       driverRow.className = "driver-row";
+//       driversContainer.appendChild(driverRow);
+//     }
 
-    // Then populate the rows with driver data
-    for (let i = 0; i < 8; i++) {
-      const driverRow = document.getElementById(`driver-row-${i}`);
-      if (i < race.drivers.length) {
-        try {
-          const driver = await fetchDriver(race.drivers[i]);
-          const { name, car, id } = driver.data;
-          driverRow.innerHTML = `<span class="driver-id">#${id}</span> <span>${name}</span> <span class="driver-car"><i class="fa-solid fa-car ${
-            !car ? "car-icon-highlight " : ""
-          }"></i> ${car || ""}</span>`;
-        } catch (error) {
-          console.error(`Error loading driver ${race.drivers[i]}:`, error);
-          driverRow.innerHTML = "Error loading driver";
-        }
-      } else {
-        driverRow.innerHTML = "";
-      }
-    }
-  } catch (error) {
-    alert(`Error: ${error.message}`);
-    document.getElementById(
-      "current-race"
-    ).innerHTML = `<div>${error.message}</div>`;
-  }
-};
+//     // Then populate the rows with driver data
+//     for (let i = 0; i < 8; i++) {
+//       const driverRow = document.getElementById(`driver-row-${i}`);
+//       if (i < race.drivers.length) {
+//         try {
+//           const driver = await fetchDriver(race.drivers[i]);
+//           const { name, car, id } = driver.data;
+//           driverRow.innerHTML = `<span class="driver-id">#${id}</span> <span>${name}</span> <span class="driver-car"><i class="fa-solid fa-car ${
+//             !car ? "car-icon-highlight " : ""
+//           }"></i> ${car || ""}</span>`;
+//         } catch (error) {
+//           console.error(`Error loading driver ${race.drivers[i]}:`, error);
+//           driverRow.innerHTML = "Error loading driver";
+//         }
+//       } else {
+//         driverRow.innerHTML = "";
+//       }
+//     }
+//   } catch (error) {
+//     alert(`Error: ${error.message}`);
+//     document.getElementById(
+//       "current-race"
+//     ).innerHTML = `<div>${error.message}</div>`;
+//   }
+// };
 
 window.getCurrentRace = async () => {
   const response = await fetch(`/api/currentrace`);
@@ -555,7 +559,7 @@ const refreshData = async () => {
   await Promise.allSettled([
     populateDriverSelect(),
     fetchUpcomingRaces(),
-    loadCurrentRace(),
+    // loadCurrentRace(),
   ]);
 };
 

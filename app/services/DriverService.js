@@ -5,6 +5,11 @@ import logger from "../utils/logger.js";
 export const createDriver = async (name) => {
   logger.info(`DriverService.createDriver(name:${name})`);
   try {
+    const driver = await DriverRepository.findByName(name);
+    if (driver) {
+      return { error: "DRIVER_ALREADY_EXISTS" };
+    }
+
     const res = await DriverRepository.insertDriver(name);
     return res[0];
   } catch (err) {

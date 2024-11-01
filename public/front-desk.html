@@ -1,192 +1,187 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <script src="/socket.io/socket.io.js"></script>
-        <script src="js/socket/fd.socket.io.js" type="module" defer></script>
-        <script src="js/front-desk.js" type="module" defer></script>
-        <link rel="stylesheet" href="styles/front-desk.css" />
-        <link rel="stylesheet" href="styles/global.css" />
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-        <link
-            href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=SUSE:wght@100..800&display=swap"
-            rel="stylesheet"
-        />
-        <link
-            rel="stylesheet"
-            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
-            integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
-            crossorigin="anonymous"
-            referrerpolicy="no-referrer"
-        />
-        <title>Front Desk</title>
-        <link rel="icon" type="image/png" sizes="192x192" href="favicon.png" />
-    </head>
-    <body>
-        <!-- List of upcoming race sessions -->
-        <!-- Add/Remove race sessions -->
-        <!-- Add/Remove/Edit race drivers -->
-        <header>
-            <h1>Front-desk</h1>
-            <a class="btn btn-filled" href="/logout">Log out</a>
-        </header>
-        <main>
-            <section class="content">
-                <!-- Left side: Current and Upcoming Races -->
-                <div class="current-race-list">
-                    <!-- Current Race Display -->
-                    <div class="current-race-section">
-                        <!-- <h2>Current Race</h2> -->
-                        <div id="current-race">
-                            <div class="race-info">
-                                <span class="title">CURRENT RACE INFO</span>
-                                <div class="info-container">
-                                    <div class="info-item">
-                                        <span class="label">ID</span>
-                                        <span class="value" id="race-id"></span>
-                                    </div>
-                                    <div class="info-item">
-                                        <span class="label">Status</span>
-                                        <span
-                                            class="value"
-                                            id="race-status"
-                                        ></span>
-                                    </div>
-                                    <div class="info-item">
-                                        <span class="label"
-                                            >Time remaining</span
-                                        >
-                                        <span
-                                            class="value"
-                                            id="countdown"
-                                        ></span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div id="drivers-in-current"></div>
-                        </div>
-                    </div>
-
-                    <!-- Upcoming Races List -->
-                    <div class="upcoming-races-section">
-                        <h2>Upcoming Races</h2>
-                        <ol id="race-list"></ol>
-                    </div>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="js/socket/fd.socket.io.js" type="module" defer></script>
+    <script src="js/front-desk.js" type="module" defer></script>
+    <link rel="stylesheet" href="styles/front-desk.css" />
+    <link rel="stylesheet" href="styles/global.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=SUSE:wght@100..800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+      integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <title>Front Desk</title>
+    <link rel="icon" type="image/png" sizes="192x192" href="favicon.png" />
+  </head>
+  <body>
+    <!-- List of upcoming race sessions -->
+    <!-- Add/Remove race sessions -->
+    <!-- Add/Remove/Edit race drivers -->
+    <header>
+      <h1>Front-desk</h1>
+      <a class="btn btn-filled" href="/logout">Log out</a>
+    </header>
+    <main>
+      <section class="content">
+        <!-- Left side: Current and Upcoming Races -->
+        <div class="current-race-list">
+          <!-- Current Race Display -->
+          <div class="current-race-section">
+            <!-- <h2>Current Race</h2> -->
+            <div id="current-race">
+              <div class="race-info">
+                <span class="title">CURRENT RACE INFO</span>
+                <div class="info-container">
+                  <!-- <div class="info-item">
+                    <span class="label">ID</span>
+                    <span class="value" id="race-id"></span>
+                  </div>
+                  <div class="info-item">
+                    <span class="label">Status</span>
+                    <span class="value" id="race-status"></span>
+                  </div>
+                  <div class="info-item">
+                    <span class="label">Time remaining</span>
+                    <span class="value" id="countdown"></span>
+                  </div> -->
                 </div>
+              </div>
+              <!-- <div id="drivers-in-current"></div> -->
+            </div>
+          </div>
 
-                <!-- Right side, managment -->
-                <div class="race-sessions">
-                    <div class="management-section-parent">
-                        <!-- Add Race Section -->
-                        <div class="management-section">
-                            <h2>Add Race</h2>
-                            <div class="form-group">
-                                <input
-                                    type="text"
-                                    id="race-drivers"
-                                    placeholder="Driver IDs (comma-separated, max 8)"
-                                    required
-                                />
-                                <button
-                                    id="create-race-btn"
-                                    class="btn btn-filled"
-                                >
-                                    Add Race
-                                </button>
-                            </div>
-                        </div>
-                        <!-- Add Driver Section -->
-                        <div class="management-section">
-                            <h2>Add Driver</h2>
-                            <div class="form-group">
-                                <input
-                                    type="text"
-                                    id="driver-name"
-                                    placeholder="Driver Name"
-                                    required
-                                />
-                                <button
-                                    id="create-driver-btn"
-                                    class="btn btn-filled"
-                                >
-                                    Add Driver
-                                </button>
-                            </div>
-                        </div>
-                        <!-- Assign Car Section -->
-                        <div class="management-section">
-                            <h2>Assign Car to Driver</h2>
-                            <div class="form-group">
-                                <select id="driver-select">
-                                    <option value="">Select Driver</option>
-                                </select>
-                                <input
-                                    type="number"
-                                    id="car-id"
-                                    placeholder="Car ID"
-                                    min="1"
-                                    required
-                                />
-                                <button
-                                    id="assign-car-btn"
-                                    class="btn btn-filled"
-                                >
-                                    Assign Car
-                                </button>
-                            </div>
-                        </div>
-                        <!-- Edit Driver Section -->
-                        <div class="management-section">
-                            <h2>Edit Driver</h2>
-                            <div class="form-group">
-                                <select id="edit-driver-select">
-                                    <option value="">Select Driver</option>
-                                </select>
-                                <input
-                                    type="text"
-                                    id="edit-driver-name"
-                                    placeholder="New Name"
-                                />
-                                <button
-                                    id="update-driver-btn"
-                                    class="btn btn-filled"
-                                >
-                                    Update Driver
-                                </button>
-                                <button
-                                    id="delete-driver-btn"
-                                    class="btn btn-filled"
-                                >
-                                    Delete Driver
-                                </button>
-                            </div>
-                        </div>
-                    </div>
+          <!-- Upcoming Races List -->
+          <div class="upcoming-races-section">
+            <h2>Upcoming Races</h2>
+            <ol id="race-list"></ol>
+          </div>
+        </div>
 
-                    <div class="race-drivers">
-                        <h2>Drivers</h2>
-                        <div class="drivers-list">
-                            <ol id="drivers-list"></ol>
-                        </div>
-                    </div>
-                </div>
-            </section>
-        </main>
-        <script type="module">
-            import { initializeTimer } from "./js/socket/timer.socket.io.js";
+        <!-- Right side, managment -->
+        <div class="race-sessions">
+          <div class="management-section-parent">
+            <!-- Add Race Section -->
+            <div class="management-section">
+              <h2>Add Race</h2>
+              <div class="form-group">
+                <input
+                  type="text"
+                  id="race-drivers"
+                  placeholder="Driver IDs (comma-separated, max 8)"
+                  required
+                />
+                <button id="create-race-btn" class="btn btn-filled">
+                  Add Race
+                </button>
+              </div>
+            </div>
+            <!-- Add Driver Section -->
+            <div class="management-section">
+              <h2>Add Driver</h2>
+              <div class="form-group">
+                <input
+                  type="text"
+                  id="driver-name"
+                  placeholder="Driver Name"
+                  required
+                />
+                <button id="create-driver-btn" class="btn btn-filled">
+                  Add Driver
+                </button>
+              </div>
+            </div>
+            <!-- Assign Car Section -->
+            <div class="management-section">
+              <h2>Assign Car to Driver</h2>
+              <div class="form-group">
+                <select id="driver-select">
+                  <option value="">Select Driver</option>
+                </select>
+                <input
+                  type="number"
+                  id="car-id"
+                  placeholder="Car ID"
+                  min="1"
+                  required
+                />
+                <button id="assign-car-btn" class="btn btn-filled">
+                  Assign Car
+                </button>
+              </div>
+            </div>
+            <!-- Edit Driver Section -->
+            <div class="management-section">
+              <h2>Edit Driver</h2>
+              <div class="form-group">
+                <select id="edit-driver-select">
+                  <option value="">Select Driver</option>
+                </select>
+                <input
+                  type="text"
+                  id="edit-driver-name"
+                  placeholder="New Name"
+                />
+                <button id="update-driver-btn" class="btn btn-filled">
+                  Update Driver
+                </button>
+                <button id="delete-driver-btn" class="btn btn-filled">
+                  Delete Driver
+                </button>
+              </div>
+            </div>
+          </div>
 
-            document.addEventListener("DOMContentLoaded", async () => {
-                const timer = initializeTimer("countdown");
+          <div class="race-drivers">
+            <h2>Drivers</h2>
+            <div class="drivers-list">
+              <ol id="drivers-list"></ol>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+    <script type="module">
+      import { createCountdown } from "./js/components/Countdown.js";
+      import { createRaceID } from "./js/components/RaceID.js";
+      import { createStatus } from "./js/components/Status.js";
+      import { createDriverTable } from "./js/components/DriverTable.js";
 
-                const race = await window.getCurrentRace();
-                if (race.status === "STARTED" && race.mode !== "FINISH") {
-                    timer.startRace(race.id);
-                } else {
-                    document.getElementById("countdown").innerHTML = "00:00";
-                }
-            });
-        </script>
-    </body>
+      document.addEventListener("DOMContentLoaded", () => {
+        //const timer = initializeTimer("countdown");
+
+        const infoContainer = document.querySelector(".info-container");
+        const raceId = createRaceID("raceId");
+        const raceStatus = createStatus("raceStatus");
+        const countdown = createCountdown("countdown");
+        if (!infoContainer) {
+          console.error("infoContainer not found in the DOM.");
+        }
+        infoContainer.appendChild(raceId);
+        infoContainer.appendChild(raceStatus);
+        infoContainer.appendChild(countdown);
+
+        const currentDrivers = document.getElementById("current-race");
+        const driversTable = createDriverTable("drivers-table");
+        currentDrivers.appendChild(driversTable);
+
+        // const race = await window.getCurrentRace();
+        // if (race.status === "STARTED" && race.mode !== "FINISH") {
+        //   timer.startRace(race.id);
+        // } else {
+        //   document.getElementById("countdown").innerHTML = "00:00";
+        // }
+      });
+    </script>
+  </body>
 </html>

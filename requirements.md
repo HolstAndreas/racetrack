@@ -8,8 +8,6 @@
 
 When the race session is ended, the Next Race display shows an additional message to proceed to the paddock.
 
-Race sessions disappear from the Front Desk interface once it is safe to start.
-
 When the race is started, the following happens:
 
 ✓ - The race mode is changed to "Safe"
@@ -33,13 +31,14 @@ The receptionist can add/edit/remove drivers from a race.
 The receptionist can see a list of upcoming races.
 The receptionist can delete an upcoming race.
 The receptionist can assign drivers to specific cars.
+Race sessions disappear from the Front Desk interface once it is safe to start.
 
 The Race Control interface is designed for a mobile interface.
 ✓ The safety official has one active button, which starts the race when pressed.
-✓ When the Safety Official selects "Hazard", the Flag screen is yellow. 
-✓ When the Safety Official selects "Finish", the Flag screen is chequered. 
-✓ When the Safety Official selects "Danger", the Flag screen is red. 
-✓ When the Safety Official selects "Safe", the Flag screen is green. 
+✓ When the Safety Official selects "Hazard", the Flag screen is yellow.
+✓ When the Safety Official selects "Finish", the Flag screen is chequered.
+✓ When the Safety Official selects "Danger", the Flag screen is red.
+✓ When the Safety Official selects "Safe", the Flag screen is green.
 ✓ When the race mode changes to "Finish", `the race controls disappear`, and a button appears to end the race session.
 ✓ When the Safety Official ends the race session, the next session appears on their interface.
 If there is no upcoming race after the last session is ended, the Safety Official sees no upcoming races message.
@@ -86,10 +85,6 @@ It is not possible to have two drivers with the same name.
 | Next Race | Race Driver | `next-race` |
 | Race Countdown | Race Driver | `race-countdown` |
 | Race Flag | Race Driver | `race-flags` |
-
-
-
-
 
 The system state is persisted.
 When the server is restarted, the system resumes with the exact same. I.e. the race counter continues counting down, and upcoming races are not lost.

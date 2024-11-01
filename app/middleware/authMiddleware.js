@@ -10,8 +10,6 @@ const authMiddleware = (requiredRole) => {
     const token = req.cookies.token;
 
     if (!token) {
-      // return res.status(401).json({ message: "No token provided" });
-      // return res.status(401).send("Unauthorized");
       logger.warning("authMiddleware.js | No token provided");
       const error = new Error("No token provided");
       error.status = 401;
@@ -21,7 +19,6 @@ const authMiddleware = (requiredRole) => {
     try {
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
       if (decoded.role !== requiredRole) {
-        // return res.status(403).send("Insufficient permissions");
         logger.warning("authMiddleware.js | Insufficient permissions");
         const error = new Error("Insufficient permissions");
         error.status = 403;
@@ -31,10 +28,11 @@ const authMiddleware = (requiredRole) => {
       next();
       logger.success("authMiddleware.js | Token verified");
     } catch (err) {
-      // return res.status(401).send("Invalid token");
       logger.error("authMiddleware.js | Invalid token");
-      err.status = 401;
-      next(err);
+      const error = new Error(err.message);
+      error.name = err.name;
+      error.status = 401;
+      return next(error);
     }
   };
 };
