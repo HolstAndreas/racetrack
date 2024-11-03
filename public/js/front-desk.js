@@ -29,12 +29,14 @@ const handleResponse = async (response) => {
 
 const fetchUpcomingRaces = async () => {
   try {
-    const response = await fetch("/api/upcomingraces");
-    const data = await handleResponse(response);
+    // const response = await fetch("/api/upcomingraces");
+    // const data = await handleResponse(response);
+
+    const newData = raceStore.upcoming;
 
     const raceList = document.getElementById("race-list");
     raceList.innerHTML = "";
-    const newData = data.data;
+    // const newData = data.data;
 
     if (newData.length > 0) {
       let counter = 0;

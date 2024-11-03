@@ -156,6 +156,10 @@
       import { createRaceID } from "./js/components/RaceID.js";
       import { createStatus } from "./js/components/Status.js";
       import { createDriverTable } from "./js/components/DriverTable.js";
+      import {
+        createUpcomingRacesList,
+        addFunctionality,
+      } from "./js/components/upcomingRacesList.js";
 
       document.addEventListener("DOMContentLoaded", () => {
         //const timer = initializeTimer("countdown");
@@ -174,6 +178,13 @@
         const currentDrivers = document.getElementById("current-race");
         const driversTable = createDriverTable("drivers-table");
         currentDrivers.appendChild(driversTable);
+
+        const upcomingRacesDiv = document.querySelector(
+          ".upcoming-races-section"
+        );
+        const upcomingRaces = createUpcomingRacesList("race-list");
+
+        //add functionality later
 
         // const race = await window.getCurrentRace();
         // if (race.status === "STARTED" && race.mode !== "FINISH") {

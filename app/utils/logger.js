@@ -30,31 +30,45 @@ const colors = {
   },
 };
 
+const isLoggingEnabled = process.env.NODE_LOGGING !== "false";
+
 const logger = {
   info: (message) => {
-    console.log(`${colors.fg.cyan}[INFO]${colors.reset} ${message}`);
+    if (isLoggingEnabled) {
+      console.log(`${colors.fg.cyan}[INFO]${colors.reset} ${message}`);
+    }
   },
 
   success: (message) => {
-    console.log(`${colors.fg.green}[SUCCESS]${colors.reset} ${message}`);
+    if (isLoggingEnabled) {
+      console.log(`${colors.fg.green}[SUCCESS]${colors.reset} ${message}`);
+    }
   },
 
   warning: (message) => {
-    console.log(`${colors.fg.yellow}[WARNING]${colors.reset} ${message}`);
+    if (isLoggingEnabled) {
+      console.log(`${colors.fg.yellow}[WARNING]${colors.reset} ${message}`);
+    }
   },
 
   error: (message) => {
-    console.log(`${colors.fg.red}[ERROR]${colors.reset} ${message}`);
+    if (isLoggingEnabled) {
+      console.log(`${colors.fg.red}[ERROR]${colors.reset} ${message}`);
+    }
   },
 
   debug: (message) => {
-    console.log(`${colors.fg.magenta}[DEBUG]${colors.reset} ${message}`);
+    if (isLoggingEnabled) {
+      console.log(`${colors.fg.magenta}[DEBUG]${colors.reset} ${message}`);
+    }
   },
 
   custom: (category, message, fgColor = "white", bgColor = null) => {
-    const fg = colors.fg[fgColor] || colors.fg.white;
-    const bg = bgColor ? colors.bg[bgColor] : "";
-    console.log(`${fg}${bg}[${category}]${colors.reset} ${message}`);
+    if (isLoggingEnabled) {
+      const fg = colors.fg[fgColor] || colors.fg.white;
+      const bg = bgColor ? colors.bg[bgColor] : "";
+      console.log(`${fg}${bg}[${category}]${colors.reset} ${message}`);
+    }
   },
 };
 

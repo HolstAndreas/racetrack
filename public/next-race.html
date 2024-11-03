@@ -172,8 +172,8 @@
     <div class="race-info-parent">
       <div class="race-info">
         <span class="title" id="raceId">NEXT RACE: </span>
-        <div id="driverTable">
-          <!-- <div id="driver-row-0" class="driver-row">
+        <!-- <div id="driverTable"> -->
+        <!-- <div id="driver-row-0" class="driver-row">
             <div class="skeleton"></div>
           </div>
           <div id="driver-row-1" class="driver-row">
@@ -199,7 +199,7 @@
           <div id="driver-row-7" class="driver-row">
             <div class="skeleton"></div>
           </div> -->
-        </div>
+        <!-- </div> -->
       </div>
     </div>
     <script type="module">
@@ -209,6 +209,7 @@
       document.addEventListener("DOMContentLoaded", () => {
         const container = document.querySelector(".race-info");
         const driversTable = createDriverTable("drivers-table");
+        driversTable.classList.add("next");
         container.appendChild(driversTable);
 
         // try {

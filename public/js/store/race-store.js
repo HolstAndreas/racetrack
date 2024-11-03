@@ -28,22 +28,29 @@ const raceStore = {
   ],
   updateUI: function () {
     if (this.data.currentRace) {
-      const elements = {
-        id: document.getElementById("raceId"),
-        status: document.getElementById("raceStatus"),
-        //driverTable: document.getElementById("drivers-in-current"),
-      };
-      Object.entries(elements).forEach(([key, element]) => {
-        if (element) {
-          if (this.data.currentRace[key] !== undefined) {
-            element.textContent = this.data.currentRace[key];
-          } else {
-            element.innerHTML = `<div class="skeleton"></div>`;
-          }
-        }
-      });
+      const raceId = document.getElementById("raceId");
+      if (raceId.classList.contains("next")) {
+        raceId.innerHTML = this.upcoming[0].id;
+      } else {
+        raceId.innerHTML = this.data.currentRace.id;
+      }
+      const raceStatus = document.getElementById("raceStatus");
+      raceStatus.innerHTML = this.data.currentRace.status;
+      // const elements = {
+      //   id: document.getElementById("raceId"),
+      //   status: document.getElementById("raceStatus"),
+      //   //driverTable: document.getElementById("drivers-in-current"),
+      // };
+      // Object.entries(elements).forEach(([key, element]) => {
+      //   if (element) {
+      //     if (this.data.currentRace[key] !== undefined) {
+      //       element.textContent = this.data.currentRace[key];
+      //     } else {
+      //       element.innerHTML = `<div class="skeleton"></div>`;
+      //     }
+      //   }
+      // });
     }
-
     // RACE CONTROL BUTTON DISABLING FIX
     // CHECK IF WE ARE ON RACE CONTROL PAGE
     if (document.getElementById("ctrlButtonDiv")) {
@@ -79,48 +86,100 @@ const raceStore = {
       }
     }
   },
-  updateNextRaceUI: function () {
+  updateDriversTableUI: function () {
     const driversTable = document.getElementById("drivers-table");
-    if (driversTable) {
-      for (let index = 0; index < 8; i++) {
-        const row = document.getElementById(`driver-row-${index}`);
-        if (!row) return;
-        const driver = this.upcoming[0].drivers[index];
-        //console.log
-        if (index < driver.length) {
-          // Clear existing content
-          row.innerHTML = "";
+    let drivers;
+    if (!driversTable) return;
+    if (driversTable.classList.contains("next")) {
+      drivers = this.upcoming[0].drivers;
+    } else {
+      drivers = this.data.currentRace.drivers;
+    }
+    for (let index = 0; index < 8; index++) {
+      const row = document.getElementById(`driver-row-${index}`);
+      if (!row) return;
+      const driver = drivers[index];
+      console.log("driver: ", driver);
+      console.log("driver.length:", drivers.length);
+      if (index < drivers.length) {
+        // Clear existing content
+        row.innerHTML = "";
 
-          if (!driver.id) return;
+        if (!driver.id) return;
 
-          // Create driver number element
-          const driverId = document.createElement("span");
-          driverId.className = "driver-id";
-          driverId.textContent = `#${driver.id}`;
+        // Create driver number element
+        const driverId = document.createElement("span");
+        driverId.className = "driver-id";
+        driverId.textContent = `#${driver.id}`;
 
-          // Create driver name element
-          const driverName = document.createElement("span");
-          driverName.textContent = ` ${driver.name} `;
+        // Create driver name element
+        const driverName = document.createElement("span");
+        driverName.textContent = ` ${driver.name} `;
 
-          // Create car element
-          const driverCar = document.createElement("span");
-          driverCar.className = "driver-car";
-          driverCar.innerHTML = `${driver.car || ""} <i class="fa-solid fa-car${
-            !driver.car ? " car-icon" : ""
-          }"></i>`;
+        // Create car element
+        const driverCar = document.createElement("span");
+        driverCar.className = "driver-car";
+        driverCar.innerHTML = `${driver.car || ""} <i class="fa-solid fa-car${
+          !driver.car ? " car-icon" : ""
+        }"></i>`;
 
-          // Append all elements
-          row.appendChild(driverId);
-          row.appendChild(driverName);
-          row.appendChild(driverCar);
-        } else {
-          row.innerHTML = "";
-        }
+        // Append all elements
+        row.appendChild(driverId);
+        row.appendChild(driverName);
+        row.appendChild(driverCar);
+      } else {
+        row.innerHTML = "";
       }
     }
   },
-};
 
+  updateUpcomingRacesUI: function () {
+    const raceList = document.getElementById("race-list");
+    raceList.innerHTML = "";
+
+    if (this.upcoming.length === 0)
+      return (raceList.innerHTML = "<li>No upcoming races available.</li>");
+
+    this.upcoming.forEach((race) => {
+      const listItem = document.createElement("li");
+      listItem.className = "upcoming-race";
+      const listItemId = document.createElement("div");
+      listItemId.className = "upcoming-race-id";
+      listItemId.innerHTML = race.id;
+      listItem.append(listItemId);
+
+      const listItemDrivers = document.createElement("div");
+      listItemDrivers.className = "race-drivers-grid";
+
+      for (let i = 0; i < 8; i++) {
+        const driverSlot = document.createElement("div");
+        driverSlot.className = "driver-slot";
+
+        if (i < race.drivers.length) {
+          try {
+            driverSlot.innerHTML = `<i title="ID: ${
+              race.drivers.id
+            }" class="fa-solid fa-car ${
+              !race.drivers.car ? "car-icon" : ""
+            }"></i> <strong>${race.drivers.car || ""}</strong> ${
+              race.drivers.name
+            }`;
+          } catch (error) {
+            driverSlot.innerHTML = `<i class="fa-solid fa-triangle-exclamation" style="color: #FFD43B;"></i>`;
+          }
+        } else {
+          driverSlot.innerHTML = "";
+        }
+        listItemDrivers.append(driverSlot);
+      }
+    });
+    if (document.getElementById("race-list")) {
+      import("../js/components/UpcomingRaces.js").then((module) =>
+        module.addfunctionality()
+      );
+    }
+  },
+};
 //   updateNextRaceData: function (index) {
 //     if (this.upcoming[index]) {
 //       const elements = {
@@ -174,7 +233,7 @@ socket.on("raceUpdate", (newRaceData) => {
 socket.on("upcomingRacesUpdate", (upcomingRacesData) => {
   raceStore.upcoming = upcomingRacesData;
   console.log(upcomingRacesData);
-  raceStore.updateNextRaceUI();
+  raceStore.updateDriversTableUI();
 });
 
 socket.on("modeUpdate", (mode) => {
