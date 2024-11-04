@@ -157,9 +157,9 @@
       import { createStatus } from "./js/components/Status.js";
       import { createDriverTable } from "./js/components/DriverTable.js";
       import {
-        createUpcomingRacesList,
+        createUpcomingRaces,
         addFunctionality,
-      } from "./js/components/upcomingRacesList.js";
+      } from "./js/components/UpcomingRaces.js";
 
       document.addEventListener("DOMContentLoaded", () => {
         //const timer = initializeTimer("countdown");
@@ -182,8 +182,9 @@
         const upcomingRacesDiv = document.querySelector(
           ".upcoming-races-section"
         );
-        const upcomingRaces = createUpcomingRacesList("race-list");
+        const upcomingRaces = createUpcomingRaces("race-list");
 
+        addFunctionality();
         //add functionality later
 
         // const race = await window.getCurrentRace();

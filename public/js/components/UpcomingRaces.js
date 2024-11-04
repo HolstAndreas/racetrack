@@ -28,7 +28,7 @@ export function createUpcomingRaces(elementId) {
   return upcomingRacesDiv;
 }
 
-export function addfunctionality() {
+export function addFunctionality() {
   const allUpcomingRaces = document.querySelectorAll(".upcoming-race");
   allUpcomingRaces.forEach((listItem) => {
     listItem.addEventListener("click", (event) => {
@@ -41,7 +41,10 @@ export function addfunctionality() {
           item.classList.remove("highlight");
         });
         raceEventTarget.classList.add("highlight");
-        selectRace(race.id);
+        const raceIdDiv = raceEventTarget.querySelector(".upcoming-race-id");
+        const raceId = raceIdDiv.textContent;
+        console.log(raceId);
+        updateSelectedRaceUI(raceId);
       }
     });
   });

@@ -99,8 +99,8 @@ const raceStore = {
       const row = document.getElementById(`driver-row-${index}`);
       if (!row) return;
       const driver = drivers[index];
-      console.log("driver: ", driver);
-      console.log("driver.length:", drivers.length);
+      // console.log("driver: ", driver);
+      // console.log("driver.length:", drivers.length);
       if (index < drivers.length) {
         // Clear existing content
         row.innerHTML = "";
@@ -141,6 +141,7 @@ const raceStore = {
       return (raceList.innerHTML = "<li>No upcoming races available.</li>");
 
     this.upcoming.forEach((race) => {
+      console.log(race);
       const listItem = document.createElement("li");
       listItem.className = "upcoming-race";
       const listItemId = document.createElement("div");
@@ -156,13 +157,16 @@ const raceStore = {
         driverSlot.className = "driver-slot";
 
         if (i < race.drivers.length) {
+          console.log(`DriverSlot, ID: ${race.drivers[i].id}`);
+          console.log(`DriverSlot, car: ${race.drivers[i].car}`);
+          console.log(`DriverSlot, name: ${race.drivers[i].name}`);
           try {
             driverSlot.innerHTML = `<i title="ID: ${
-              race.drivers.id
+              race.drivers[i].id
             }" class="fa-solid fa-car ${
-              !race.drivers.car ? "car-icon" : ""
-            }"></i> <strong>${race.drivers.car || ""}</strong> ${
-              race.drivers.name
+              !race.drivers[i].car ? "car-icon" : ""
+            }"></i> <strong>${race.drivers[i].car || ""}</strong> ${
+              race.drivers[i].name
             }`;
           } catch (error) {
             driverSlot.innerHTML = `<i class="fa-solid fa-triangle-exclamation" style="color: #FFD43B;"></i>`;
@@ -172,12 +176,53 @@ const raceStore = {
         }
         listItemDrivers.append(driverSlot);
       }
+      const raceActions = document.createElement("div");
+      raceActions.className = "race-actions";
+      raceActions.innerHTML = `
+                  <i onclick="addDriverToRace(${race.id})" class="fa-solid fa-user-plus btn" title="Add Driver"></i>
+                  <i onclick="deleteRace(${race.id})" class="fa-solid fa-trash btn" title="Delete Race"></i>
+              `;
+
+      listItem.append(listItemDrivers);
+      listItem.append(raceActions);
+      raceList.append(listItem);
     });
     if (document.getElementById("race-list")) {
-      import("../js/components/UpcomingRaces.js").then((module) =>
-        module.addfunctionality()
+      import("../components/UpcomingRaces.js").then((module) =>
+        module.addFunctionality()
       );
     }
+  },
+
+  updateSelectedRaceUI: function (raceId) {
+    const raceIndex = this.upcoming.findIndex((race) => race.id === raceId);
+    const race = upcoming[raceIndex];
+
+    const driversList = document.getElementById("drivers-list");
+    driversList.innerHTML = "";
+
+    race.drivers.forEach((driver) => {
+      const li = document.createElement("li");
+      li.innerHTML = `
+        <div class="driver-info" id="driver${driver.id}">
+        <span class="driver-name">
+          <b>Name:</b> ${driver.name}
+        </span>
+          <span><b>ID:</b> ${driver.id}</span>
+          <span class="driver-car">
+            <b>Car:</b> ${driver.car || "No Car"}
+          </span>
+          <div class="driver-actions">
+              <button onclick="removeDriverFromRace(${
+                driver.id
+              }, ${raceId})" class="btn">Remove from Race</button>
+              <button onclick="deleteDriver(${
+                driver.id
+              })" class="btn">Delete Driver</button>
+          </div>
+      </div>`;
+      driversList.appendChild(li);
+    });
   },
 };
 //   updateNextRaceData: function (index) {
@@ -234,6 +279,7 @@ socket.on("upcomingRacesUpdate", (upcomingRacesData) => {
   raceStore.upcoming = upcomingRacesData;
   console.log(upcomingRacesData);
   raceStore.updateDriversTableUI();
+  raceStore.updateUpcomingRacesUI();
 });
 
 socket.on("modeUpdate", (mode) => {

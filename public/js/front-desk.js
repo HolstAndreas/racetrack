@@ -27,97 +27,97 @@ const handleResponse = async (response) => {
   return data;
 };
 
-const fetchUpcomingRaces = async () => {
-  try {
-    // const response = await fetch("/api/upcomingraces");
-    // const data = await handleResponse(response);
+// const fetchUpcomingRaces = async () => {
+//   try {
+//     // const response = await fetch("/api/upcomingraces");
+//     // const data = await handleResponse(response);
 
-    const newData = raceStore.upcoming;
+//     const newData = raceStore.upcoming;
 
-    const raceList = document.getElementById("race-list");
-    raceList.innerHTML = "";
-    // const newData = data.data;
+//     const raceList = document.getElementById("race-list");
+//     raceList.innerHTML = "";
+//     // const newData = data.data;
 
-    if (newData.length > 0) {
-      let counter = 0;
-      for (const race of newData) {
-        const listItem = document.createElement("li");
-        listItem.addEventListener("click", (event) => {
-          const raceEventTarget = event.target.closest("li");
-          if (raceEventTarget.classList.contains("highlight")) {
-            raceEventTarget.classList.remove("highlight");
-            document.getElementById("drivers-list").innerHTML = "";
-          } else {
-            document
-              .querySelectorAll("#race-list li.highlight")
-              .forEach((item) => {
-                item.classList.remove("highlight");
-              });
-            raceEventTarget.classList.add("highlight");
-            selectRace(race.id);
-          }
-        });
-        const listItemId = document.createElement("div");
-        listItemId.className = "upcoming-race-id";
-        const listItemDrivers = document.createElement("div");
-        listItemDrivers.className = "race-drivers-grid";
+//     if (newData.length > 0) {
+//       let counter = 0;
+//       for (const race of newData) {
+//         const listItem = document.createElement("li");
+//         listItem.addEventListener("click", (event) => {
+//           const raceEventTarget = event.target.closest("li");
+//           if (raceEventTarget.classList.contains("highlight")) {
+//             raceEventTarget.classList.remove("highlight");
+//             document.getElementById("drivers-list").innerHTML = "";
+//           } else {
+//             document
+//               .querySelectorAll("#race-list li.highlight")
+//               .forEach((item) => {
+//                 item.classList.remove("highlight");
+//               });
+//             raceEventTarget.classList.add("highlight");
+//             selectRace(race.id);
+//           }
+//         });
+//         const listItemId = document.createElement("div");
+//         listItemId.className = "upcoming-race-id";
+//         const listItemDrivers = document.createElement("div");
+//         listItemDrivers.className = "race-drivers-grid";
 
-        listItemId.innerHTML = `${race.id.toString().padStart(3, "0")}`;
-        //
-        // if (counter === 0) {
-        //     listItemId.innerHTML = `${race.id}`;
-        // } else {
-        //     listItemId.innerHTML = `${race.id}`;
-        // }
-        listItem.append(listItemId);
+//         listItemId.innerHTML = `${race.id.toString().padStart(3, "0")}`;
+//         //
+//         // if (counter === 0) {
+//         //     listItemId.innerHTML = `${race.id}`;
+//         // } else {
+//         //     listItemId.innerHTML = `${race.id}`;
+//         // }
+//         listItem.append(listItemId);
 
-        // Create and populate driver slots
-        const populateDriverSlots = async () => {
-          for (let i = 0; i < 8; i++) {
-            const driverSlot = document.createElement("div");
-            driverSlot.className = "driver-slot";
+//         // Create and populate driver slots
+//         const populateDriverSlots = async () => {
+//           for (let i = 0; i < 8; i++) {
+//             const driverSlot = document.createElement("div");
+//             driverSlot.className = "driver-slot";
 
-            if (i < race.drivers.length) {
-              try {
-                const driverData = await fetchDriver(race.drivers[i]);
-                const { name, car, id } = driverData.data;
-                driverSlot.innerHTML = `<i title="ID: ${id}" class="fa-solid fa-car ${
-                  !car ? "car-icon" : ""
-                }"></i> <strong>${car || ""}</strong> ${name}`;
-              } catch (error) {
-                driverSlot.innerHTML = `<i class="fa-solid fa-triangle-exclamation" style="color: #FFD43B;"></i>`;
-              }
-            } else {
-              driverSlot.innerHTML = "";
-            }
+//             if (i < race.drivers.length) {
+//               try {
+//                 const driverData = await fetchDriver(race.drivers[i]);
+//                 const { name, car, id } = driverData.data;
+//                 driverSlot.innerHTML = `<i title="ID: ${id}" class="fa-solid fa-car ${
+//                   !car ? "car-icon" : ""
+//                 }"></i> <strong>${car || ""}</strong> ${name}`;
+//               } catch (error) {
+//                 driverSlot.innerHTML = `<i class="fa-solid fa-triangle-exclamation" style="color: #FFD43B;"></i>`;
+//               }
+//             } else {
+//               driverSlot.innerHTML = "";
+//             }
 
-            listItemDrivers.append(driverSlot);
-          }
-        };
+//             listItemDrivers.append(driverSlot);
+//           }
+//         };
 
-        await populateDriverSlots();
+//         await populateDriverSlots();
 
-        const raceActions = document.createElement("div");
-        raceActions.className = "race-actions";
-        raceActions.innerHTML = `
-                    <i onclick="addDriverToRace(${race.id})" class="fa-solid fa-user-plus btn" title="Add Driver"></i>
-                    <i onclick="deleteRace(${race.id})" class="fa-solid fa-trash btn" title="Delete Race"></i>
-                `;
-        listItem.append(listItemDrivers);
-        listItem.append(raceActions);
-        raceList.append(listItem);
-        counter++;
-      }
-    } else {
-      raceList.innerHTML = "<li>No upcoming races available.</li>";
-    }
-  } catch (error) {
-    console.error("Error loading race list:", error);
-    document.getElementById(
-      "race-list"
-    ).innerHTML = `<li>Error loading race data: ${error}</li>`;
-  }
-};
+//         const raceActions = document.createElement("div");
+//         raceActions.className = "race-actions";
+//         raceActions.innerHTML = `
+//                     <i onclick="addDriverToRace(${race.id})" class="fa-solid fa-user-plus btn" title="Add Driver"></i>
+//                     <i onclick="deleteRace(${race.id})" class="fa-solid fa-trash btn" title="Delete Race"></i>
+//                 `;
+//         listItem.append(listItemDrivers);
+//         listItem.append(raceActions);
+//         raceList.append(listItem);
+//         counter++;
+//       }
+//     } else {
+//       raceList.innerHTML = "<li>No upcoming races available.</li>";
+//     }
+//   } catch (error) {
+//     console.error("Error loading race list:", error);
+//     document.getElementById(
+//       "race-list"
+//     ).innerHTML = `<li>Error loading race data: ${error}</li>`;
+//   }
+// };
 
 // driver management functions
 const addDriverToRace = async (raceId) => {
@@ -328,15 +328,15 @@ const selectRace = async (raceId) => {
   }
 };
 
-const fetchDriver = async (id) => {
-  try {
-    const response = await fetch(`/api/drivers/${id}`);
-    const data = await handleResponse(response);
-    return data;
-  } catch (error) {
-    console.error(`Error fetching driver ${id}:`, error);
-  }
-};
+// const fetchDriver = async (id) => {
+//   try {
+//     const response = await fetch(`/api/drivers/${id}`);
+//     const data = await handleResponse(response);
+//     return data;
+//   } catch (error) {
+//     console.error(`Error fetching driver ${id}:`, error);
+//   }
+// };
 
 const createDriver = async () => {
   const driverName = document.getElementById("driver-name").value.trim();
