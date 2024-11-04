@@ -12,21 +12,15 @@
 
 #leaderboard {
   margin: 0 1rem;
-  /* border: 2px solid var(--disabled-color); */
-  /* border-radius: 8px; */
 }
 
 #leaderboard table {
   border-radius: 8px;
 
   width: 100%;
-  /* border-collapse: separate; */
-  /* padding: 1rem; */
   border-spacing: 0 1rem;
   padding: 0 1rem;
   overflow: hidden;
-  /* box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); */
-  /* background: var(--menu-color); */
 }
 #leaderboard th,
 #leaderboard td {
@@ -141,14 +135,12 @@ tbody > tr {
   margin: 0 auto;
 }
 
-/* Adjust skeleton styling for table cells */
 #leaderboard .skeleton {
   width: 80%;
   height: 1.5rem;
   margin: 0 auto;
 }
 
-/* Add border-radius to first and last cells of each row */
 #leaderboard td:first-child,
 #leaderboard th:first-child {
   border-top-left-radius: 8px;
@@ -208,7 +200,6 @@ tbody > tr {
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 1px;
-  /* border-bottom: 3px solid var(--accent-color, #00d4ab); */
   padding: 15px 10px;
 }
 
@@ -270,21 +261,19 @@ tbody > tr {
 
 #leaderboard td span {
   transition: all 0.5s ease-in-out;
-  display: block; /* Ensures the transition applies properly */
+  display: block; 
 }
 
 #leaderboard td::before {
   transition: all 0.5s ease-in-out;
 }
 
-/* Add transition for text color and opacity */
 #leaderboard td,
 #leaderboard td span,
 #leaderboard td::before {
   transition: all 0.5s ease-in-out;
 }
 
-/* Ensure background transitions are smooth */
 #driver-1 td,
 #driver-2 td,
 #driver-3 td,
@@ -293,7 +282,6 @@ tbody > tr {
   transition: all 0.5s ease-in-out;
 }
 
-/* Add blur transition */
 #leaderboard tbody tr {
   transition: transform 0.5s ease-in-out, background 0.5s ease-in-out,
     filter 0.2s ease-in-out;
@@ -301,7 +289,7 @@ tbody > tr {
   z-index: 1;
 }
 
-/* Add blur class */
 .position-changing {
+  transition: transform 0.5s ease, filter 0.5s ease;
   filter: blur(4px);
 }

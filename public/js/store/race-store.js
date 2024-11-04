@@ -38,15 +38,11 @@ const raceStore = {
       const raceStatus = document.getElementById("raceStatus");
       raceStatus.innerHTML = this.data.currentRace.status;
     }
-    // RACE CONTROL BUTTON DISABLING FIX
-    // CHECK IF WE ARE ON RACE CONTROL PAGE
     if (document.getElementById("ctrlButtonDiv")) {
-      // IDK AUSALT
       import("../race-control.js").then((module) => module.disableButtons());
     }
   },
   updateModeUI: function () {
-    // console.log(this.data.mode);
     const modeElement = document.getElementById("raceMode");
     if (modeElement) {
       modeElement.textContent = this.data.mode;
@@ -92,10 +88,7 @@ const raceStore = {
       const row = document.getElementById(`driver-row-${index}`);
       if (!row) return;
       const driver = drivers[index];
-      // console.log("driver: ", driver);
-      // console.log("driver.length:", drivers.length);
       if (index < drivers.length) {
-        // Clear existing content
         row.innerHTML = "";
 
         if (!driver.id) return;
@@ -129,7 +122,6 @@ const raceStore = {
   updateUpcomingRacesUI: function () {
     if (document.getElementById("race-list")) {
       import("../components/UpcomingRaces.js").then((module) =>
-        // module.addFunctionality(raceStore.upcoming)
         module.update(this.upcoming)
       );
     }
@@ -179,7 +171,6 @@ socket.on("upcomingRacesUpdate", (upcomingRacesData) => {
 
 socket.on("modeUpdate", (mode) => {
   raceStore.data.mode = mode;
-  // Update UI components that depend on mode
   raceStore.updateModeUI();
 });
 

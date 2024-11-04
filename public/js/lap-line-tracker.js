@@ -47,54 +47,44 @@
 // };
 
 export const updateRaceInfo = async (race) => {
-  if (race) {
-    // Set up car button click handlers
-    for (let i = 1; i <= 8; i++) {
-      const btn = document.getElementById(`car-btn${i}`);
-      const driver = race.drivers[i - 1];
-      if (driver) {
-        const { car, id } = driver;
-        btn.onclick = () => {
-          window.registerLapTime(id);
-          console.log(`PRESSED BUTTON`);
-        };
-        // const oldListener = btn.getAttribute("data-listener");
-        // btn.removeEventListener("click", window[oldListener]);
-        // btn.addEventListener("click", () => {
-        //   window.registerLapTime(id);
-        //   console.log(PRESSED BUTTON);
-        // });
+    if (race) {
+        // Set up car button click handlers
+        for (let i = 1; i <= 8; i++) {
+            const btn = document.getElementById(`car-btn${i}`);
+            const driver = race.drivers[i - 1];
+            if (driver) {
+                const { car, id } = driver;
+                btn.onclick = () => {
+                    window.registerLapTime(id);
+                    console.log(`PRESSED BUTTON`);
+                };
+                btn.textContent = `${car}`;
+            } else {
+                btn.textContent = `X`;
+            }
 
-        btn.textContent = `${car}`;
-      } else {
-        btn.textContent = `X`;
-      }
-
-      // Disable buttons for cars not in race
-      if (i > race.drivers?.length) {
-        btn.disabled = true;
-        btn.classList.add("disabled");
-      } else {
-        if (btn.classList.contains("disabled")) {
-          btn.classList.remove("disabled");
-          btn.disabled = false;
+            // Disable buttons for cars not in race
+            if (i > race.drivers?.length) {
+                btn.disabled = true;
+                btn.classList.add("disabled");
+            } else {
+                if (btn.classList.contains("disabled")) {
+                    btn.classList.remove("disabled");
+                    btn.disabled = false;
+                }
+            }
         }
-      }
+        disableButtons(race.mode, race.status);
+    } else {
+        alert("No current race.");
     }
-    disableButtons(race.mode, race.status);
-  } else {
-    alert("No current race.");
-  }
 };
 
 const disableButtons = (raceMode, raceStatus) => {
-  const buttonsDiv = document.getElementById("buttonsDiv");
-  if (raceMode === "FINISH" || raceStatus !== "STARTED") {
-    // if (!buttonsDiv.classList.includes("disabled")) {
-    //   buttonsDiv.classList.add("disabled");
-    // }
-    buttonsDiv.disabled = true;
-  } else {
-    buttonsDiv.disabled = false;
-  }
+    const buttonsDiv = document.getElementById("buttonsDiv");
+    if (raceMode === "FINISH" || raceStatus !== "STARTED") {
+        buttonsDiv.disabled = true;
+    } else {
+        buttonsDiv.disabled = false;
+    }
 };
