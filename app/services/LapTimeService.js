@@ -68,12 +68,13 @@ export const postLapTime2 = async (driverId, lapTime) => {
       `LapTimeService.postLapTime2(driverId:${driverId}, raceId:${currentRace[0].id}, lapTime:${currentLapTime}, lapNumber:${previousLapTimes.length})`
     );
 
-    return await LapTimeRepository.insertLapTime(
+    await LapTimeRepository.insertLapTime(
       driverId,
       currentRace[0].id,
       currentLapTime,
       previousLapTimes.length
     );
+    return;
   } catch (err) {
     logger.error(err);
   }

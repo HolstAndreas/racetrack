@@ -21,17 +21,17 @@ const errorHandler = (err, req, res, next) => {
 
   // Handle JWT errors for specific status codes
   if (err.name === "TokenExpiredError") {
-    return res.redirect("../../public/401.html");
+    return res.redirect("../../401.html");
   }
 
   if (err.name === "JsonWebTokenError" || err.status === 401) {
     res.status(401);
-    return res.sendFile(path.join(__dirname, "../../public/401.html"));
+    return res.redirect("../../401.html");
   }
 
   if (err.status === 403) {
     res.status(403);
-    return res.sendFile(path.join(__dirname, "../../public/403.html"));
+    return res.redirect("../../403.html");
   }
 
   // Default error

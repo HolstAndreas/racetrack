@@ -138,7 +138,6 @@ const addDriverToRace = async (raceId) => {
     const data = await handleResponse(response);
     if (data.status === "success") {
       await refreshData();
-      alert("Driver added to race successfully!");
     }
   } catch (error) {
     alert(`Error adding driver to race: ${error.message}`);
@@ -177,47 +176,6 @@ const populateDriverSelect = async () => {
   }
 };
 
-const removeDriverFromRace = async (driverId, raceId) => {
-  try {
-    const response = await fetch(
-      `/api/race-sessions/${raceId}/drivers/${driverId}`,
-      {
-        method: "DELETE",
-      }
-    );
-    const data = await handleResponse(response);
-    if (data.status === "success") {
-      const driverToRemove = document.getElementById(`driver${driverId}`);
-      driverToRemove.parentElement.remove();
-    }
-  } catch (error) {
-    alert(error);
-    console.error(`Error removing driver from race: ${error}`);
-  }
-};
-
-const deleteDriver = async (id) => {
-  try {
-    const confirmDelete = confirm(
-      `Are you sure you want to delete driver ${id}?`
-    );
-
-    if (confirmDelete) {
-      const response = await fetch(`/api/drivers/${id}`, {
-        method: "DELETE",
-      });
-      if (response.status === 204) {
-        const driverToRemove = document.getElementById(`driver${id}`);
-        driverToRemove.parentElement.remove();
-        await fetchUpcomingRaces(); // Refresh the upcoming races list
-        await populateDriverSelect();
-      }
-    }
-  } catch (error) {
-    alert(error);
-    console.error(`Error deleting driver: ${error}`);
-  }
-};
 const deleteDriverManagement = async () => {
   const id = document.getElementById("edit-driver-select").value;
   if (!id) {
@@ -236,7 +194,7 @@ const deleteDriverManagement = async () => {
       if (response.status === 204) {
         const driverToRemove = document.getElementById(`driver${id}`);
         driverToRemove.parentElement.remove();
-        await fetchUpcomingRaces(); // Refresh the upcoming races list
+        // await fetchUpcomingRaces(); // Refresh the upcoming races list
         await populateDriverSelect();
       }
     }
@@ -275,56 +233,6 @@ const updateDriver = async () => {
     }
   } catch (error) {
     alert(error);
-  }
-};
-
-const createDriverListItem = (driver, raceId) => {
-  const li = document.createElement("li");
-  li.innerHTML = `
-      <div class="driver-info" id="driver${driver.id}">
-      <span class="driver-name">
-          <b>Name:</b> ${driver.name}
-      </span>
-          <span><b>ID:</b> ${driver.id}</span>
-          <span class="driver-car">
-              <b>Car:</b> ${driver.car || "No Car"}
-          </span>
-          <div class="driver-actions">
-              <button onclick="removeDriverFromRace(${
-                driver.id
-              }, ${raceId})" class="btn">Remove from Race</button>
-              <button onclick="deleteDriver(${
-                driver.id
-              })" class="btn">Delete Driver</button>
-          </div>
-      </div>`;
-  return li;
-};
-
-const selectRace = async (raceId) => {
-  try {
-    const data = await fetchRace(raceId);
-    const race = data.data[0];
-    const driversList = document.getElementById("drivers-list");
-    driversList.innerHTML = "";
-
-    await Promise.allSettled(
-      race.drivers.map(async (driverId) => {
-        try {
-          const driverData = await fetchDriver(driverId);
-          const driver = driverData.data;
-          const driverElement = createDriverListItem(driver, raceId);
-          driversList.appendChild(driverElement);
-        } catch (error) {
-          console.error(`Error loading driver ${driverId}:`, error);
-        }
-      })
-    );
-  } catch (error) {
-    console.error(`Error selecting race ${raceId}:`, error);
-    document.getElementById(
-      "drivers-list"
-    ).innerHTML = `<li>Error loading race data: ${error.message}</li>`;
   }
 };
 
@@ -496,7 +404,6 @@ const createRace = async () => {
     if (data.status === "success") {
       clearRaceCreationForm();
       await refreshData();
-      alert("Race created successfully!");
     }
   } catch (error) {
     alert(`Error creating race: ${error.message}`);
@@ -516,7 +423,6 @@ const deleteRace = async (raceId) => {
 
       if (response.status === 204) {
         await refreshData();
-        alert("Race deleted successfully!");
       }
     }
   } catch (error) {
@@ -560,7 +466,7 @@ const clearDriverUpdateForm = () => {
 const refreshData = async () => {
   await Promise.allSettled([
     populateDriverSelect(),
-    fetchUpcomingRaces(),
+    // fetchUpcomingRaces(),
     // loadCurrentRace(),
   ]);
 };

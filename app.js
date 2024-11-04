@@ -11,6 +11,7 @@ import * as RaceService from "./app/services/RaceService.js";
 import logger from "./app/utils/logger.js";
 import routes from "./app/routes/index.js";
 import errorHandler from "./app/middleware/errorHandler.js";
+import { getCurrentRace } from "./app/repositories/RaceRepository.js";
 
 dotenv.config();
 
@@ -60,6 +61,17 @@ io.on("connection", (socket) => {
   };
   updateInitialMode();
 
+  const updateInitialLeaderBoard = async () => {
+    const currentRace = await RaceService.findCurrentRace();
+    if (currentRace) {
+      const laps = await LapTimeService.getLapTimesByRace(currentRace[0].id);
+      io.emit("lapUpdate", laps);
+    } else {
+      io.emit("lapUpdate", []);
+    }
+  };
+  updateInitialLeaderBoard();
+
   socket.on("connectToRoom", (roomName) => {
     socket.join(roomName);
     logger.debug(`${socket.id} joined room: ${roomName}`);
@@ -81,6 +93,15 @@ io.on("connection", (socket) => {
 
   socket.on("registerLapTime", async ({ driverId, currentTimestamp }) => {
     await LapTimeService.postLapTime2(driverId, currentTimestamp);
+
+    const currentRace = await RaceService.findCurrentRace();
+    if (currentRace) {
+      const laps = await LapTimeService.getLapTimesByRace(currentRace[0].id);
+      io.emit("lapUpdate", laps);
+    } else {
+      io.emit("lapUpdate", []);
+    }
+
     // TODO: EMIT LEADERBOARD UPDATE
   });
 
@@ -117,13 +138,13 @@ const startRaceTimer = async (raceId) => {
   timerInterval = setInterval(async () => {
     if (globalTimer > 0) {
       // THIS IS A TEST BLOCK FOR RESET RACE BTN TO REMOVE LATER
-      const TESTrace = await RaceService.findCurrentRace();
-      if (typeof TESTrace[0].remaining_time === "undefined") {
-        clearInterval(timerInterval);
-        io.emit("timerUpdate", parseInt(process.env.TIMER));
-        globalTimer = parseInt(process.env.TIMER);
-        return;
-      }
+      // const TESTrace = await RaceService.findCurrentRace();
+      // if (typeof TESTrace[0].remaining_time === "undefined") {
+      //   clearInterval(timerInterval);
+      //   io.emit("timerUpdate", parseInt(process.env.TIMER));
+      //   globalTimer = parseInt(process.env.TIMER);
+      //   return;
+      // }
 
       globalTimer--;
       // update remaining time in database
