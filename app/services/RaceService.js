@@ -162,6 +162,10 @@ export const updateRaceStatus = async (raceId, status) => {
 
     const upcomingRaces = await findUpcomingRaces();
     io.emit("upcomingRacesUpdate", upcomingRaces);
+    if (status === "FINISHED") {
+      return upcomingRaces[0];
+    }
+
     return result[0];
   } catch (err) {
     logger.error(`RaceService.updateRaceStatus() | Error: ${err}`);

@@ -32,7 +32,7 @@ export function createMode(elementId) {
         infoItem.style.border = "2px solid var(--disabled-color)";
     }
   }
-
+  // eslint-disable-next-line no-undef
   const socket = io();
   socket.on("modeUpdate", (mode) => {
     updateDisplay(mode);

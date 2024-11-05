@@ -20,7 +20,7 @@ export function createCountdown(elementId) {
       .toString()
       .padStart(2, "0")}`;
   }
-
+  // eslint-disable-next-line no-undef
   const socket = io();
   socket.on("timerUpdate", (timeLeft) => {
     updateDisplay(timeLeft);

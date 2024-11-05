@@ -16,7 +16,7 @@ export function createRaceID(elementId) {
   function updateDisplay(raceId) {
     raceIdValue.innerHTML = raceId;
   }
-
+  // eslint-disable-next-line no-undef
   const socket = io();
   socket.on("raceUpdate", (raceData) => {
     updateDisplay(raceData[0].id);

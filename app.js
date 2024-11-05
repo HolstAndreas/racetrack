@@ -61,7 +61,7 @@ io.on("connection", (socket) => {
 
   const updateInitialLeaderBoard = async () => {
     const currentRace = await RaceService.findCurrentRace();
-    if (currentRace) {
+    if (currentRace.length > 0) {
       const laps = await LapTimeService.getLapTimesByRace(currentRace[0].id);
       io.emit("lapUpdate", laps);
     } else {
@@ -76,14 +76,16 @@ io.on("connection", (socket) => {
     io.to(roomName).emit("newUserJoined", socket.id);
   });
 
-  socket.on("raceUpdated", async (raceId) => {
-    // Get updated currentrace data
-    const updatedRace = await RaceService.findById(raceId);
-    if (updatedRace.Status === "Started")
-      await startRaceTimer(updatedRace[0].id);
-    if (updatedRace.mode === "FINISH") globalTimer = 0;
-    io.emit("raceUpdate", updatedRace);
-  });
+  // socket.on("raceUpdate", async (raceId) => {
+  //   // Get updated currentrace data
+  //   const updatedRace = await RaceService.findById(raceId);
+  //   if (updatedRace.Status === "Started") {
+  //     await startRaceTimer(updatedRace[0].id);
+  //   }
+  //   console.log("got modeUpdate");
+  //   if (updatedRace.mode === "FINISH") globalTimer = 0;
+  //   io.emit("raceUpdate", updatedRace);
+  // });
 
   socket.on("raceStarted", (raceId) => {
     logger.info(`Socket got the info that race started.`);
@@ -116,6 +118,10 @@ const startRaceTimer = async () => {
   await RaceService.setMode("SAFE");
 
   timerInterval = setInterval(async () => {
+    const mode = await RaceService.getMode();
+    if (mode === "FINISH") {
+      globalTimer = 0;
+    }
     if (globalTimer > 0) {
       globalTimer--;
       await RaceService.updateRemainingTime(race[0].id, globalTimer);

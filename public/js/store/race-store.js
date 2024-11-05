@@ -43,11 +43,15 @@ const raceStore = {
     if (this.data.currentRace.status) {
       const paddockDiv = document.getElementById("paddock");
       if (paddockDiv) {
-        if (this.data.currentRace.status === "FINISHED") {
+        if (this.data.currentRace.status === "WAITING") {
           paddockDiv.innerHTML = "Proceed to the paddock!";
+          console.log("We are here");
         } else {
           paddockDiv.innerHTML = "";
+          console.log("We are NOT here");
         }
+      } else {
+        console.log("paddock not found");
       }
     }
     if (document.getElementById("ctrlButtonDiv")) {

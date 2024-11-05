@@ -1,4 +1,3 @@
-import { startRace } from "./socket/rc.socket.io.js";
 import raceStore from "./store/race-store.js";
 
 document.addEventListener("DOMContentLoaded", async () => {
@@ -69,7 +68,6 @@ const changeStatus = async (status) => {
 
     if (status === "STARTED") {
       await changeMode("SAFE");
-      startRace();
     }
 
     disableButtons();
@@ -110,7 +108,7 @@ export const disableButtons = () => {
   const modeControl = document.getElementById("ctrlButtonDiv");
   const race = raceStore.data.currentRace;
 
-  if (race.status === "STARTED" && race.mode !== "FINISH") {
+  if (race.status === "STARTED" && raceStore.data.mode !== "FINISH") {
     modeControl.disabled = false;
   } else {
     modeControl.disabled = true;
@@ -122,7 +120,7 @@ export const disableButtons = () => {
     startRaceButton.disabled = true;
   }
 
-  if (race.mode === "FINISH" && race.status === "STARTED") {
+  if (raceStore.data.mode === "FINISH" && race.status === "STARTED") {
     endRaceButton.disabled = false;
   } else {
     endRaceButton.disabled = true;

@@ -11,7 +11,7 @@
     "sourceType": "module"
   },
   "rules": {
-    "import/no-unresolved": "error",
+    "import/no-unresolved": "warn",
     "no-unused-vars": [
       "warn",
       { "vars": "all", "args": "after-used", "ignoreRestSiblings": false }

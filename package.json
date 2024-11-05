@@ -7,6 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "TIMER=3600 nodemon app.js",
     "dev:nolog": "TIMER=3600 NODE_LOGGING=false nodemon app.js",
+    "dev:eslint": "TIMER=3600 NODE_LOGGING=false nodemon --exec 'eslint . && node' app.js",
     "start": "TIMER=600 node app.js"
   },
   "repository": {

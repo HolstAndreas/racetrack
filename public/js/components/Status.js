@@ -16,7 +16,7 @@ export function createStatus(elementId) {
   function updateDisplay(status) {
     statusValue.innerHTML = status;
   }
-
+  // eslint-disable-next-line no-undef
   const socket = io();
   socket.on("raceUpdate", (raceData) => {
     updateDisplay(raceData[0].status);
