@@ -1,167 +1,160 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Race Control</title>
-        <link rel="icon" type="image/png" sizes="192x192" href="favicon.png" />
-        <script src="/socket.io/socket.io.js"></script>
-        <script src="js/socket/rc.socket.io.js" type="module"></script>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-        <link
-            href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=SUSE:wght@100..800&display=swap"
-            rel="stylesheet"
-        />
-        <link
-            rel="stylesheet"
-            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
-            integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
-            crossorigin="anonymous"
-            referrerpolicy="no-referrer"
-        />
-        <link rel="stylesheet" href="styles/global.css" />
-        <link rel="stylesheet" href="styles/race-control.css" />
-    </head>
-    <style>
-        #driverTable {
-            display: flex;
-            flex-wrap: wrap;
-            margin-bottom: 0.5rem;
-            border: 2px solid var(--disabled-color);
-            border-radius: 8px;
-            width: 100%;
-        }
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Race Control</title>
+    <link rel="icon" type="image/png" sizes="192x192" href="favicon.png" />
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="js/socket/rc.socket.io.js" type="module"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=SUSE:wght@100..800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+      integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <link rel="stylesheet" href="styles/global.css" />
+    <link rel="stylesheet" href="styles/race-control.css" />
+  </head>
+  <style>
+    #drivers-table {
+      display: flex;
+      flex-wrap: wrap;
+      margin-bottom: 0.5rem;
+      border: 2px solid var(--disabled-color);
+      border-radius: 8px;
+      width: 100%;
+    }
 
-        #driverTable div:nth-child(even) {
-            border-left: 2px solid var(--disabled-color);
-        }
+    #drivers-table div:nth-child(even) {
+      border-left: 2px solid var(--disabled-color);
+    }
 
-        .car-icon {
-            color: #ff5e5e;
-        }
+    .car-icon {
+      color: #ff5e5e;
+    }
 
-        .driver-row {
-            display: flex;
-            align-items: center;
-            height: 2rem;
-            gap: 0.5rem;
-            width: 50%;
-            border-bottom: 2px solid var(--disabled-color);
-            padding: 0.5rem 1rem 0.5rem 0.5rem;
-        }
+    .driver-row {
+      display: flex;
+      align-items: center;
+      height: 2rem;
+      gap: 0.5rem;
+      width: 50%;
+      border-bottom: 2px solid var(--disabled-color);
+      padding: 0.5rem 1rem 0.5rem 0.5rem;
+    }
 
-        .driver-row:nth-child(7) {
-            border-bottom: none;
-        }
+    .driver-row:nth-child(7) {
+      border-bottom: none;
+    }
 
-        .driver-row:last-child {
-            border-bottom: none;
-        }
-        .driver-id {
-            background-color: var(--background-color);
-            color: var(--disabled-color);
-            font-weight: 600;
-            padding: 0.125rem;
-            border-radius: 4px;
-            font-size: 0.875rem;
-            width: 2rem;
-            text-align: center;
-        }
+    .driver-row:last-child {
+      border-bottom: none;
+    }
+    .driver-id {
+      background-color: var(--background-color);
+      color: var(--disabled-color);
+      font-weight: 600;
+      padding: 0.125rem;
+      border-radius: 4px;
+      font-size: 0.875rem;
+      width: 2rem;
+      text-align: center;
+    }
 
-        .driver-car {
-            color: var(--disabled-color);
-            font-weight: 600;
-        }
+    .driver-car {
+      color: var(--disabled-color);
+      font-weight: 600;
+    }
 
-        @media only screen and (max-width: 800px) {
-            .driver-row {
-                width: 100%;
-                border-left: none !important;
-                border-right: none !important;
-                justify-content: space-between;
-            }
-            .driver-row:nth-child(7) {
-                border-bottom: 2px solid var(--disabled-color);
-            }
-        }
-    </style>
-    <body>
-        <a class="logout-btn" href="/logout">Log out</a>
-        <button
-            class="logout-btn"
-            id="reset-race"
-            style="right: 150px !important"
-        >
-            reset race
-        </button>
-        <span id="logs"></span>
-        <div class="ctrlButtonsDiv" style="margin-bottom: 1rem">
-            <div class="race-info">
-                <div class="info-container"></div>
-                <div class="info-container"></div>
-            </div>
-        </div>
-        <div class="ctrlButtonsDiv" style="margin-bottom: 1rem">
-            <div class="race-info">
-                <div class="info-container"></div>
-            </div>
-        </div>
-        <div class="ctrlButtonsDiv">
-            <div class="ctrlDivTitle">CHANGE MODE</div>
-            <fieldset class="ctrlButtonDiv" id="ctrlButtonDiv" disabled>
-                <button id="safeButton">SAFE</button>
-                <button id="hazardButton">HAZARD</button>
-                <button id="dangerButton">DANGER</button>
-                <button id="finishButton">FINISH</button>
-            </fieldset>
+    @media only screen and (max-width: 800px) {
+      .driver-row {
+        width: 100%;
+        border-left: none !important;
+        border-right: none !important;
+        justify-content: space-between;
+      }
+      .driver-row:nth-child(7) {
+        border-bottom: 2px solid var(--disabled-color);
+      }
+    }
+  </style>
+  <body>
+    <a class="logout-btn" href="/logout">Log out</a>
+    <button class="logout-btn" id="reset-race" style="right: 150px !important">
+      reset race
+    </button>
+    <span id="logs"></span>
+    <div class="ctrlButtonsDiv" style="margin-bottom: 1rem">
+      <div class="race-info">
+        <div class="info-container"></div>
+        <div class="info-container"></div>
+      </div>
+    </div>
+    <div class="ctrlButtonsDiv" style="margin-bottom: 1rem">
+      <div class="race-info">
+        <div class="info-container"></div>
+      </div>
+    </div>
+    <div class="ctrlButtonsDiv">
+      <div class="ctrlDivTitle">CHANGE MODE</div>
+      <fieldset class="ctrlButtonDiv" id="ctrlButtonDiv" disabled>
+        <button id="safeButton">SAFE</button>
+        <button id="hazardButton">HAZARD</button>
+        <button id="dangerButton">DANGER</button>
+        <button id="finishButton">FINISH</button>
+      </fieldset>
 
-            <div class="ctrlDivTitle">CHANGE STATUS</div>
-            <div class="ctrlButtonDiv">
-                <button id="startBtn">START RACE</button>
-                <button id="finishBtn">END RACE</button>
-            </div>
-        </div>
-        <script type="module">
-            import { createCountdown } from "./js/components/Countdown.js";
-            import { createRaceID } from "./js/components/RaceID.js";
-            import { createMode } from "./js/components/Mode.js";
-            import { createStatus } from "./js/components/Status.js";
-            import { createDriverTable } from "./js/components/DriverTable.js";
-            import raceStore from "./js/store/race-store.js";
+      <div class="ctrlDivTitle">CHANGE STATUS</div>
+      <div class="ctrlButtonDiv">
+        <button id="startBtn">START RACE</button>
+        <button id="finishBtn">END RACE</button>
+      </div>
+    </div>
+    <script type="module">
+      import { createCountdown } from "./js/components/Countdown.js";
+      import { createRaceID } from "./js/components/RaceID.js";
+      import { createMode } from "./js/components/Mode.js";
+      import { createStatus } from "./js/components/Status.js";
+      import { createDriverTable } from "./js/components/DriverTable.js";
+      import raceStore from "./js/store/race-store.js";
 
-            document.addEventListener("DOMContentLoaded", () => {
-                const raceIdContainer =
-                    document.querySelector(".info-container");
-                const raceId = createRaceID("raceId");
-                raceIdContainer.appendChild(raceId);
+      document.addEventListener("DOMContentLoaded", () => {
+        const raceIdContainer = document.querySelector(".info-container");
+        const raceId = createRaceID("raceId");
+        raceIdContainer.appendChild(raceId);
 
-                const countdownContainer =
-                    document.querySelector(".info-container");
-                const countdown = createCountdown("countdown");
-                countdownContainer.appendChild(countdown);
+        const countdownContainer = document.querySelector(".info-container");
+        const countdown = createCountdown("countdown");
+        countdownContainer.appendChild(countdown);
 
-                const modeContainer = document.querySelector(
-                    ".info-container:nth-child(2)"
-                );
-                const mode = createMode("raceMode");
-                modeContainer.appendChild(mode);
+        const modeContainer = document.querySelector(
+          ".info-container:nth-child(2)"
+        );
+        const mode = createMode("raceMode");
+        modeContainer.appendChild(mode);
 
-                const statusContainer = document.querySelector(
-                    ".info-container:nth-child(2)"
-                );
-                const status = createStatus("raceStatus");
-                statusContainer.appendChild(status);
+        const statusContainer = document.querySelector(
+          ".info-container:nth-child(2)"
+        );
+        const status = createStatus("raceStatus");
+        statusContainer.appendChild(status);
 
-                const ctrlButtonsDivs =
-                    document.querySelectorAll(".ctrlButtonsDiv");
-                const driverTableContainer = ctrlButtonsDivs[1].querySelector(
-                    ".race-info .info-container"
-                );
-                const driverTable = createDriverTable("driverTable");
-                driverTableContainer.appendChild(driverTable);
-            });
-        </script>
-        <script src="js/race-control.js" type="module" defer></script>
-    </body>
+        const ctrlButtonsDivs = document.querySelectorAll(".ctrlButtonsDiv");
+        const driverTableContainer = ctrlButtonsDivs[1].querySelector(
+          ".race-info .info-container"
+        );
+        const driverTable = createDriverTable("drivers-table");
+        driverTableContainer.appendChild(driverTable);
+      });
+    </script>
+    <script src="js/race-control.js" type="module" defer></script>
+  </body>
 </html>
