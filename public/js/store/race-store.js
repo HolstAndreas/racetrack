@@ -31,12 +31,24 @@ const raceStore = {
     if (this.data.currentRace) {
       const raceId = document.getElementById("raceId");
       if (raceId.classList.contains("next")) {
-        raceId.innerHTML = this.upcoming[0].id;
+        raceId.innerHTML = `NEXT RACE: ${this.upcoming[0].id}`;
       } else {
         raceId.innerHTML = this.data.currentRace.id;
       }
       const raceStatus = document.getElementById("raceStatus");
-      raceStatus.innerHTML = this.data.currentRace.status;
+      if (raceStatus) {
+        raceStatus.innerHTML = this.data.currentRace.status;
+      }
+    }
+    if (this.data.currentRace.status) {
+      const paddockDiv = document.getElementById("paddock");
+      if (paddockDiv) {
+        if (this.data.currentRace.status === "FINISHED") {
+          paddockDiv.innerHTML = "Proceed to the paddock!";
+        } else {
+          paddockDiv.innerHTML = "";
+        }
+      }
     }
     if (document.getElementById("ctrlButtonDiv")) {
       import("../race-control.js").then((module) => module.disableButtons());
@@ -161,6 +173,7 @@ socket.on("upcomingRacesUpdate", (upcomingRacesData) => {
   raceStore.upcoming = upcomingRacesData;
   raceStore.updateDriversTableUI();
   raceStore.updateUpcomingRacesUI();
+  raceStore.updateUI();
 });
 
 socket.on("modeUpdate", (mode) => {

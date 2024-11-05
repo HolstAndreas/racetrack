@@ -6,7 +6,6 @@
     <title>Next Race</title>
     <link rel="icon" type="image/png" sizes="192x192" href="favicon.png" />
     <script src="/socket.io/socket.io.js"></script>
-    <script src="js/guest.js"></script>
     <link rel="stylesheet" href="styles/global.css" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -170,35 +169,7 @@
   <body>
     <div class="race-info-parent">
       <div class="race-info">
-        <span class="title" id="raceId">NEXT RACE: </span>
-        <!-- <div id="driverTable"> -->
-        <!-- <div id="driver-row-0" class="driver-row">
-            <div class="skeleton"></div>
-          </div>
-          <div id="driver-row-1" class="driver-row">
-            <div class="skeleton"></div>
-          </div>
-          <div id="driver-row-2" class="driver-row">
-            <div class="skeleton"></div>
-          </div>
-          <div id="driver-row-3" class="driver-row">
-            <div class="skeleton"></div>
-          </div>
-          <div id="driver-row-4" class="driver-row">
-            <div class="skeleton"></div>
-          </div>
-          <div id="driver-row-5" class="driver-row">
-            <div class="skeleton"></div>
-          </div>
-
-          <div id="driver-row-6" class="driver-row">
-            <div class="skeleton"></div>
-          </div>
-
-          <div id="driver-row-7" class="driver-row">
-            <div class="skeleton"></div>
-          </div> -->
-        <!-- </div> -->
+        <span class="title next" id="raceId">NEXT RACE: </span>
       </div>
     </div>
     <script type="module">
@@ -210,89 +181,11 @@
         const driversTable = createDriverTable("drivers-table");
         driversTable.classList.add("next");
         container.appendChild(driversTable);
+
+        const paddockDiv = document.createElement("div");
+        paddockDiv.classList.add("paddock");
+        container.appendChild(paddockDiv);
       });
-
-      window.loadNextRace = async () => {
-        await loadCurrentRace();
-      };
-
-      const fetchCurrentRace = async () => {
-        try {
-          const response = await fetch(`/api/next-race`);
-          const data = await response.json();
-          return data;
-        } catch (error) {
-          alert(`Error fetching current race:`, error);
-        }
-      };
-
-      const fetchDriver = async (id) => {
-        try {
-          const response = await fetch(`/api/drivers/${id}`);
-          const data = await response.json();
-          return data;
-        } catch (error) {
-          console.error(`Error fetching driver ${id}:`, error);
-        }
-      };
-
-      // const wait = (seconds) => {
-      // return new Promise((resolve) => setTimeout(resolve, seconds * 1000));
-      // };
-      const loadCurrentRace = async () => {
-        // await wait(1.25);
-        try {
-          const data = await fetchCurrentRace();
-          if (
-            !data ||
-            !data.data ||
-            data.data.length === 0 ||
-            data.status === "fail"
-          ) {
-            alert("Currently there is no next race.");
-            return;
-          }
-          const race = data.data[0];
-
-          const driversContainer =
-            document.getElementById("drivers-in-current");
-
-          for (let i = 0; i < 8; i++) {
-            const driverRow = document.getElementById(`driver-row-${i}`);
-            driverRow.innerHTML = `<div class="skeleton"></div>`;
-          }
-
-          // Then populate the rows with driver data
-          for (let i = 0; i < 8; i++) {
-            const driverRow = document.getElementById(`driver-row-${i}`);
-            driverRow.innerHTML = "";
-            if (i < race.drivers.length) {
-              try {
-                const driver = await fetchDriver(race.drivers[i]);
-                const { name, car, id } = driver.data;
-                driverRow.innerHTML = `<span class="driver-id">#${id}</span> <span>${name}</span> <span class="driver-car">${
-                  car || ""
-                } <i class="fa-solid fa-car ${
-                  !car ? "car-icon" : ""
-                }"></i></span>`;
-              } catch (error) {
-                console.error(
-                  `Error loading driver ${race.drivers[i]}:`,
-                  error
-                );
-                driverRow.innerHTML = `<i class="fa-solid fa-triangle-exclamation" style="color: #FFD43B;"></i>`;
-              }
-            } else {
-              driverRow.innerHTML = "";
-            }
-          }
-        } catch (error) {
-          alert(`Error: ${error.message}`);
-          document.getElementById(
-            "current-race"
-          ).innerHTML = `<div>${error.message}</div>`;
-        }
-      };
     </script>
   </body>
 </html>

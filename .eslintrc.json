@@ -5,14 +5,23 @@
     "browser": true
   },
   "extends": "eslint:recommended",
+  "plugins": ["import"],
   "parserOptions": {
-    "ecmaVersion": 2022,
+    "ecmaVersion": "latest",
     "sourceType": "module"
   },
   "rules": {
+    "import/no-unresolved": "error",
     "no-unused-vars": [
       "warn",
       { "vars": "all", "args": "after-used", "ignoreRestSiblings": false }
     ]
+  },
+  "settings": {
+    "import/resolver": {
+      "node": {
+        "extensions": [".js", ".jsx"]
+      }
+    }
   }
 }

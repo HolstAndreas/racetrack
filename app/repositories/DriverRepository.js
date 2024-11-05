@@ -60,7 +60,7 @@ export const getDriversByCar = async (carId) => {
   }
 };
 
-export const getDriversByRace = async (id) => {
+export const getDriversByRace2 = async (id) => {
   logger.info(`DriverRepository.getDriversByRace(id:${id})`);
   try {
     const res = await pool.query("SELECT drivers FROM races WHERE id = $1;", [

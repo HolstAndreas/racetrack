@@ -1,4 +1,4 @@
-let thisRaces = [];
+//let thisRaces = [];
 
 export const createUpcomingRaces = (elementId) => {
   const upcomingRacesDiv = document.createElement("div");
@@ -133,5 +133,5 @@ export const update = (races) => {
 
   races.forEach((race) => updateRace(race));
 
-  thisRaces = races;
+  //thisRaces = races;
 };
