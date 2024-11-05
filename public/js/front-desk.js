@@ -1,7 +1,3 @@
-import raceStore from "./store/race-store.js";
-
-let race;
-
 // Utility functions
 const handleResponse = async (response) => {
   const contentType = response.headers.get("content-type");
@@ -26,98 +22,6 @@ const handleResponse = async (response) => {
 
   return data;
 };
-
-// const fetchUpcomingRaces = async () => {
-//   try {
-//     // const response = await fetch("/api/upcomingraces");
-//     // const data = await handleResponse(response);
-
-//     const newData = raceStore.upcoming;
-
-//     const raceList = document.getElementById("race-list");
-//     raceList.innerHTML = "";
-//     // const newData = data.data;
-
-//     if (newData.length > 0) {
-//       let counter = 0;
-//       for (const race of newData) {
-//         const listItem = document.createElement("li");
-//         listItem.addEventListener("click", (event) => {
-//           const raceEventTarget = event.target.closest("li");
-//           if (raceEventTarget.classList.contains("highlight")) {
-//             raceEventTarget.classList.remove("highlight");
-//             document.getElementById("drivers-list").innerHTML = "";
-//           } else {
-//             document
-//               .querySelectorAll("#race-list li.highlight")
-//               .forEach((item) => {
-//                 item.classList.remove("highlight");
-//               });
-//             raceEventTarget.classList.add("highlight");
-//             selectRace(race.id);
-//           }
-//         });
-//         const listItemId = document.createElement("div");
-//         listItemId.className = "upcoming-race-id";
-//         const listItemDrivers = document.createElement("div");
-//         listItemDrivers.className = "race-drivers-grid";
-
-//         listItemId.innerHTML = `${race.id.toString().padStart(3, "0")}`;
-//         //
-//         // if (counter === 0) {
-//         //     listItemId.innerHTML = `${race.id}`;
-//         // } else {
-//         //     listItemId.innerHTML = `${race.id}`;
-//         // }
-//         listItem.append(listItemId);
-
-//         // Create and populate driver slots
-//         const populateDriverSlots = async () => {
-//           for (let i = 0; i < 8; i++) {
-//             const driverSlot = document.createElement("div");
-//             driverSlot.className = "driver-slot";
-
-//             if (i < race.drivers.length) {
-//               try {
-//                 const driverData = await fetchDriver(race.drivers[i]);
-//                 const { name, car, id } = driverData.data;
-//                 driverSlot.innerHTML = `<i title="ID: ${id}" class="fa-solid fa-car ${
-//                   !car ? "car-icon" : ""
-//                 }"></i> <strong>${car || ""}</strong> ${name}`;
-//               } catch (error) {
-//                 driverSlot.innerHTML = `<i class="fa-solid fa-triangle-exclamation" style="color: #FFD43B;"></i>`;
-//               }
-//             } else {
-//               driverSlot.innerHTML = "";
-//             }
-
-//             listItemDrivers.append(driverSlot);
-//           }
-//         };
-
-//         await populateDriverSlots();
-
-//         const raceActions = document.createElement("div");
-//         raceActions.className = "race-actions";
-//         raceActions.innerHTML = `
-//                     <i onclick="addDriverToRace(${race.id})" class="fa-solid fa-user-plus btn" title="Add Driver"></i>
-//                     <i onclick="deleteRace(${race.id})" class="fa-solid fa-trash btn" title="Delete Race"></i>
-//                 `;
-//         listItem.append(listItemDrivers);
-//         listItem.append(raceActions);
-//         raceList.append(listItem);
-//         counter++;
-//       }
-//     } else {
-//       raceList.innerHTML = "<li>No upcoming races available.</li>";
-//     }
-//   } catch (error) {
-//     console.error("Error loading race list:", error);
-//     document.getElementById(
-//       "race-list"
-//     ).innerHTML = `<li>Error loading race data: ${error}</li>`;
-//   }
-// };
 
 // driver management functions
 const addDriverToRace = async (raceId) => {
@@ -236,16 +140,6 @@ const updateDriver = async () => {
   }
 };
 
-// const fetchDriver = async (id) => {
-//   try {
-//     const response = await fetch(`/api/drivers/${id}`);
-//     const data = await handleResponse(response);
-//     return data;
-//   } catch (error) {
-//     console.error(`Error fetching driver ${id}:`, error);
-//   }
-// };
-
 const createDriver = async () => {
   const driverName = document.getElementById("driver-name").value.trim();
 
@@ -268,7 +162,7 @@ const createDriver = async () => {
 
     const data = await handleResponse(response);
     if (data.status === "success") {
-      nameInput.value = "";
+      document.getElementById("driver-name").value = "";
       await refreshData();
       alert(`Driver ${driverName} created successfully!`);
     }
@@ -307,56 +201,6 @@ const assignCar = async () => {
   }
 };
 
-// race management functions
-
-// export const loadCurrentRace = async () => {
-//   try {
-//     const race = raceStore.data.currentRace;
-//     // const data = await getCurrentRace();
-//     // race = data.data[0];
-
-//     // Update race info values
-//     console.log(race);
-//     document.getElementById("race-id").textContent = race.id;
-//     document.getElementById("race-status").textContent = race.status;
-
-//     const driversContainer = document.getElementById("drivers-in-current");
-//     driversContainer.innerHTML = "";
-
-//     // Create the 8 fixed driver rows
-//     for (let i = 0; i < 8; i++) {
-//       const driverRow = document.createElement("div");
-//       driverRow.id = `driver-row-${i}`;
-//       driverRow.className = "driver-row";
-//       driversContainer.appendChild(driverRow);
-//     }
-
-//     // Then populate the rows with driver data
-//     for (let i = 0; i < 8; i++) {
-//       const driverRow = document.getElementById(`driver-row-${i}`);
-//       if (i < race.drivers.length) {
-//         try {
-//           const driver = await fetchDriver(race.drivers[i]);
-//           const { name, car, id } = driver.data;
-//           driverRow.innerHTML = `<span class="driver-id">#${id}</span> <span>${name}</span> <span class="driver-car"><i class="fa-solid fa-car ${
-//             !car ? "car-icon-highlight " : ""
-//           }"></i> ${car || ""}</span>`;
-//         } catch (error) {
-//           console.error(`Error loading driver ${race.drivers[i]}:`, error);
-//           driverRow.innerHTML = "Error loading driver";
-//         }
-//       } else {
-//         driverRow.innerHTML = "";
-//       }
-//     }
-//   } catch (error) {
-//     alert(`Error: ${error.message}`);
-//     document.getElementById(
-//       "current-race"
-//     ).innerHTML = `<div>${error.message}</div>`;
-//   }
-// };
-
 window.getCurrentRace = async () => {
   const response = await fetch(`/api/currentrace`);
   const data = await handleResponse(response);
@@ -364,16 +208,6 @@ window.getCurrentRace = async () => {
     return data; //data[0]
   } else {
     alert(data.message);
-  }
-};
-
-const fetchRace = async (raceId) => {
-  try {
-    const response = await fetch(`/api/race-sessions/${raceId}`);
-    const data = await handleResponse(response);
-    return data;
-  } catch (error) {
-    console.error(`Error fetching race ${raceId}:`, error);
   }
 };
 
@@ -464,11 +298,7 @@ const clearDriverUpdateForm = () => {
 };
 
 const refreshData = async () => {
-  await Promise.allSettled([
-    populateDriverSelect(),
-    // fetchUpcomingRaces(),
-    // loadCurrentRace(),
-  ]);
+  await Promise.allSettled([populateDriverSelect()]);
 };
 
 document.addEventListener("DOMContentLoaded", async () => {

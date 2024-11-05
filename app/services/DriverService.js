@@ -1,12 +1,11 @@
 import * as DriverRepository from "../repositories/DriverRepository.js";
-import Driver from "../entities/Driver.js";
 import logger from "../utils/logger.js";
 
 export const createDriver = async (name) => {
   logger.info(`DriverService.createDriver(name:${name})`);
   try {
     const driver = await DriverRepository.findByName(name);
-    if (driver) {
+    if (driver.length > 0) {
       return { error: "DRIVER_ALREADY_EXISTS" };
     }
 

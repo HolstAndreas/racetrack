@@ -15,25 +15,6 @@ export const getLapTimesByRace = async (raceId) => {
   }
 };
 
-// SELECT
-//               r.id AS id,
-//               r.start_time,
-//               json_agg(json_build_object('id', d.id, 'name', d.name, 'car', d.car)) AS drivers,
-//               r.status
-//           FROM
-//               races r
-//           JOIN
-//               LATERAL unnest(r.drivers) AS driver_id ON true
-//           JOIN
-//               drivers d ON d.id = driver_id
-//                 WHERE
-//                     r.id > $1
-//                 GROUP BY
-//                     r.id
-//           ORDER BY
-//               id ASC
-//           LIMIT 1;
-
 export const getLapTimesByDriver = async (driverId) => {
   logger.info(`LapTimeRepository.getLapTimesByDriver(driverId:${driverId})`);
   try {
@@ -125,12 +106,3 @@ export const getLapTimesByDriverAndRace = async (driverId, raceId) => {
     throw err;
   }
 };
-
-// CREATE TABLE lap_times (
-//   id SERIAL PRIMARY KEY,
-//   driver_id INTEGER REFERENCES drivers(id),
-//   race_id INTEGER REFERENCES races(id),
-//   lap_time INTEGER,
-//   lap_number INTEGER,
-//   UNIQUE(driver_id, race_id, lap_number)
-// );

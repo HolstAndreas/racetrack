@@ -1,4 +1,4 @@
-import { startRace, raceUpdated } from "./socket/rc.socket.io.js";
+import { startRace } from "./socket/rc.socket.io.js";
 import raceStore from "./store/race-store.js";
 
 document.addEventListener("DOMContentLoaded", async () => {

@@ -4,7 +4,6 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script src="/socket.io/socket.io.js"></script>
-    <script src="js/socket/fd.socket.io.js" type="module" defer></script>
     <script src="js/front-desk.js" type="module" defer></script>
     <link rel="stylesheet" href="styles/front-desk.css" />
     <link rel="stylesheet" href="styles/global.css" />
@@ -25,53 +24,30 @@
     <link rel="icon" type="image/png" sizes="192x192" href="favicon.png" />
   </head>
   <body>
-    <!-- List of upcoming race sessions -->
-    <!-- Add/Remove race sessions -->
-    <!-- Add/Remove/Edit race drivers -->
     <header>
       <h1>Front-desk</h1>
       <a class="btn btn-filled" href="/logout">Log out</a>
     </header>
     <main>
       <section class="content">
-        <!-- Left side: Current and Upcoming Races -->
         <div class="current-race-list">
-          <!-- Current Race Display -->
           <div class="current-race-section">
-            <!-- <h2>Current Race</h2> -->
             <div id="current-race">
               <div class="race-info">
                 <span class="title">CURRENT RACE INFO</span>
                 <div class="info-container">
-                  <!-- <div class="info-item">
-                    <span class="label">ID</span>
-                    <span class="value" id="race-id"></span>
-                  </div>
-                  <div class="info-item">
-                    <span class="label">Status</span>
-                    <span class="value" id="race-status"></span>
-                  </div>
-                  <div class="info-item">
-                    <span class="label">Time remaining</span>
-                    <span class="value" id="countdown"></span>
-                  </div> -->
+
                 </div>
               </div>
-              <!-- <div id="drivers-in-current"></div> -->
             </div>
           </div>
 
-          <!-- Upcoming Races List -->
           <div class="upcoming-races-section">
-            <!-- <h2>Upcoming Races</h2> -->
-            <!-- <ol id="race-list"></ol> -->
           </div>
         </div>
 
-        <!-- Right side, managment -->
         <div class="race-sessions">
           <div class="management-section-parent">
-            <!-- Add Race Section -->
             <div class="management-section">
               <h2>Add Race</h2>
               <div class="form-group">
@@ -86,7 +62,6 @@
                 </button>
               </div>
             </div>
-            <!-- Add Driver Section -->
             <div class="management-section">
               <h2>Add Driver</h2>
               <div class="form-group">
@@ -101,7 +76,6 @@
                 </button>
               </div>
             </div>
-            <!-- Assign Car Section -->
             <div class="management-section">
               <h2>Assign Car to Driver</h2>
               <div class="form-group">
@@ -120,7 +94,6 @@
                 </button>
               </div>
             </div>
-            <!-- Edit Driver Section -->
             <div class="management-section">
               <h2>Edit Driver</h2>
               <div class="form-group">
@@ -144,14 +117,13 @@
 
           <div class="race-drivers">
             <h2>Drivers</h2>
-            <!-- <div class="drivers-list">
-              <ol id="drivers-list"></ol> -->
             </div>
           </div>
         </div>
       </section>
     </main>
     <script type="module">
+      import raceStore from "./js/store/race-store.js";
       import { createCountdown } from "./js/components/Countdown.js";
       import { createRaceID } from "./js/components/RaceID.js";
       import { createStatus } from "./js/components/Status.js";
@@ -160,8 +132,6 @@
       import { createDriversList } from "./js/components/DriversList.js";
 
       document.addEventListener("DOMContentLoaded", () => {
-        //const timer = initializeTimer("countdown");
-
         const infoContainer = document.querySelector(".info-container");
         const raceId = createRaceID("raceId");
         const raceStatus = createStatus("raceStatus");
@@ -186,13 +156,6 @@
         const driversListDiv = document.querySelector(".race-drivers");
         const driversList = createDriversList("drivers-list");
         driversListDiv.appendChild(driversList);
-
-        // const race = await window.getCurrentRace();
-        // if (race.status === "STARTED" && race.mode !== "FINISH") {
-        //   timer.startRace(race.id);
-        // } else {
-        //   document.getElementById("countdown").innerHTML = "00:00";
-        // }
       });
     </script>
   </body>

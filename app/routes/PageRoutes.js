@@ -21,6 +21,21 @@ router.get("/logout", (req, res) => {
   res.sendFile(path.join(__dirname, "../../public/goodbye.html"));
 });
 
+router.get("/goodbye", (req, res) => {
+  res.clearCookie("token");
+  res.sendFile(path.join(__dirname, "../../public/goodbye.html"));
+});
+
+router.get("/401", (req, res) => {
+  res.clearCookie("token");
+  res.sendFile(path.join(__dirname, "../../public/401.html"));
+});
+
+router.get("/403", (req, res) => {
+  res.clearCookie("token");
+  res.sendFile(path.join(__dirname, "../../public/403.html"));
+});
+
 // Protected Routes
 router.get("/front-desk", authMiddleware("receptionist"), function (req, res) {
   res.sendFile(path.join(__dirname, "../../public/front-desk.html"));

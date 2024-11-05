@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 // Utility functions
 const handleResponse = async (response, resultElement) => {
   const contentType = response.headers.get("content-type");
@@ -219,7 +220,6 @@ async function getLapTimesByRace() {
   }
 
   try {
-    console.log(`${raceId}`);
     const response = await fetch(`/api/laptimes/race/${raceId}`);
     const data = await handleResponse(response, resultElement);
     displayResult(resultElement, data);

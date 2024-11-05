@@ -14,7 +14,6 @@ router.use("/api/race-sessions", RaceRoutes);
 router.use("/api/drivers", DriverRoutes);
 router.use("/api/laptimes", LapTimeRoutes);
 
-// Add error handler at the router level
 router.use(errorHandler);
 
 export default router;

@@ -10,8 +10,6 @@ import * as LapTimeService from "./app/services/LapTimeService.js";
 import * as RaceService from "./app/services/RaceService.js";
 import logger from "./app/utils/logger.js";
 import routes from "./app/routes/index.js";
-import errorHandler from "./app/middleware/errorHandler.js";
-import { getCurrentRace } from "./app/repositories/RaceRepository.js";
 
 dotenv.config();
 
@@ -78,31 +76,13 @@ io.on("connection", (socket) => {
     io.to(roomName).emit("newUserJoined", socket.id);
   });
 
-  socket.on("startRace", async () => {
-    const race = await RaceService.findCurrentRace();
-    if (race.length > 0) {
-      await startRaceTimer(race[0].id);
-    }
-  });
-
   socket.on("raceUpdated", async (raceId) => {
     // Get updated currentrace data
     const updatedRace = await RaceService.findById(raceId);
+    if (updatedRace.Status === "Started")
+      await startRaceTimer(updatedRace[0].id);
+    if (updatedRace.mode === "FINISH") globalTimer = 0;
     io.emit("raceUpdate", updatedRace);
-  });
-
-  socket.on("registerLapTime", async ({ driverId, currentTimestamp }) => {
-    await LapTimeService.postLapTime2(driverId, currentTimestamp);
-
-    const currentRace = await RaceService.findCurrentRace();
-    if (currentRace) {
-      const laps = await LapTimeService.getLapTimesByRace(currentRace[0].id);
-      io.emit("lapUpdate", laps);
-    } else {
-      io.emit("lapUpdate", []);
-    }
-
-    // TODO: EMIT LEADERBOARD UPDATE
   });
 
   socket.on("raceStarted", (raceId) => {
@@ -123,7 +103,7 @@ io.on("connection", (socket) => {
   });
 });
 
-const startRaceTimer = async (raceId) => {
+const startRaceTimer = async () => {
   // Clear any existing timer
   if (timerInterval) clearInterval(timerInterval);
 
@@ -137,17 +117,7 @@ const startRaceTimer = async (raceId) => {
 
   timerInterval = setInterval(async () => {
     if (globalTimer > 0) {
-      // THIS IS A TEST BLOCK FOR RESET RACE BTN TO REMOVE LATER
-      // const TESTrace = await RaceService.findCurrentRace();
-      // if (typeof TESTrace[0].remaining_time === "undefined") {
-      //   clearInterval(timerInterval);
-      //   io.emit("timerUpdate", parseInt(process.env.TIMER));
-      //   globalTimer = parseInt(process.env.TIMER);
-      //   return;
-      // }
-
       globalTimer--;
-      // update remaining time in database
       await RaceService.updateRemainingTime(race[0].id, globalTimer);
       io.emit("timerUpdate", globalTimer);
     } else {

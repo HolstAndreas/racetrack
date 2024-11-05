@@ -20,10 +20,3 @@ class Driver {
 }
 
 export default Driver;
-
-// CREATE TABLE drivers (
-//     id SERIAL PRIMARY KEY,
-//     name VARCHAR(255) NOT NULL,
-//     car INTEGER,
-//     current_race INTEGER REFERENCES races(id),
-// );

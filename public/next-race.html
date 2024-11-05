@@ -7,7 +7,6 @@
     <link rel="icon" type="image/png" sizes="192x192" href="favicon.png" />
     <script src="/socket.io/socket.io.js"></script>
     <script src="js/guest.js"></script>
-    <script src="js/socket/next.socket.io.js" type="module"></script>
     <link rel="stylesheet" href="styles/global.css" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -211,12 +210,6 @@
         const driversTable = createDriverTable("drivers-table");
         driversTable.classList.add("next");
         container.appendChild(driversTable);
-
-        // try {
-        //   await updateNextRaceData(0);
-        // } catch (error) {
-        //   alert(error);
-        // }
       });
 
       window.loadNextRace = async () => {

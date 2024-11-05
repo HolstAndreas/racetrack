@@ -6,7 +6,6 @@
     <title>Race Control</title>
     <link rel="icon" type="image/png" sizes="192x192" href="favicon.png" />
     <script src="/socket.io/socket.io.js"></script>
-    <script src="js/socket/rc.socket.io.js" type="module"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -125,6 +124,8 @@
       import { createStatus } from "./js/components/Status.js";
       import { createDriverTable } from "./js/components/DriverTable.js";
       import raceStore from "./js/store/race-store.js";
+
+      const socket = io();
 
       document.addEventListener("DOMContentLoaded", () => {
         const raceIdContainer = document.querySelector(".info-container");

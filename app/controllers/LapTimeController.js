@@ -3,42 +3,27 @@ import logger from "../utils/logger.js";
 import ApiResponse from "../utils/ApiResponse.js";
 import ApiError from "../utils/ApiError.js";
 
-export const postLapTimes = async (req, res, next) => {
-  const { raceId, driverId, lapTime, lapNumber } = req.body;
+export const postLapTime = async (req, res, next) => {
+  const { driverId, currentTimestamp } = req.body;
   logger.info(
     `LapTimeController.postLapTimes(lapTime:${JSON.stringify(req.body)})`
   );
   try {
     // Check if all required fields are present
-    if (!raceId) {
-      throw ApiError.badRequest("Race ID is required");
-    }
+
     if (!driverId) {
       throw ApiError.badRequest("Driver ID is required");
     }
-    if (!lapTime) {
-      throw ApiError.badRequest("Lap time is required");
-    }
-    if (!lapNumber) {
-      throw ApiError.badRequest("Lap number is required");
+    if (!currentTimestamp) {
+      throw ApiError.badRequest("Current timestamp is required");
     }
 
-    // Check if all values are integers
-    if (
-      !Number.isInteger(raceId) ||
-      !Number.isInteger(driverId) ||
-      !Number.isInteger(lapTime) ||
-      !Number.isInteger(lapNumber)
-    ) {
-      throw ApiError.badRequest("All values must be integers");
+    // Check if Driver ID is integers
+    if (!Number.isInteger(driverId)) {
+      throw ApiError.badRequest("Driver ID must be integers");
     }
 
-    const result = await LapTimeService.postLapTime(
-      driverId,
-      raceId,
-      lapTime,
-      lapNumber
-    );
+    const result = await LapTimeService.postLapTime(driverId, currentTimestamp);
     return ApiResponse.success(result, "Lap time recorded successfully").send(
       res
     );

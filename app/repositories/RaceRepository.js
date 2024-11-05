@@ -110,10 +110,7 @@ export const getCurrentRace = async () => {
             GROUP BY 
                 r.id;`
     );
-    // logger.info(
-    //   `RaceRepository.getCurrentRace query result: ${typeof res.rows[0]}`
-    // );
-    if (res.rows[0] === undefined) return []; // no started race;
+    if (res.rows[0] === undefined) return [];
     return res.rows;
   } catch (err) {
     logger.error(err);
@@ -304,7 +301,6 @@ export const updateMode = async (mode) => {
   }
 };
 
-// '2023-10-01 12:00:00'
 export async function updateRaceStatus(raceId, status) {
   logger.info(
     `RaceRepository.updateRaceStatus(raceId: ${raceId}, status: ${status})`
@@ -377,19 +373,6 @@ export const postDriverToRace = async (raceId, drivers) => {
     throw err;
   }
 };
-// CREATE TABLE races (
-//   id SERIAL PRIMARY KEY,
-//   start_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-//   drivers INTEGER[],
-//   remaining_time INTEGER DEFAULT 600,
-//   status VARCHAR(50) DEFAULT 'WAITING',
-//   mode VARCHAR(50) DEFAULT 'DANGER'
-//   );
-
-//     INSERT INTO races (start_time, remaining_time, status, mode)
-// VALUES ('2023-10-01 12:00:00', 600, 'WAITING', 'DANGER');
-
-// SELECT * FROM races;
 
 export const resetRace = async (raceId) => {
   logger.debug(`reset race ${raceId})`);

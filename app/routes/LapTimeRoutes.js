@@ -3,7 +3,7 @@ import * as LapTimeController from "../controllers/LapTimeController.js";
 
 const router = express.Router();
 
-router.post("/", LapTimeController.postLapTimes);
+router.post("/", LapTimeController.postLapTime);
 router.get("/race/:raceId", LapTimeController.getLapTimesByRace);
 router.get("/driver/:driverId/", LapTimeController.getLapTimesByDriver);
 router.get(

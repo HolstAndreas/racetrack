@@ -149,14 +149,3 @@ export const deleteDriver = async (driverId) => {
     throw err;
   }
 };
-
-// CREATE TABLE drivers(id SERIAL PRIMARY KEY,
-//   name VARCHAR(255) NOT NULL,
-//   car INTEGER,
-//   current_Race INTEGER REFERENCES races(id),
-//   );
-
-// INSERT INTO drivers (name, car, current_race)
-// VALUES ('Jaan Kood', 1, 1);
-
-// SELECT * FROM drivers;

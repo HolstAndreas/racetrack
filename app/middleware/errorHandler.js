@@ -1,12 +1,7 @@
 import ApiError from "../utils/ApiError.js";
 import logger from "../utils/logger.js";
-import path from "path";
-import { fileURLToPath } from "url";
 
-// Defined __dirname in ES module scope
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
+// eslint-disable-next-line no-unused-vars
 const errorHandler = (err, req, res, next) => {
   logger.error(`Error: ${err.message}`);
 
@@ -21,17 +16,17 @@ const errorHandler = (err, req, res, next) => {
 
   // Handle JWT errors for specific status codes
   if (err.name === "TokenExpiredError") {
-    return res.redirect("../../401.html");
+    return res.redirect("/401");
   }
 
   if (err.name === "JsonWebTokenError" || err.status === 401) {
     res.status(401);
-    return res.redirect("../../401.html");
+    return res.redirect("/401");
   }
 
   if (err.status === 403) {
     res.status(403);
-    return res.redirect("../../403.html");
+    return res.redirect("/403");
   }
 
   // Default error

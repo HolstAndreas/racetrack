@@ -145,15 +145,10 @@ const raceStore = {
 };
 
 // Listen for updates from server
+// eslint-disable-next-line no-undef
 const socket = io();
 
 socket.on("raceUpdate", (newRaceData) => {
-  // console.log(
-  //     `%c raceStore.js %c raceUpdate ${newRaceData[0]}`,
-  //     "background: #222; color: #bada55;",
-  //     "background: transparent; color: auto;"
-  // );
-
   raceStore.data.currentRace = {
     ...raceStore.data.currentRace,
     ...newRaceData[0],
@@ -164,7 +159,6 @@ socket.on("raceUpdate", (newRaceData) => {
 
 socket.on("upcomingRacesUpdate", (upcomingRacesData) => {
   raceStore.upcoming = upcomingRacesData;
-  // console.log(upcomingRacesData);
   raceStore.updateDriversTableUI();
   raceStore.updateUpcomingRacesUI();
 });
@@ -180,11 +174,6 @@ socket.on("lapUpdate", (laps) => {
 });
 
 socket.on("timerUpdate", (newTime) => {
-  // console.log(
-  //     `%c raceStore.js %c timerUpdate ${newTime}`,
-  //     "background: #222; color: #bada55;",
-  //     "background: transparent; color: auto;"
-  // );
   raceStore.data.timer = newTime;
 });
 

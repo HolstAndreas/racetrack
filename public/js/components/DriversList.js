@@ -35,16 +35,11 @@ export const createDriversList = (elementId) => {
 };
 
 export const showDrivers = (drivers, raceId) => {
-  //update(drivers, raceId);
   const driversList = document.getElementById("drivers-list");
   driversList.innerHTML = "";
 
   drivers.forEach((driver) => {
     const li = document.createElement("li");
-    // console.log(driver.car);
-    // console.log(driver.name);
-    // console.log(driver.id);
-    // console.log(raceId);
     li.innerHTML = `
       <div class="driver-info" id="driver${driver.id}">
       <span class="driver-name">
@@ -96,8 +91,10 @@ export const removeDriverFromRace = async (driverId, raceId) => {
       }
     );
     const data = await handleResponse(response);
-    const driverToRemove = document.getElementById(`driver${driverId}`);
-    driverToRemove.parentElement.remove();
+    if (data.status === "success") {
+      const driverToRemove = document.getElementById(`driver${driverId}`);
+      driverToRemove.parentElement.remove();
+    }
   } catch (error) {
     alert(error);
     console.error(`Error removing driver from race: ${error}`);
@@ -107,30 +104,3 @@ export const removeDriverFromRace = async (driverId, raceId) => {
 window.showDrivers = showDrivers;
 window.deleteDriver = deleteDriver;
 window.removeDriverFromRace = removeDriverFromRace;
-
-// const selectRace = async (raceId) => {
-//     try {
-//       const data = await fetchRace(raceId);
-//       const race = data.data[0];
-//       const driversList = document.getElementById("drivers-list");
-//       driversList.innerHTML = "";
-
-//       await Promise.allSettled(
-//         race.drivers.map(async (driverId) => {
-//           try {
-//             const driverData = await fetchDriver(driverId);
-//             const driver = driverData.data;
-//             const driverElement = createDriverListItem(driver, raceId);
-//             driversList.appendChild(driverElement);
-//           } catch (error) {
-//             console.error(`Error loading driver ${driverId}:`, error);
-//           }
-//         })
-//       );
-//     } catch (error) {
-//       console.error(`Error selecting race ${raceId}:`, error);
-//       document.getElementById(
-//         "drivers-list"
-//       ).innerHTML = `<li>Error loading race data: ${error.message}</li>`;
-//     }
-//   };

@@ -1,4 +1,3 @@
-import Race from "../entities/Race.js";
 import * as RaceRepository from "../repositories/RaceRepository.js";
 import logger from "../utils/logger.js";
 import { io } from "../../app.js";
@@ -130,7 +129,7 @@ export const startCurrentRace = async (raceId) => {
     return { error: "NO_DRIVERS_IN_RACE" };
   }
 
-  await RaceService.setMode("SAFE");
+  await setMode("SAFE"); //await RaceService.setMode("SAFE");
   const result = await RaceRepository.updateTimeStamp(raceId);
   return result[0];
 };
@@ -298,8 +297,6 @@ export const removeDriverFromRace = async (raceId, driverId) => {
     // Remove driver
     const newDrivers = drivers[0].drivers.filter((id) => id !== driverIdNum);
     const result = await RaceRepository.postDriverToRace(raceId, newDrivers);
-    // const updatedRace = await findCurrentRace();
-    // io.emit("raceUpdate", updatedRace);
 
     const upcomingRaces = await findUpcomingRaces();
     io.emit("upcomingRacesUpdate", upcomingRaces);
