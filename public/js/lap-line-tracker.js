@@ -6,7 +6,9 @@ export const updateRaceInfo = async (race) => {
       const driver = race.drivers[i - 1];
       if (driver) {
         const { car, id } = driver;
-        btn.textContent = `${car}`;
+        btn.innerHTML =
+          car ||
+          `<i class="fa-solid fa-triangle-exclamation" style="color: #FFD43B;"></i>`;
         btn.onclick = async () => {
           try {
             const response = await fetch("/api/laptimes/", {

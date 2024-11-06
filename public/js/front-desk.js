@@ -49,7 +49,7 @@ const addDriverToRace = async (raceId) => {
   }
 };
 
-const populateDriverSelect = async () => {
+export const populateDriverSelect = async () => {
   try {
     const response = await fetch("/api/drivers");
     const data = await handleResponse(response);
@@ -194,10 +194,25 @@ const assignCar = async () => {
     if (data.status === "success") {
       clearCarAssignmentForm();
       await refreshData();
-      alert(`Car ${carId} assigned successfully to driver ${driverId}`);
+      Toastify({
+        text: `Car ${carId} assigned successfully to driver ${driverId}`,
+        duration: 3000,
+        close: true,
+        gravity: "bottom",
+        position: "left",
+        stopOnFocus: true,
+      }).showToast();
     }
   } catch (error) {
-    alert(`Error: ${error.message}`);
+    Toastify({
+      text: `${error.message}`,
+      duration: 3000,
+      close: true,
+      gravity: "bottom",
+      position: "left",
+      className: "error",
+      stopOnFocus: true,
+    }).showToast();
   }
 };
 
@@ -260,7 +275,15 @@ const deleteRace = async (raceId) => {
       }
     }
   } catch (error) {
-    alert(`Error: ${error.message}`);
+    Toastify({
+      text: `${error.message}`,
+      duration: 3000,
+      close: true,
+      gravity: "bottom",
+      position: "left",
+      className: "error",
+      stopOnFocus: true,
+    }).showToast();
   }
 };
 

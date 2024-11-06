@@ -1,5 +1,7 @@
 import * as DriverRepository from "../repositories/DriverRepository.js";
 import logger from "../utils/logger.js";
+import { io } from "../../app.js";
+import * as RaceService from "../services/RaceService.js";
 
 export const createDriver = async (name) => {
   logger.info(`DriverService.createDriver(name:${name})`);
@@ -10,6 +12,9 @@ export const createDriver = async (name) => {
     }
 
     const res = await DriverRepository.insertDriver(name);
+    io.emit("driversUpdate");
+    const upcomingRaces = await RaceService.findUpcomingRaces();
+    io.emit("upcomingRacesUpdate", upcomingRaces);
     return res[0];
   } catch (err) {
     logger.error(err);
@@ -67,6 +72,9 @@ export const assignCarToDriver = async (driverId, carId) => {
     }
 
     const result = await DriverRepository.postCarToDriver(driverId, carId);
+    io.emit("driversUpdate");
+    const upcomingRaces = await RaceService.findUpcomingRaces();
+    io.emit("upcomingRacesUpdate", upcomingRaces);
     return result[0];
   } catch (err) {
     logger.error(`DriverService.assignCarToDriver() | Error: ${err}`);
@@ -81,6 +89,9 @@ export const updateDriver = async (driverId, name) => {
       driverId,
       name
     );
+    io.emit("driversUpdate");
+    const upcomingRaces = await RaceService.findUpcomingRaces();
+    io.emit("upcomingRacesUpdate", upcomingRaces);
     return updatedDriver;
   } catch (err) {
     logger.error(err);
@@ -101,6 +112,9 @@ export const deleteDriver = async (driverId) => {
     }
 
     const deleted = await DriverRepository.deleteDriver(driverId);
+    io.emit("driversUpdate");
+    const upcomingRaces = await RaceService.findUpcomingRaces();
+    io.emit("upcomingRacesUpdate", upcomingRaces);
     return deleted;
   } catch (err) {
     logger.error(err);

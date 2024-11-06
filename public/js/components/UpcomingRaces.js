@@ -133,5 +133,14 @@ export const update = (races) => {
 
   races.forEach((race) => updateRace(race));
 
-  //thisRaces = races;
+  const selectedRaceElement = document.querySelector(
+    ".highlight[data-race-id]"
+  );
+  if (selectedRaceElement) {
+    let selectedRaceId = selectedRaceElement.dataset.raceId;
+    let selectedRaceValue = races.filter(
+      (race) => race.id === parseInt(selectedRaceId)
+    );
+    window.showDrivers(selectedRaceValue[0].drivers, selectedRaceId);
+  }
 };

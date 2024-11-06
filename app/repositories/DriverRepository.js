@@ -130,6 +130,16 @@ export const deleteDriver = async (driverId) => {
     // Start a transaction since we are making multiple changes
     await pool.query("BEGIN");
 
+    // find races where this driver is the only driver
+    const racesToDelete = await pool.query(
+      `SELECT id FROM races WHERE array_length(drivers, 1) = 1 AND $1=any(drivers)`,
+      [driverId]
+    );
+    if (racesToDelete.rows.length > 0) {
+      await pool.query(`DELETE FROM races WHERE id = ANY($1)`),
+        [racesToDelete.rows.map((race) => race.id)];
+    }
+
     // Remove driver from races drivers array
     await pool.query("UPDATE races SET drivers = array_remove(drivers, $1)", [
       driverId,

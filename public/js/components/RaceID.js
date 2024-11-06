@@ -13,14 +13,14 @@ export function createRaceID(elementId) {
   infoItem.appendChild(raceIdValue);
   raceIdValue.innerHTML = "<div class='skeleton'></div>";
 
-  function updateDisplay(raceId) {
-    raceIdValue.innerHTML = raceId;
-  }
+  // function updateDisplay(raceId) {
+  // raceIdValue.innerHTML = raceId;
+  // }
   // eslint-disable-next-line no-undef
-  const socket = io();
-  socket.on("raceUpdate", (raceData) => {
-    // updateDisplay(raceData[0].id);
-  });
+  // const socket = io();
+  // socket.on("raceUpdate", (raceData) => {
+  // updateDisplay(raceData[0].id);
+  // });
 
   return infoItem;
 }
