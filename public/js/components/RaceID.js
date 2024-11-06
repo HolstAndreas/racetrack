@@ -19,7 +19,7 @@ export function createRaceID(elementId) {
   // eslint-disable-next-line no-undef
   const socket = io();
   socket.on("raceUpdate", (raceData) => {
-    updateDisplay(raceData[0].id);
+    // updateDisplay(raceData[0].id);
   });
 
   return infoItem;

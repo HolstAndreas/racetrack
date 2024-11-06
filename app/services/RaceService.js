@@ -59,6 +59,17 @@ export const findNextRace = async () => {
   return nextRace;
 };
 
+export const findLastFinishedRace = async () => {
+  logger.info(`findLastFinishedRace()`);
+  try {
+    const lastRace = await RaceRepository.getLastFinishedRace();
+    return lastRace;
+  } catch (err) {
+    logger.error(err);
+    throw err;
+  }
+};
+
 export const findDrivers = async () => {
   logger.info("findDrivers()");
   const drivers = await RaceRepository.getDrivers();
@@ -165,6 +176,9 @@ export const updateRaceStatus = async (raceId, status) => {
     if (status === "FINISHED") {
       return upcomingRaces[0];
     }
+
+    const lastRace = await findLastFinishedRace();
+    io.emit("lastRaceUpdate", lastRace[0]);
 
     return result[0];
   } catch (err) {

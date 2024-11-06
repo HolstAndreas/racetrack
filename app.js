@@ -47,7 +47,8 @@ io.on("connection", (socket) => {
   const updateInitialRace = async () => {
     const race = await RaceService.findCurrentRace();
     io.emit("raceUpdate", race);
-
+    const lastRace = await RaceService.findLastFinishedRace();
+    io.emit("lastRaceUpdate", lastRace[0]);
     const upcomingRaces = await RaceService.findUpcomingRaces();
     io.emit("upcomingRacesUpdate", upcomingRaces);
   };
@@ -92,17 +93,17 @@ io.on("connection", (socket) => {
     io.emit("newRaceStarted", raceId);
   });
 
-  socket.on("changeStatus", async (data) => {
-    logger.info(`Socket status in service: ${data.status}`);
-    try {
-      await RaceService.updateRaceStatus(data.raceId, data.status);
-      if (data.status === "STARTED") {
-        io.emit("raceStarted", data.raceId);
-      }
-    } catch (err) {
-      logger.error(`Error updating race status: ${err}`);
-    }
-  });
+  // socket.on("changeStatus", async (data) => {
+  //   logger.info(`Socket status in service: ${data.status}`);
+  //   try {
+  //     await RaceService.updateRaceStatus(data.raceId, data.status);
+  //     if (data.status === "STARTED") {
+  //       io.emit("raceStarted", data.raceId);
+  //     }
+  //   } catch (err) {
+  //     logger.error(`Error updating race status: ${err}`);
+  //   }
+  // });
 });
 
 const startRaceTimer = async () => {
