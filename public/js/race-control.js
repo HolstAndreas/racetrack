@@ -42,8 +42,16 @@ const resetRace = async () => {
     );
     if (!result.ok) throw new Error("Failed to reset race");
     location.reload();
-  } catch (err) {
-    alert(err);
+  } catch (error) {
+    Toastify({
+      text: `${error.message}`,
+      duration: 3000,
+      close: true,
+      gravity: "bottom",
+      position: "left",
+      className: "error",
+      stopOnFocus: true,
+    }).showToast();
   }
 };
 
@@ -63,7 +71,15 @@ const changeStatus = async (status) => {
     );
     const data = await handleResponse(result);
     if (data.status !== "success") {
-      alert(data.message);
+      Toastify({
+        text: `Unable to change status: ${data.message}`,
+        duration: 3000,
+        close: true,
+        gravity: "bottom",
+        position: "left",
+        className: "error",
+        stopOnFocus: true,
+      }).showToast();
     }
 
     if (status === "STARTED") {
@@ -71,8 +87,16 @@ const changeStatus = async (status) => {
     }
 
     disableButtons();
-  } catch (err) {
-    alert(err);
+  } catch (error) {
+    Toastify({
+      text: `Something went wrong: ${error.message}`,
+      duration: 3000,
+      close: true,
+      gravity: "bottom",
+      position: "left",
+      className: "error",
+      stopOnFocus: true,
+    }).showToast();
   }
 };
 
@@ -92,12 +116,28 @@ const changeMode = async (mode) => {
     );
     const data = await handleResponse(result);
     if (data.status !== "success") {
-      alert(data.message);
+      Toastify({
+        text: `Unable to change mode: ${data.message}`,
+        duration: 3000,
+        close: true,
+        gravity: "bottom",
+        position: "left",
+        className: "error",
+        stopOnFocus: true,
+      }).showToast();
     }
 
     disableButtons();
-  } catch (err) {
-    alert(err);
+  } catch (error) {
+    Toastify({
+      text: `Something went wrong: ${error.message}`,
+      duration: 3000,
+      close: true,
+      gravity: "bottom",
+      position: "left",
+      className: "error",
+      stopOnFocus: true,
+    }).showToast();
   }
 };
 

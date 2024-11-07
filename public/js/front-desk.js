@@ -44,7 +44,15 @@ const addDriverToRace = async (raceId) => {
       await refreshData();
     }
   } catch (error) {
-    alert(`Error adding driver to race: ${error.message}`);
+    Toastify({
+      text: `Error adding driver to race: ${error.message}`,
+      duration: 3000,
+      close: true,
+      gravity: "bottom",
+      position: "left",
+      className: "error",
+      stopOnFocus: true,
+    }).showToast();
     console.error(`Error adding driver to race: ${error}`);
   }
 };
@@ -83,7 +91,15 @@ export const populateDriverSelect = async () => {
 const deleteDriverManagement = async () => {
   const id = document.getElementById("edit-driver-select").value;
   if (!id) {
-    alert("Please select a driver");
+    Toastify({
+      text: `Please select a driver`,
+      duration: 3000,
+      close: true,
+      gravity: "bottom",
+      position: "left",
+      className: "error",
+      stopOnFocus: true,
+    }).showToast();
     return;
   }
   try {
@@ -103,20 +119,43 @@ const deleteDriverManagement = async () => {
       }
     }
   } catch (error) {
-    alert(error);
-    console.error(`Error deleting driver: ${error}`);
+    Toastify({
+      text: `Error deleting driver: ${error}`,
+      duration: 3000,
+      close: true,
+      gravity: "bottom",
+      position: "left",
+      className: "error",
+      stopOnFocus: true,
+    }).showToast();
   }
 };
 
 const updateDriver = async () => {
   const id = document.getElementById("edit-driver-select").value;
   if (!id) {
-    alert("Please select a driver");
+    Toastify({
+      text: `Please select a driver`,
+      duration: 3000,
+      close: true,
+      gravity: "bottom",
+      position: "left",
+      className: "error",
+      stopOnFocus: true,
+    }).showToast();
     return;
   }
   const name = document.getElementById("edit-driver-name").value;
   if (!name) {
-    alert("Please enter a driver name");
+    Toastify({
+      text: `Please enter a driver name`,
+      duration: 3000,
+      close: true,
+      gravity: "bottom",
+      position: "left",
+      className: "error",
+      stopOnFocus: true,
+    }).showToast();
     return;
   }
   try {
@@ -129,14 +168,37 @@ const updateDriver = async () => {
     });
     const data = await handleResponse(response);
     if (data.status === "success") {
-      alert(`Driver ${name} updated successfully!`);
       refreshData();
       clearDriverUpdateForm();
+      Toastify({
+        text: `Driver ${name} updated successfully!`,
+        duration: 3000,
+        close: true,
+        gravity: "bottom",
+        position: "left",
+        stopOnFocus: true,
+      }).showToast();
     } else {
-      alert(data.message);
+      Toastify({
+        text: `${data.message}`,
+        duration: 3000,
+        close: true,
+        gravity: "bottom",
+        position: "left",
+        className: "error",
+        stopOnFocus: true,
+      }).showToast();
     }
   } catch (error) {
-    alert(error);
+    Toastify({
+      text: `${error.message}`,
+      duration: 3000,
+      close: true,
+      gravity: "bottom",
+      position: "left",
+      className: "error",
+      stopOnFocus: true,
+    }).showToast();
   }
 };
 
@@ -144,12 +206,28 @@ const createDriver = async () => {
   const driverName = document.getElementById("driver-name").value.trim();
 
   if (!driverName) {
-    alert("Please enter a driver name");
+    Toastify({
+      text: `Please enter a driver name`,
+      duration: 3000,
+      close: true,
+      gravity: "bottom",
+      position: "left",
+      className: "error",
+      stopOnFocus: true,
+    }).showToast();
     return;
   }
 
   if (!validateDriverName(driverName)) {
-    alert("Name must be at least 3 characters long and contain only letters.");
+    Toastify({
+      text: `Name must be at least 3 characters long and contain only letters.`,
+      duration: 3000,
+      close: true,
+      gravity: "bottom",
+      position: "left",
+      className: "error",
+      stopOnFocus: true,
+    }).showToast();
     return;
   }
 
@@ -164,10 +242,25 @@ const createDriver = async () => {
     if (data.status === "success") {
       document.getElementById("driver-name").value = "";
       await refreshData();
-      alert(`Driver ${driverName} created successfully!`);
+      Toastify({
+        text: `Driver ${driverName} created successfully!`,
+        duration: 3000,
+        close: true,
+        gravity: "bottom",
+        position: "left",
+        stopOnFocus: true,
+      }).showToast();
     }
   } catch (error) {
-    alert(error);
+    Toastify({
+      text: `${error.message}`,
+      duration: 3000,
+      close: true,
+      gravity: "bottom",
+      position: "left",
+      className: "error",
+      stopOnFocus: true,
+    }).showToast();
   }
 };
 
@@ -222,21 +315,45 @@ window.getCurrentRace = async () => {
   if (data.status === "success") {
     return data; //data[0]
   } else {
-    alert(data.message);
+    Toastify({
+      text: `${data.message}`,
+      duration: 3000,
+      close: true,
+      gravity: "bottom",
+      position: "left",
+      className: "error",
+      stopOnFocus: true,
+    }).showToast();
   }
 };
 
 const createRace = async () => {
   const driversInput = document.getElementById("race-drivers").value;
   if (!driversInput) {
-    alert(`Please provide atleast 1 driver`);
+    Toastify({
+      text: `Please provide atleast 1 driver`,
+      duration: 3000,
+      close: true,
+      gravity: "bottom",
+      position: "left",
+      className: "error",
+      stopOnFocus: true,
+    }).showToast();
     return;
   }
   // split by comma, trim spaces, and convert to int
   const drivers = driversInput.split(",").map((id) => parseInt(id.trim()));
 
   if (!drivers.length) {
-    alert(`Please provide atleast 1 driver`);
+    Toastify({
+      text: `Please provide atleast 1 driver.`,
+      duration: 3000,
+      close: true,
+      gravity: "bottom",
+      position: "left",
+      className: "error",
+      stopOnFocus: true,
+    }).showToast();
     return;
   }
 
@@ -255,7 +372,15 @@ const createRace = async () => {
       await refreshData();
     }
   } catch (error) {
-    alert(`Error creating race: ${error.message}`);
+    Toastify({
+      text: `Error creating race: ${error.message}`,
+      duration: 3000,
+      close: true,
+      gravity: "bottom",
+      position: "left",
+      className: "error",
+      stopOnFocus: true,
+    }).showToast();
   }
 };
 
@@ -295,11 +420,27 @@ const validateDriverName = (name) => {
 
 const validateCarAssignment = (driverId, carId) => {
   if (!driverId) {
-    alert("Please select a driver");
+    Toastify({
+      text: `Please select a driver.`,
+      duration: 3000,
+      close: true,
+      gravity: "bottom",
+      position: "left",
+      className: "error",
+      stopOnFocus: true,
+    }).showToast();
     return false;
   }
   if (!parseInt(carId) || parseInt(carId) < 1) {
-    alert("Car ID must be a positive number");
+    Toastify({
+      text: `Car ID must be a positive number.`,
+      duration: 3000,
+      close: true,
+      gravity: "bottom",
+      position: "left",
+      className: "error",
+      stopOnFocus: true,
+    }).showToast();
     return false;
   }
   return true;
@@ -343,7 +484,15 @@ document.addEventListener("DOMContentLoaded", async () => {
       .addEventListener("click", createDriver);
     await refreshData();
   } catch (error) {
-    alert(error);
+    Toastify({
+      text: `${error.message}`,
+      duration: 3000,
+      close: true,
+      gravity: "bottom",
+      position: "left",
+      className: "error",
+      stopOnFocus: true,
+    }).showToast();
   }
 });
 

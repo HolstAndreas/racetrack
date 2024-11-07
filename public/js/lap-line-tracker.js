@@ -29,8 +29,15 @@ export const updateRaceInfo = async (race) => {
               throw new Error(error.message || "Failed to register lap time");
             }
           } catch (error) {
-            console.error("Error registering lap time:", error);
-            alert(error);
+            Toastify({
+                text: `Error registering lap time: ${error.message}`,
+                duration: 3000,
+                close: true,
+                gravity: "bottom",
+                position: "left",
+                className: "error",
+                stopOnFocus: true,
+              }).showToast();
           }
         };
       } else {
@@ -50,7 +57,15 @@ export const updateRaceInfo = async (race) => {
     }
     disableButtons();
   } else {
-    alert("No current race.");
+    Toastify({
+        text: `No current race`,
+        duration: 3000,
+        close: true,
+        gravity: "bottom",
+        position: "left",
+        className: "error",
+        stopOnFocus: true,
+      }).showToast();
   }
 };
 

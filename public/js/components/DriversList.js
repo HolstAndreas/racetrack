@@ -77,8 +77,15 @@ export const deleteDriver = async (id) => {
       }
     }
   } catch (error) {
-    alert(error);
-    console.error(`Error deleting driver: ${error}`);
+    Toastify({
+      text: `Error deleting a driver: ${error.message}`,
+      duration: 3000,
+      close: true,
+      gravity: "bottom",
+      position: "left",
+      className: "error",
+      stopOnFocus: true,
+    }).showToast();
   }
 };
 
@@ -96,8 +103,15 @@ export const removeDriverFromRace = async (driverId, raceId) => {
       driverToRemove.parentElement.remove();
     }
   } catch (error) {
-    alert(error);
-    console.error(`Error removing driver from race: ${error}`);
+    Toastify({
+      text: `Error removing driver from race: ${error.message}`,
+      duration: 3000,
+      close: true,
+      gravity: "bottom",
+      position: "left",
+      className: "error",
+      stopOnFocus: true,
+    }).showToast();
   }
 };
 
