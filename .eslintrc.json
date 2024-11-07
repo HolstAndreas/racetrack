@@ -10,6 +10,9 @@
     "ecmaVersion": "latest",
     "sourceType": "module"
   },
+  "globals": {
+    "Toastify": "readonly"
+  },
   "rules": {
     "import/no-unresolved": "warn",
     "no-unused-vars": [
