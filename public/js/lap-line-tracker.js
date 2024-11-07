@@ -1,3 +1,5 @@
+import raceStore from "./store/race-store.js";
+
 export const updateRaceInfo = async (race) => {
   if (race) {
     // Set up car button click handlers
@@ -46,15 +48,15 @@ export const updateRaceInfo = async (race) => {
         }
       }
     }
-    disableButtons(race.mode, race.status);
+    disableButtons();
   } else {
     alert("No current race.");
   }
 };
 
-const disableButtons = (raceMode, raceStatus) => {
+const disableButtons = () => {
   const buttonsDiv = document.getElementById("buttonsDiv");
-  if (raceMode === "FINISH" || raceStatus !== "STARTED") {
+  if (raceStore.data.currentRace.status !== "STARTED") {
     buttonsDiv.disabled = true;
   } else {
     buttonsDiv.disabled = false;

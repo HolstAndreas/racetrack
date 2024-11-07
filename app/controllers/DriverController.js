@@ -81,6 +81,18 @@ export const patchDriverById = async (req, res, next) => {
     }
 
     const updatedDriver = await DriverService.updateDriver(driverId, name);
+    if (updatedDriver.error) {
+      switch (updatedDriver.error) {
+        case "DRIVER_ALREADY_EXISTS":
+          throw ApiError.badRequest("Driver already exists.");
+        case "DRIVER_NOT_FOUND":
+          throw ApiError.notFound("Driver not found");
+        case "DRIVER_RACING":
+          throw ApiError.conflict(`Driver is currently racing`);
+        default:
+          throw ApiError.internal("Failed to change driver name.");
+      }
+    }
     if (!updatedDriver) {
       throw ApiError.notFound("Driver not found");
     }
@@ -99,6 +111,16 @@ export const deleteDriverById = async (req, res, next) => {
   const { driverId } = req.params;
   try {
     const deleted = await DriverService.deleteDriver(driverId);
+    if (deleted.error) {
+      switch (deleted.error) {
+        case "DRIVER_NOT_FOUND":
+          throw ApiError.notFound("Driver not found");
+        case "DRIVER_RACING":
+          throw ApiError.conflict(`Driver is currently racing`);
+        default:
+          throw ApiError.internal("Failed to delete driver");
+      }
+    }
     if (!deleted) {
       throw ApiError.notFound("Driver not found");
     }
@@ -125,6 +147,8 @@ export const assignCarToDriver = async (req, res, next) => {
           throw ApiError.conflict(
             `Car is already taken by driver: ${result.id}`
           );
+        case "DRIVER_RACING":
+          throw ApiError.conflict(`Driver is currently racing`);
         default:
           throw ApiError.internal("Failed to assign car to driver");
       }

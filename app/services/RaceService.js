@@ -1,6 +1,7 @@
 import * as RaceRepository from "../repositories/RaceRepository.js";
 import logger from "../utils/logger.js";
-import { io } from "../../app.js";
+import { io, startRaceTimer } from "../../app.js";
+import * as LapTimeService from "../services/LapTimeService.js";
 
 export const findAll = async () => {
   logger.info(`findAll()`);
@@ -117,7 +118,11 @@ export const addRace = async (drivers) => {
         return { error: "DRIVER_NOT_FOUND", driver: DriverId };
       }
     }
+    const currentRace = await findCurrentRace();
     const result = await RaceRepository.insertRace(drivers);
+    if (currentRace.length === 0) {
+      io.emit("raceUpdate", result);
+    }
 
     const upcomingRaces = await findUpcomingRaces();
     io.emit("upcomingRacesUpdate", upcomingRaces);
@@ -163,6 +168,7 @@ export const updateRaceStatus = async (raceId, status) => {
     if (status === "STARTED") {
       await RaceRepository.updateTimeStamp(raceId);
       await setMode("SAFE");
+      startRaceTimer();
     }
     if (status === "FINISHED") {
       await setMode("DANGER");
@@ -174,11 +180,21 @@ export const updateRaceStatus = async (raceId, status) => {
     const upcomingRaces = await findUpcomingRaces();
     io.emit("upcomingRacesUpdate", upcomingRaces);
     if (status === "FINISHED") {
-      return upcomingRaces[0];
+      if (upcomingRaces.length > 0) {
+        return upcomingRaces[0];
+      } else {
+        return [];
+      }
     }
 
     const lastRace = await findLastFinishedRace();
-    io.emit("lastRaceUpdate", lastRace[0]);
+    if (lastRace) {
+      const lastRaceLapTimes = await LapTimeService.getLapTimesByRace(
+        lastRace[0].id
+      );
+      lastRace[0].lap_times = lastRaceLapTimes;
+      io.emit("lastRaceUpdate", lastRace[0]);
+    }
 
     return result[0];
   } catch (err) {

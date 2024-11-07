@@ -7,62 +7,80 @@ export const updateLeaderBoard = async (race) => {
     }
   }
 
-  const newDriverLaps = [];
-  const seenDrivers = new Set();
-
-  const driverLapCount = new Map();
-
+  // Map array
+  const leaderboardData = [];
   // foreach race.laptimes count driver laps
-
   race.lap_times.forEach((lap) => {
-    if (!seenDrivers.has(lap.driver_id)) {
-      // if lapnumber = 0 dont add to set
-      if (lap.lap_number !== 0) {
-        seenDrivers.add(lap.driver_id);
-      } // if lap 0 dont do this
-      const fastestDriver = race.drivers.find(
-        (driver) => driver.id === lap.driver_id
-      );
-      if (lap.lap_number === 0 && driverLapCount.get(fastestDriver.id) > 1) {
-        // race.lap_times.filter(lap => lap.driver_id = driver.id).length();
-        // if lapnumber = 0 && driver has > 1 laps length dont push to newdriverlaps
-        // MIHKEL LAP = 0 AND LAP COUNT = 1 = RUN FUNCTION (mihkel has laps 1)
-        // MIHKEL LAP = 0 AND LAP COUNT = 2 = DONT RUN FUNCTION (mihkel has laps 0 and 1)
-        // MIHKEL LAP = 1 AND LAP COUNT = 2 = RUN FUNCTION (mihkel has laps 0 and 1)
-        // array[0] mihkel.laps.length = 1
-        // array[0, 1] mihkel.laps.length = 2
-        // array[0, 1, 2]
-        // array[1, 0, 2]
-        newDriverLaps.push({
-          name: fastestDriver.name || null,
-          car: fastestDriver.car || null,
-          lapTime: lap.lap_number !== 0 ? formatLapTime(lap.lap_time) : "",
-          lapNumber: lap.lap_number,
-        });
+    const foundDriver = leaderboardData.find(
+      (row) => row.get("id") === lap.driver_id
+    );
+    if (foundDriver) {
+      foundDriver.set("currentLap", foundDriver.get("currentLap") + 1);
+      if (
+        isNaN(foundDriver.get("fastestLap")) ||
+        lap.lap_time < foundDriver.get("fastestLap")
+      ) {
+        foundDriver.set("fastestLap", lap.lap_time);
       }
+    } else {
+      const newDriver = new Map();
+      newDriver.set("id", lap.driver_id);
+      newDriver.set(
+        "car",
+        race.drivers.find((driver) => driver.id === lap.driver_id).car
+      );
+      newDriver.set(
+        "name",
+        race.drivers.find((driver) => driver.id === lap.driver_id).name
+      );
+      newDriver.set("currentLap", 1);
+      if (lap.lap_number === 0) {
+        newDriver.set("fastestLap", NaN);
+      } else {
+        newDriver.set("fastestLap", lap.lap_time);
+      }
+      leaderboardData.push(newDriver);
     }
   });
 
-  if (newDriverLaps.length === 0) {
+  if (leaderboardData.length === 0) {
     for (let i = 1; i <= 8; i++) {
       const row = document.getElementById(`driver-${i}`);
       row.innerHTML = "";
     }
   }
+  leaderboardData.sort((a, b) => {
+    // without fastest_lap it goes back
+    if (isNaN(a.get("fastestLap")) && isNaN(b.get("fastestLap"))) return 0;
+    if (isNaN(a.get("fastestLap"))) return 1;
+    if (isNaN(b.get("fastestLap"))) return -1;
+
+    // order in ascending order
+    return a.get("fastestLap") - b.get("fastestLap");
+  });
+
+  // console.log(leaderboardData);
 
   for (let i = 0; i < 8; i++) {
     const newPos = i + 1;
     const row = document.getElementById(`driver-${newPos}`);
-    if (newDriverLaps[i]) {
+    if (leaderboardData[i]) {
+      //console.log(leaderboardData[i]);
       row.innerHTML = `
     <td><span id="driver-${newPos}-position">${newPos}</span></td>
-    <td><span id="driver-${newPos}-car">${newDriverLaps[i].car}</span></td>
-    <td><span id="driver-${newPos}-driver">${newDriverLaps[i].name}</span></td>
-    <td><span id="driver-${newPos}-lap-number">${
-        newDriverLaps[i].lapNumber + 1
-      }</span></td>
+    <td><span id="driver-${newPos}-car">${leaderboardData[i].get(
+        "car"
+      )}</span></td>
+    <td><span id="driver-${newPos}-driver">${leaderboardData[i].get(
+        "name"
+      )}</span></td>
+    <td><span id="driver-${newPos}-lap-number">${leaderboardData[i].get(
+        "currentLap"
+      )}</span></td>
     <td><span id="driver-${newPos}-fastest-lap-time">${
-        newDriverLaps[i].lapTime
+        isNaN(leaderboardData[i].get("fastestLap"))
+          ? ""
+          : formatLapTime(leaderboardData[i].get("fastestLap"))
       }</span></td>
   `;
     } else {

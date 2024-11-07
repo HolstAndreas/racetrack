@@ -125,6 +125,13 @@ export const disableButtons = () => {
   } else {
     endRaceButton.disabled = true;
   }
+
+  const isUpcoming = document.getElementById("isUpcoming");
+  if (raceStore.data.currentRace.id === "NONE") {
+    isUpcoming.style.display = "block";
+  } else {
+    isUpcoming.style.display = "none";
+  }
 };
 
 // Utility functions

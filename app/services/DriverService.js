@@ -3,6 +3,16 @@ import logger from "../utils/logger.js";
 import { io } from "../../app.js";
 import * as RaceService from "../services/RaceService.js";
 
+export const checkDriverRacing = async (id) => {
+  const currentRace = await RaceService.findCurrentRace();
+  return (
+    currentRace[0].status === "STARTED" &&
+    typeof currentRace[0].drivers.find(
+      (driver) => driver.id === parseInt(id)
+    ) !== "undefined"
+  );
+};
+
 export const createDriver = async (name) => {
   logger.info(`DriverService.createDriver(name:${name})`);
   try {
@@ -65,6 +75,12 @@ export const assignCarToDriver = async (driverId, carId) => {
       return { error: "DRIVER_NOT_FOUND" };
     }
 
+    // Check if driver in race
+    const driverRacing = await checkDriverRacing(driverId);
+    if (driverRacing) {
+      return { error: "DRIVER_RACING" };
+    }
+
     // Check if any other driver has this car
     const carDrivers = await DriverRepository.getDriversByCar(carId);
     if (carDrivers.length > 0) {
@@ -84,6 +100,17 @@ export const assignCarToDriver = async (driverId, carId) => {
 
 export const updateDriver = async (driverId, name) => {
   logger.info(`DriverService.updateDriver(driverId:${driverId}, name:${name})`);
+  // Check if muhamed exists
+  const driverSameName = await DriverRepository.findByName(name);
+  if (driverSameName.length > 0) {
+    return { error: "DRIVER_ALREADY_EXISTS" };
+  }
+
+  // Check if driver in race
+  const driverRacing = await checkDriverRacing(driverId);
+  if (driverRacing) {
+    return { error: "DRIVER_RACING" };
+  }
   try {
     const updatedDriver = await DriverRepository.updateDriverName(
       driverId,
@@ -101,6 +128,11 @@ export const updateDriver = async (driverId, name) => {
 
 export const deleteDriver = async (driverId) => {
   logger.info(`DriverService.deleteDriver(driverId:${driverId})`);
+  // Check if driver in race
+  const driverRacing = await checkDriverRacing(driverId);
+  if (driverRacing) {
+    return { error: "DRIVER_RACING" };
+  }
   try {
     // Check if driver exists
     const driverExists = await DriverRepository.checkDriverExists(driverId);

@@ -3,13 +3,7 @@ const raceStore = {
     currentRace: {
       id: "NONE",
       status: "NONE",
-      drivers: [
-        {
-          id: 0,
-          name: "",
-          car: "",
-        },
-      ],
+      drivers: [],
       lap_times: [],
     },
     timer: 0,
@@ -35,11 +29,17 @@ const raceStore = {
     lap_times: [],
   },
   updateUI: function () {
-    const showLastRace = this.data.currentRace.status === "WAITING";
+    const showLastRace =
+      this.data.currentRace.status === "WAITING" ||
+      this.data.currentRace.status === "NONE";
     if (this.data.currentRace) {
       const raceId = document.getElementById("raceId");
       if (raceId.classList.contains("next")) {
-        raceId.innerHTML = `NEXT RACE: ${this.upcoming[0].id}`;
+        if (this.upcoming[0]) {
+          raceId.innerHTML = `NEXT RACE: ${this.upcoming[0].id}`;
+        } else {
+          raceId.innerHTML = `NEXT RACE: NONE`;
+        }
       } else {
         if (!raceStore.isRaceControl) {
           raceId.innerHTML = showLastRace
@@ -102,10 +102,16 @@ const raceStore = {
           break;
       }
     }
+    //race-control
+    if (document.getElementById("ctrlButtonDiv")) {
+      import("../race-control.js").then((module) => module.disableButtons());
+    }
     //disable llt buttons
     if (document.getElementById("buttonsDiv")) {
       import("../lap-line-tracker.js").then((module) => {
-        const showLastRace = this.data.currentRace.status === "WAITING";
+        const showLastRace =
+          this.data.currentRace.status === "WAITING" ||
+          this.data.currentRace.status === "NONE";
         module.updateRaceInfo(
           showLastRace ? this.pastRace : this.data.currentRace
         );
@@ -114,18 +120,30 @@ const raceStore = {
   },
   updateDriversTableUI: function () {
     const driversTable = document.getElementById("drivers-table");
-    const showLastRace = this.data.currentRace.status === "WAITING";
+    const showLastRace =
+      this.data.currentRace.status === "WAITING" ||
+      this.data.currentRace.status === "NONE";
     let drivers;
     if (!driversTable) return;
     if (driversTable.classList.contains("next")) {
-      drivers = this.upcoming[0].drivers;
+      if (!this.upcoming[0]) {
+        drivers = [];
+      } else {
+        drivers = this.upcoming[0].drivers;
+      }
     } else {
       if (!raceStore.isRaceControl) {
         drivers = showLastRace
           ? this.pastRace.drivers
           : this.data.currentRace.drivers;
       } else {
-        if (this.data.currentRace.status === "WAITING") {
+        if (
+          this.data.currentRace.status === "WAITING" ||
+          this.data.currentRace.status === "NONE"
+        ) {
+          if (this.upcoming[0].drivers.length < 1) {
+            drivers = [];
+          }
           drivers = this.upcoming[0].drivers;
         } else {
           drivers = this.data.currentRace.drivers;
@@ -178,7 +196,9 @@ const raceStore = {
   updateLapLineTrackerUI: function () {
     if (document.getElementById("buttonsDiv")) {
       import("../lap-line-tracker.js").then((module) => {
-        const showLastRace = this.data.currentRace.status === "WAITING";
+        const showLastRace =
+          this.data.currentRace.status === "WAITING" ||
+          this.data.currentRace.status === "NONE";
         module.updateRaceInfo(
           showLastRace ? this.pastRace : this.data.currentRace
         );
@@ -189,7 +209,9 @@ const raceStore = {
   updateLeaderBoardUI: function () {
     if (document.getElementById("leaderboard")) {
       import("../guest.js").then((module) => {
-        const showLastRace = this.data.currentRace.status === "WAITING";
+        const showLastRace =
+          this.data.currentRace.status === "WAITING" ||
+          this.data.currentRace.status === "NONE";
         module.updateLeaderBoard(
           showLastRace ? this.pastRace : this.data.currentRace
         );
@@ -203,12 +225,28 @@ const raceStore = {
 const socket = io();
 
 socket.on("raceUpdate", (newRaceData) => {
-  raceStore.data.currentRace = {
-    ...raceStore.data.currentRace,
-    ...newRaceData[0],
-  };
-  raceStore.updateUI();
-  raceStore.updateLapLineTrackerUI();
+  if (newRaceData.length > 0) {
+    raceStore.data.currentRace = {
+      ...raceStore.data.currentRace,
+      ...newRaceData[0],
+    };
+    raceStore.updateUI();
+    raceStore.updateLapLineTrackerUI();
+    raceStore.updateLeaderBoardUI();
+  } else {
+    if (raceStore.data.currentRace.id !== "NONE") {
+      raceStore.data.currentRace.status = "FINISHED";
+      raceStore.updateLapLineTrackerUI();
+      raceStore.pastRace = { ...raceStore.data.currentRace };
+    }
+    raceStore.data.currentRace = {
+      id: "NONE",
+      status: "NONE",
+      timer: 0,
+      lap_times: [],
+      drivers: [],
+    };
+  }
 });
 
 socket.on("lastRaceUpdate", (lastRaceData) => {
@@ -216,6 +254,9 @@ socket.on("lastRaceUpdate", (lastRaceData) => {
     ...raceStore.pastRace,
     ...lastRaceData,
   };
+  raceStore.updateUI();
+  raceStore.updateLapLineTrackerUI();
+  raceStore.updateLeaderBoardUI();
 });
 
 socket.on("upcomingRacesUpdate", (upcomingRacesData) => {

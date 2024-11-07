@@ -47,8 +47,15 @@ io.on("connection", (socket) => {
   const updateInitialRace = async () => {
     const race = await RaceService.findCurrentRace();
     io.emit("raceUpdate", race);
+
     const lastRace = await RaceService.findLastFinishedRace();
-    io.emit("lastRaceUpdate", lastRace[0]);
+    if (lastRace) {
+      const lastRaceLapTimes = await LapTimeService.getLapTimesByRace(
+        lastRace[0].id
+      );
+      lastRace[0].lap_times = lastRaceLapTimes;
+      io.emit("lastRaceUpdate", lastRace[0]);
+    }
     const upcomingRaces = await RaceService.findUpcomingRaces();
     io.emit("upcomingRacesUpdate", upcomingRaces);
   };
@@ -70,43 +77,9 @@ io.on("connection", (socket) => {
     }
   };
   updateInitialLeaderBoard();
-
-  socket.on("connectToRoom", (roomName) => {
-    socket.join(roomName);
-    logger.debug(`${socket.id} joined room: ${roomName}`);
-    io.to(roomName).emit("newUserJoined", socket.id);
-  });
-
-  // socket.on("raceUpdate", async (raceId) => {
-  //   // Get updated currentrace data
-  //   const updatedRace = await RaceService.findById(raceId);
-  //   if (updatedRace.Status === "Started") {
-  //     await startRaceTimer(updatedRace[0].id);
-  //   }
-  //   console.log("got modeUpdate");
-  //   if (updatedRace.mode === "FINISH") globalTimer = 0;
-  //   io.emit("raceUpdate", updatedRace);
-  // });
-
-  socket.on("raceStarted", (raceId) => {
-    logger.info(`Socket got the info that race started.`);
-    io.emit("newRaceStarted", raceId);
-  });
-
-  // socket.on("changeStatus", async (data) => {
-  //   logger.info(`Socket status in service: ${data.status}`);
-  //   try {
-  //     await RaceService.updateRaceStatus(data.raceId, data.status);
-  //     if (data.status === "STARTED") {
-  //       io.emit("raceStarted", data.raceId);
-  //     }
-  //   } catch (err) {
-  //     logger.error(`Error updating race status: ${err}`);
-  //   }
-  // });
 });
 
-const startRaceTimer = async () => {
+export const startRaceTimer = async () => {
   // Clear any existing timer
   if (timerInterval) clearInterval(timerInterval);
 
