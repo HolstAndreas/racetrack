@@ -1,80 +1,81 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <script src="/socket.io/socket.io.js"></script>
-    <script src="js/lap-line-tracker.js" type="module"></script>
-    <link rel="stylesheet" href="styles/lap-line-tracker.css" />
-    <link rel="stylesheet" href="styles/global.css" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=SUSE:wght@100..800&display=swap"
-      rel="stylesheet"
-    />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
-      integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
-      crossorigin="anonymous"
-      referrerpolicy="no-referrer"
-    />
-    <title>Lap-Line Tracker</title>
-    <link rel="icon" type="image/png" sizes="192x192" href="favicon.png" />
-  </head>
-  <body>
-    <a class="logout-btn" href="/logout">Log out</a>
-    <span id="logs"></span>
-    <div class="car-number-buttons">
-      <div class="race-info">
-        <span class="title">RACE INFO</span>
-        <div class="info-container"></div>
-      </div>
-      <fieldset class="buttonsDiv" id="buttonsDiv">
-        <button id="car-btn1" class="disabled" disabled>
-          <div class="skeleton"></div>
-        </button>
-        <button id="car-btn2" class="disabled" disabled>
-          <div class="skeleton"></div>
-        </button>
-        <button id="car-btn3" class="disabled" disabled>
-          <div class="skeleton"></div>
-        </button>
-        <button id="car-btn4" class="disabled" disabled>
-          <div class="skeleton"></div>
-        </button>
-        <button id="car-btn5" class="disabled" disabled>
-          <div class="skeleton"></div>
-        </button>
-        <button id="car-btn6" class="disabled" disabled>
-          <div class="skeleton"></div>
-        </button>
-        <button id="car-btn7" class="disabled" disabled>
-          <div class="skeleton"></div>
-        </button>
-        <button id="car-btn8" class="disabled" disabled>
-          <div class="skeleton"></div>
-        </button>
-      </fieldset>
-    </div>
-    <script type="module">
-      import raceStore from "./js/store/race-store.js";
-      import { createCountdown } from "./js/components/Countdown.js";
-      import { createRaceID } from "./js/components/RaceID.js";
-      import { createStatus } from "./js/components/Status.js";
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <script src="/socket.io/socket.io.js"></script>
+        <script src="js/lap-line-tracker.js" type="module"></script>
+        <link rel="stylesheet" href="styles/lap-line-tracker.css" />
+        <link rel="stylesheet" href="styles/global.css" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=SUSE:wght@100..800&display=swap"
+            rel="stylesheet"
+        />
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+            integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
+            crossorigin="anonymous"
+            referrerpolicy="no-referrer"
+        />
+        <title>Lap-Line Tracker</title>
+        <link rel="icon" type="image/png" sizes="192x192" href="favicon.png" />
+    </head>
+    <a class="logout-btn" href="/logout"
+        ><i class="fa-solid fa-right-from-bracket"></i
+    ></a>
+    <body>
+        <div class="car-number-buttons">
+            <div class="race-info">
+                <!-- <span class="title">RACE INFO</span> -->
+                <div class="info-container"></div>
+            </div>
+            <fieldset class="buttonsDiv" id="buttonsDiv">
+                <button id="car-btn1" class="disabled" disabled>
+                    <div class="skeleton"></div>
+                </button>
+                <button id="car-btn2" class="disabled" disabled>
+                    <div class="skeleton"></div>
+                </button>
+                <button id="car-btn3" class="disabled" disabled>
+                    <div class="skeleton"></div>
+                </button>
+                <button id="car-btn4" class="disabled" disabled>
+                    <div class="skeleton"></div>
+                </button>
+                <button id="car-btn5" class="disabled" disabled>
+                    <div class="skeleton"></div>
+                </button>
+                <button id="car-btn6" class="disabled" disabled>
+                    <div class="skeleton"></div>
+                </button>
+                <button id="car-btn7" class="disabled" disabled>
+                    <div class="skeleton"></div>
+                </button>
+                <button id="car-btn8" class="disabled" disabled>
+                    <div class="skeleton"></div>
+                </button>
+            </fieldset>
+        </div>
+        <script type="module">
+            import raceStore from "./js/store/race-store.js";
+            import { createCountdown } from "./js/components/Countdown.js";
+            import { createRaceID } from "./js/components/RaceID.js";
+            import { createStatus } from "./js/components/Status.js";
 
-      document.addEventListener("DOMContentLoaded", async () => {
-        const infoContainer = document.querySelector(".info-container");
-        const raceId = createRaceID("raceId");
-        const raceStatus = createStatus("raceStatus");
-        const countdown = createCountdown("countdown");
-        if (!infoContainer) {
-          console.error("infoContainer not found in the DOM.");
-        }
-        infoContainer.appendChild(raceId);
-        infoContainer.appendChild(raceStatus);
-        infoContainer.appendChild(countdown);
-      });
-    </script>
-  </body>
+            document.addEventListener("DOMContentLoaded", async () => {
+                const infoContainer = document.querySelector(".info-container");
+                const raceId = createRaceID("raceId");
+                const raceStatus = createStatus("raceStatus");
+                const countdown = createCountdown("countdown");
+                if (!infoContainer) {
+                    console.error("infoContainer not found in the DOM.");
+                }
+                infoContainer.appendChild(raceId);
+                infoContainer.appendChild(raceStatus);
+                infoContainer.appendChild(countdown);
+            });
+        </script>
+    </body>
 </html>
