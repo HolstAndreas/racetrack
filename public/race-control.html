@@ -1,96 +1,98 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Race Control</title>
-    <link rel="icon" type="image/png" sizes="192x192" href="favicon.png" />
-    <script src="/socket.io/socket.io.js"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=SUSE:wght@100..800&display=swap"
-      rel="stylesheet"
-    />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
-      integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
-      crossorigin="anonymous"
-      referrerpolicy="no-referrer"
-    />
-    <link rel="stylesheet" href="styles/global.css" />
-    <link rel="stylesheet" href="styles/race-control.css" />
-  </head>
-  <body>
-    <a class="logout-btn" href="/logout"><i class="fa-solid fa-right-from-bracket"></i></a>
-    <!-- <button class="logout-btn" id="reset-race" style="right: 150px !important">
-      reset race
-    </button> -->
-    <div class="ctrlButtonsDiv">
-      <div class="race-info">
-        <div class="info-container" id="idAndCountdown"><div class="info-item"><span class="label">Race ID</span><span class="value" id="raceId">8</span></div><div class="info-item"><span class="label">Countdown</span><span class="value" id="countdown">60:00</span></div></div>
-        <div class="info-container" id="statusAndMode"><div class="info-item" style="border: 2px dashed red;"><span class="label">Mode</span><span class="value" id="raceMode">DANGER</span></div><div class="info-item"><span class="label">Status</span><span class="value" id="raceStatus">WAITING</span></div></div>
-      </div>
-    </div>
-    <div class="ctrlButtonsDiv">
-      <div class="race-info">
-        <div class="info-container" id="drvTable"><div id="drivers-table"><div id="driver-row-0" class="driver-row"><span class="driver-id">#1</span><span> Jaan Kood </span><span class="driver-car">1 <i class="fa-solid fa-car"></i></span></div><div id="driver-row-1" class="driver-row"><span class="driver-id">#3</span><span> Lewis Hamilton </span><span class="driver-car">3 <i class="fa-solid fa-car"></i></span></div><div id="driver-row-2" class="driver-row"><span class="driver-id">#4</span><span> Lewis Hamilton </span><span class="driver-car">21 <i class="fa-solid fa-car"></i></span></div><div id="driver-row-3" class="driver-row"><span class="driver-id">#5</span><span> Mihkel </span><span class="driver-car">2 <i class="fa-solid fa-car"></i></span></div><div id="driver-row-4" class="driver-row"><span class="driver-id">#6</span><span> Mihkel </span><span class="driver-car">6 <i class="fa-solid fa-car"></i></span></div><div id="driver-row-5" class="driver-row"></div><div id="driver-row-6" class="driver-row"></div><div id="driver-row-7" class="driver-row"></div></div></div>
-        <span id="isUpcoming" style="display: none;">No upcoming races.</span>
-      </div>
-    </div>
-    <div class="ctrlButtonsDiv">
-      <!-- <div class="ctrlDivTitle">CHANGE MODE</div> -->
-      <fieldset class="ctrlButtonDiv" id="ctrlButtonDiv" disabled="">
-        <button id="safeButton">SAFE</button>
-        <button id="hazardButton">HAZARD</button>
-        <button id="dangerButton">DANGER</button>
-        <button id="finishButton">FINISH</button>
-      </fieldset>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Race Control</title>
+        <link rel="icon" type="image/png" sizes="192x192" href="favicon.png" />
+        <script src="/socket.io/socket.io.js"></script>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=SUSE:wght@100..800&display=swap"
+            rel="stylesheet"
+        />
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+            integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
+            crossorigin="anonymous"
+            referrerpolicy="no-referrer"
+        />
+        <link rel="stylesheet" href="styles/global.css" />
+        <link rel="stylesheet" href="styles/race-control.css" />
+    </head>
+    <body>
+        <a class="logout-btn" href="/logout"
+            ><i class="fa-solid fa-right-from-bracket"></i
+        ></a>
+        <div class="ctrlButtonsDiv" style="margin-bottom: 1rem">
+            <div class="race-info">
+                <div class="info-container" id="idAndCountdown"></div>
+                <div class="info-container" id="statusAndMode"></div>
+            </div>
+        </div>
+        <div class="ctrlButtonsDiv" style="margin-bottom: 1rem">
+            <div class="race-info">
+                <div class="info-container" id="drvTable"></div>
+                <span id="isUpcoming" style="display: none"
+                    >No upcoming races.</span
+                >
+            </div>
+        </div>
+        <div class="ctrlButtonsDiv">
+            <!-- <div class="ctrlDivTitle">CHANGE MODE</div> -->
+            <fieldset class="ctrlButtonDiv" id="ctrlButtonDiv" disabled>
+                <button id="safeButton">SAFE</button>
+                <button id="hazardButton">HAZARD</button>
+                <button id="dangerButton">DANGER</button>
+                <button id="finishButton">FINISH</button>
+            </fieldset>
 
-      <!-- <div class="ctrlDivTitle">CHANGE STATUS</div> -->
-      <div class="ctrlButtonDiv">
-        <button id="startBtn">START RACE</button>
-        <button id="finishBtn" disabled="">END RACE</button>
-      </div>
-    </div>
-    <script type="module">
-      import { createCountdown } from "./js/components/Countdown.js";
-      import { createRaceID } from "./js/components/RaceID.js";
-      import { createMode } from "./js/components/Mode.js";
-      import { createStatus } from "./js/components/Status.js";
-      import { createDriverTable } from "./js/components/DriverTable.js";
-      import raceStore from "./js/store/race-store.js";
+            <!-- <div class="ctrlDivTitle">CHANGE STATUS</div> -->
+            <div class="ctrlButtonDiv">
+                <button id="startBtn">START RACE</button>
+                <button id="finishBtn">END RACE</button>
+            </div>
+        </div>
+        <script type="module">
+            import { createCountdown } from "./js/components/Countdown.js";
+            import { createRaceID } from "./js/components/RaceID.js";
+            import { createMode } from "./js/components/Mode.js";
+            import { createStatus } from "./js/components/Status.js";
+            import { createDriverTable } from "./js/components/DriverTable.js";
+            import raceStore from "./js/store/race-store.js";
 
-      const socket = io();
+            const socket = io();
 
-      document.addEventListener("DOMContentLoaded", () => {
-        const raceIdContainer = document.querySelector("#idAndCountdown");
-        const raceId = createRaceID("raceId");
-        raceIdContainer.appendChild(raceId);
+            document.addEventListener("DOMContentLoaded", () => {
+                const raceIdContainer =
+                    document.querySelector("#idAndCountdown");
+                const raceId = createRaceID("raceId");
+                raceIdContainer.appendChild(raceId);
 
-        const countdownContainer = document.querySelector("#idAndCountdown");
-        const countdown = createCountdown("countdown");
-        countdownContainer.appendChild(countdown);
+                const countdownContainer =
+                    document.querySelector("#idAndCountdown");
+                const countdown = createCountdown("countdown");
+                countdownContainer.appendChild(countdown);
 
-        const modeContainer = document.querySelector("#statusAndMode");
-        const mode = createMode("raceMode");
-        modeContainer.appendChild(mode);
+                const modeContainer = document.querySelector("#statusAndMode");
+                const mode = createMode("raceMode");
+                modeContainer.appendChild(mode);
 
-        const statusContainer = document.querySelector("#statusAndMode");
-        const status = createStatus("raceStatus");
-        statusContainer.appendChild(status);
+                const statusContainer =
+                    document.querySelector("#statusAndMode");
+                const status = createStatus("raceStatus");
+                statusContainer.appendChild(status);
 
-        const ctrlButtonsDivs = document.querySelectorAll(".ctrlButtonsDiv");
-        const driverTableContainer = ctrlButtonsDivs[1].querySelector(
-          "#drvTable"
-        );
-        const driverTable = createDriverTable("drivers-table");
-        driverTableContainer.appendChild(driverTable);
-      });
-    </script>
-    <script src="./js/race-control.js" type="module"></script>
-  
-
-</body>
+                const ctrlButtonsDivs =
+                    document.querySelectorAll(".ctrlButtonsDiv");
+                const driverTableContainer =
+                    ctrlButtonsDivs[1].querySelector("#drvTable");
+                const driverTable = createDriverTable("drivers-table");
+                driverTableContainer.appendChild(driverTable);
+            });
+        </script>
+        <script src="./js/race-control.js" type="module"></script>
+    </body>
 </html>
