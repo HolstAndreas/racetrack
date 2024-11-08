@@ -39,7 +39,7 @@ timer 60 and 600
 ✓ The receptionist can assign drivers to specific cars.
 ✓ Race sessions disappear from the Front Desk interface once it is safe to start.
 
-Õ The Race Control interface is designed for a mobile interface.
+✓ The Race Control interface is designed for a mobile interface.
 ✓ The safety official has one active button, which starts the race when pressed.
 ✓ When the Safety Official selects "Hazard", the Flag screen is yellow.
 ✓ When the Safety Official selects "Finish", the Flag screen is chequered.
@@ -49,9 +49,9 @@ timer 60 and 600
 ✓ When the Safety Official ends the race session, the next session appears on their interface.
 ✓ If there is no upcoming race after the last session is ended, the Safety Official sees no upcoming races message.
 
-Õ The lap button for each car has a large tappable area.
-Õ The Lap-line Tracker is designed for a tablet, featuring large tappable buttons for each car.
-Õ It should work in Landscape or Portrait
+✓ The lap button for each car has a large tappable area.
+✓ The Lap-line Tracker is designed for a tablet, featuring large tappable buttons for each car.
+✓ It should work in Landscape or Portrait
 ✓ When the race session starts, the Lap-Line Observer sees a button for each car.
 
 ✓ The countdown timer is 1 minute in dev mode (instead of 10 minutes).
