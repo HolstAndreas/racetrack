@@ -22,100 +22,36 @@
     <link rel="stylesheet" href="styles/global.css" />
     <link rel="stylesheet" href="styles/race-control.css" />
   </head>
-  <style>
-    #drivers-table {
-      display: flex;
-      flex-wrap: wrap;
-      margin-bottom: 0.5rem;
-      border: 2px solid var(--disabled-color);
-      border-radius: 8px;
-      width: 100%;
-    }
-
-    #drivers-table div:nth-child(even) {
-      border-left: 2px solid var(--disabled-color);
-    }
-
-    .car-icon {
-      color: #ff5e5e;
-    }
-
-    .driver-row {
-      display: flex;
-      align-items: center;
-      height: 2rem;
-      gap: 0.5rem;
-      width: 50%;
-      border-bottom: 2px solid var(--disabled-color);
-      padding: 0.5rem 1rem 0.5rem 0.5rem;
-    }
-
-    .driver-row:nth-child(7) {
-      border-bottom: none;
-    }
-
-    .driver-row:last-child {
-      border-bottom: none;
-    }
-    .driver-id {
-      background-color: var(--background-color);
-      color: var(--disabled-color);
-      font-weight: 600;
-      padding: 0.125rem;
-      border-radius: 4px;
-      font-size: 0.875rem;
-      width: 2rem;
-      text-align: center;
-    }
-
-    .driver-car {
-      color: var(--disabled-color);
-      font-weight: 600;
-    }
-
-    @media only screen and (max-width: 800px) {
-      .driver-row {
-        width: 100%;
-        border-left: none !important;
-        border-right: none !important;
-        justify-content: space-between;
-      }
-      .driver-row:nth-child(7) {
-        border-bottom: 2px solid var(--disabled-color);
-      }
-    }
-  </style>
   <body>
-    <a class="logout-btn" href="/logout">Log out</a>
-    <button class="logout-btn" id="reset-race" style="right: 150px !important">
+    <a class="logout-btn" href="/logout"><i class="fa-solid fa-right-from-bracket"></i></a>
+    <!-- <button class="logout-btn" id="reset-race" style="right: 150px !important">
       reset race
-    </button>
-    <span id="logs"></span>
-    <div class="ctrlButtonsDiv" style="margin-bottom: 1rem">
+    </button> -->
+    <div class="ctrlButtonsDiv">
       <div class="race-info">
-        <div class="info-container"></div>
-        <div class="info-container"></div>
-      </div>
-    </div>
-    <div class="ctrlButtonsDiv" style="margin-bottom: 1rem">
-      <div class="race-info">
-        <div class="info-container"></div>
-        <span id="isUpcoming" style="display: none">No upcoming races.</span>
+        <div class="info-container" id="idAndCountdown"><div class="info-item"><span class="label">Race ID</span><span class="value" id="raceId">8</span></div><div class="info-item"><span class="label">Countdown</span><span class="value" id="countdown">60:00</span></div></div>
+        <div class="info-container" id="statusAndMode"><div class="info-item" style="border: 2px dashed red;"><span class="label">Mode</span><span class="value" id="raceMode">DANGER</span></div><div class="info-item"><span class="label">Status</span><span class="value" id="raceStatus">WAITING</span></div></div>
       </div>
     </div>
     <div class="ctrlButtonsDiv">
-      <div class="ctrlDivTitle">CHANGE MODE</div>
-      <fieldset class="ctrlButtonDiv" id="ctrlButtonDiv" disabled>
+      <div class="race-info">
+        <div class="info-container" id="drvTable"><div id="drivers-table"><div id="driver-row-0" class="driver-row"><span class="driver-id">#1</span><span> Jaan Kood </span><span class="driver-car">1 <i class="fa-solid fa-car"></i></span></div><div id="driver-row-1" class="driver-row"><span class="driver-id">#3</span><span> Lewis Hamilton </span><span class="driver-car">3 <i class="fa-solid fa-car"></i></span></div><div id="driver-row-2" class="driver-row"><span class="driver-id">#4</span><span> Lewis Hamilton </span><span class="driver-car">21 <i class="fa-solid fa-car"></i></span></div><div id="driver-row-3" class="driver-row"><span class="driver-id">#5</span><span> Mihkel </span><span class="driver-car">2 <i class="fa-solid fa-car"></i></span></div><div id="driver-row-4" class="driver-row"><span class="driver-id">#6</span><span> Mihkel </span><span class="driver-car">6 <i class="fa-solid fa-car"></i></span></div><div id="driver-row-5" class="driver-row"></div><div id="driver-row-6" class="driver-row"></div><div id="driver-row-7" class="driver-row"></div></div></div>
+        <span id="isUpcoming" style="display: none;">No upcoming races.</span>
+      </div>
+    </div>
+    <div class="ctrlButtonsDiv">
+      <!-- <div class="ctrlDivTitle">CHANGE MODE</div> -->
+      <fieldset class="ctrlButtonDiv" id="ctrlButtonDiv" disabled="">
         <button id="safeButton">SAFE</button>
         <button id="hazardButton">HAZARD</button>
         <button id="dangerButton">DANGER</button>
         <button id="finishButton">FINISH</button>
       </fieldset>
 
-      <div class="ctrlDivTitle">CHANGE STATUS</div>
+      <!-- <div class="ctrlDivTitle">CHANGE STATUS</div> -->
       <div class="ctrlButtonDiv">
         <button id="startBtn">START RACE</button>
-        <button id="finishBtn">END RACE</button>
+        <button id="finishBtn" disabled="">END RACE</button>
       </div>
     </div>
     <script type="module">
@@ -129,34 +65,32 @@
       const socket = io();
 
       document.addEventListener("DOMContentLoaded", () => {
-        const raceIdContainer = document.querySelector(".info-container");
+        const raceIdContainer = document.querySelector("#idAndCountdown");
         const raceId = createRaceID("raceId");
         raceIdContainer.appendChild(raceId);
 
-        const countdownContainer = document.querySelector(".info-container");
+        const countdownContainer = document.querySelector("#idAndCountdown");
         const countdown = createCountdown("countdown");
         countdownContainer.appendChild(countdown);
 
-        const modeContainer = document.querySelector(
-          ".info-container:nth-child(2)"
-        );
+        const modeContainer = document.querySelector("#statusAndMode");
         const mode = createMode("raceMode");
         modeContainer.appendChild(mode);
 
-        const statusContainer = document.querySelector(
-          ".info-container:nth-child(2)"
-        );
+        const statusContainer = document.querySelector("#statusAndMode");
         const status = createStatus("raceStatus");
         statusContainer.appendChild(status);
 
         const ctrlButtonsDivs = document.querySelectorAll(".ctrlButtonsDiv");
         const driverTableContainer = ctrlButtonsDivs[1].querySelector(
-          ".race-info .info-container"
+          "#drvTable"
         );
         const driverTable = createDriverTable("drivers-table");
         driverTableContainer.appendChild(driverTable);
       });
     </script>
     <script src="./js/race-control.js" type="module"></script>
-  </body>
+  
+
+</body>
 </html>
