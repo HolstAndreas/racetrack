@@ -117,6 +117,8 @@ A real-time race track management system with multiple interfaces for different 
     ```
     JWT_SECRET="YOUR_SECRET"
 
+    PORT=3000
+
     DB_USER=YOUR_USERNAME
     DB_DATABASE=racetrack
     DB_PASSWORD=YOUR_PASSWORD
@@ -145,7 +147,7 @@ A real-time race track management system with multiple interfaces for different 
 
 ## Access
 
-**Note**: Employee interfaces require authentication with corresponding access keys.
+> **Note**: Employee interfaces require authentication with corresponding access keys.
 
 Once running, access the interfaces at:
 
