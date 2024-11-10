@@ -1,9 +1,4 @@
-[Tasks](#tasks)
-
-## Tasks: ?
-
 AUTOFILL paroolid ära võtta.
-timer 60 and 600
 
 
 ✓ The server waits 500ms to respond if an incorrect access key is entered in the interface.
@@ -70,8 +65,8 @@ timer 60 and 600
 ✓ The Next Race display switches to the subsequent race, once the current race is safe to start.
 ✓ The upcoming race session, is displayed on the Next Race display.
 
-Õ The README.md file at the root of the project describes how to launch the project.
-Õ The README.md file at the root of the project has a user guide, describing the core functionality of the user interfaces
+✓ The README.md file at the root of the project describes how to launch the project.
+✓ The README.md file at the root of the project has a user guide, describing the core functionality of the user interfaces
 ✓ It is not possible to have two drivers with the same name.
 
 ✓ When the race session is ended, the race mode changes to "Danger".
