@@ -9,7 +9,7 @@ const __dirname = path.dirname(__filename); // Directory name where __filepath i
 const router = express.Router();
 
 router.get("/", function (req, res) {
-  res.sendFile(path.join(__dirname, "../../public/index.html"));
+  res.sendFile(path.join(__dirname, "../../public/login.html"));
 });
 
 router.get("/login", (req, res) => {
