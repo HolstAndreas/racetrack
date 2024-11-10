@@ -145,7 +145,7 @@ A real-time race track management system with multiple interfaces for different 
 
 ## Access
 
-> **Note**: Employee interfaces require authentication with corresponding access keys.
+**Note**: Employee interfaces require authentication with corresponding access keys.
 
 Once running, access the interfaces at:
 
