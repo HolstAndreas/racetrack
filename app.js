@@ -146,7 +146,6 @@ app.get("/favicon.png", (req, res) => {
 });
 
 app.use(routes);
-// app.use(errorHandler);
 
 const PORT = process.env.PORT || 3000; // Sets the port number, checks for environment variables, default is 3000.
 
