@@ -123,7 +123,7 @@ const raceStore = {
     const showLastRace =
       this.data.currentRace.status === "WAITING" ||
       this.data.currentRace.status === "NONE";
-    let drivers;
+    let drivers = [];
     if (!driversTable) return;
     if (driversTable.classList.contains("next")) {
       console.log("Drivers table has 'next' class");
@@ -159,7 +159,7 @@ const raceStore = {
               drivers = this.upcoming[0].drivers;
             }
           }
-
+          drivers = []
         } else {
           console.log("Using current race drivers:", this.data.currentRace.drivers);
           drivers = this.data.currentRace.drivers;
@@ -169,8 +169,10 @@ const raceStore = {
     for (let index = 0; index < 8; index++) {
       const row = document.getElementById(`driver-row-${index}`);
       if (!row) return;
-      if (drivers.length < 1) return;
-      const driver = drivers[index];
+      let driver;
+      if (drivers.length > 0) {
+        driver = drivers[index];
+      } 
       if (index < drivers.length) {
         row.innerHTML = "";
 
