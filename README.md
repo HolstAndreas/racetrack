@@ -2,6 +2,10 @@
 
 A real-time race track management system with multiple interfaces for different roles including Front Desk, Race Control, Lap-line Tracker, Leader Board, Next Race, Race Countdown, and Race Flags.
 
+## Live Demo
+
+[Live Demo](https://racetrack.joodkohvi.ee)
+
 ## Table of Contents
 - [Features](#features)
 - [Installation](#installation-guide-for-ubuntu-2204-or-wsl)
