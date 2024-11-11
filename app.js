@@ -98,6 +98,7 @@ export const startRaceTimer = async () => {
 
     const race = await RaceService.findCurrentRace();
     if (race.length === 0) return;
+    console.log(`RACE: ${race}`);
 
     globalTimer = race[0].remaining_time || parseInt(process.env.TIMER);
 
