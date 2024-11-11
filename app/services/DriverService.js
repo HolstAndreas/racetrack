@@ -5,12 +5,15 @@ import * as RaceService from "../services/RaceService.js";
 
 export const checkDriverRacing = async (id) => {
   const currentRace = await RaceService.findCurrentRace();
-  return (
-    currentRace[0].status === "STARTED" &&
-    typeof currentRace[0].drivers.find(
-      (driver) => driver.id === parseInt(id)
-    ) !== "undefined"
-  );
+  if (currentRace.length > 0) {
+    return (
+      currentRace[0].status === "STARTED" &&
+      typeof currentRace[0].drivers.find(
+        (driver) => driver.id === parseInt(id)
+      ) !== "undefined"
+    )
+  }
+  return false;
 };
 
 export const createDriver = async (name) => {
