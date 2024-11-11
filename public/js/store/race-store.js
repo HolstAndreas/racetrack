@@ -158,8 +158,9 @@ const raceStore = {
               console.log("Using drivers from upcoming race:", this.upcoming[0].drivers);
               drivers = this.upcoming[0].drivers;
             }
+          } else {
+            drivers = [];
           }
-          drivers = []
         } else {
           console.log("Using current race drivers:", this.data.currentRace.drivers);
           drivers = this.data.currentRace.drivers;
