@@ -26,32 +26,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   disableButtons();
 });
 
-const resetRace = async () => {
-  try {
-    const result = await fetch(
-      `/api/race-sessions/reset-race/${raceStore.data.currentRace.id}`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
-    if (!result.ok) throw new Error("Failed to reset race");
-    location.reload();
-  } catch (error) {
-    Toastify({
-      text: `${error.message}`,
-      duration: 3000,
-      close: true,
-      gravity: "bottom",
-      position: "left",
-      className: "error",
-      stopOnFocus: true,
-    }).showToast();
-  }
-};
-
 const changeStatus = async (status) => {
   try {
     const result = await fetch(

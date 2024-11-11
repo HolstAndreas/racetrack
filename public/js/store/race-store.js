@@ -126,26 +126,38 @@ const raceStore = {
     let drivers;
     if (!driversTable) return;
     if (driversTable.classList.contains("next")) {
+      console.log("Drivers table has 'next' class");
       if (!this.upcoming[0]) {
+        console.log("No upcoming races found");
         drivers = [];
       } else {
+        console.log("Using drivers from upcoming race:", this.upcoming[0].drivers);
         drivers = this.upcoming[0].drivers;
       }
     } else {
+      console.log("Drivers table does not have 'next' class");
       if (!raceStore.isRaceControl) {
+        console.log("Not race control view");
+        console.log("showLastRace:", showLastRace);
         drivers = showLastRace
           ? this.pastRace.drivers
           : this.data.currentRace.drivers;
+        console.log("Selected drivers:", drivers);
       } else {
+        console.log("Race control view");
         if (
           this.data.currentRace.status === "WAITING" ||
           this.data.currentRace.status === "NONE"
         ) {
+          console.log("Current race status:", this.data.currentRace.status);
           if (this.upcoming[0].drivers.length < 1) {
+            console.log("No drivers in upcoming race");
             drivers = [];
           }
+          console.log("Using drivers from upcoming race:", this.upcoming[0].drivers);
           drivers = this.upcoming[0].drivers;
         } else {
+          console.log("Using current race drivers:", this.data.currentRace.drivers);
           drivers = this.data.currentRace.drivers;
         }
       }
