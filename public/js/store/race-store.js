@@ -169,6 +169,7 @@ const raceStore = {
     for (let index = 0; index < 8; index++) {
       const row = document.getElementById(`driver-row-${index}`);
       if (!row) return;
+      if (drivers.length < 1) return;
       const driver = drivers[index];
       if (index < drivers.length) {
         row.innerHTML = "";
