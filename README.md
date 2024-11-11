@@ -68,8 +68,12 @@ A real-time race track management system with multiple interfaces for different 
     # Connect to the racetrack database
     \c racetrack
 
+    # Grant schema privileges to the user
+    GRANT ALL ON SCHEMA public TO youruser;
+
     # Grant privileges on future tables (required for schema import)
-    ALTER DEFAULT PRIVILEGES GRANT ALL ON TABLES TO youruser;
+    ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO youruser;
+    ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON SEQUENCES TO youruser;
 
     # Exit psql
     \q
@@ -78,21 +82,31 @@ A real-time race track management system with multiple interfaces for different 
 3. Import database schema
     ```bash
     # Import the schema (replace 'youruser' with the username you created)
+    # Download the schema file from the repository
+    psql -U youruser -d racetrack -f racetrackSchema.sql
+
+    # If the above command fails, try the following:
+    # Method 1: Using TCP/IP connection
+    PGPASSWORD=yourpassword psql -h localhost -U youruser -d racetrack -f racetrackSchema.sql
+
+    # Method 2: If Method 1 doesnt work, try using sudo
+    sudo -u youruser psql -d racetrack -f racetrackSchema.sql
+
+    # Method 3: If Method 1 and 2 dont work, try editing the PostgreSQL config:
+    sudo nano /etc/postgresql/14/main/pg_hba.conf
+
+    # Method 3: Modify the following line:
+    local   all             all                                     peer
+    # To this:
+    local   all             all                                     md5
+
+    # Method 3: Save the file and restart PostgreSQL:
+    sudo systemctl restart postgresql
+
+    # Method 3: Retry the command:
     psql -U youruser -d racetrack -f racetrackSchema.sql
 
     # If prompted for password, enter the password you set earlier
-    ```
-
-4. Set ownership of all tables to your user
-    ```bash
-    # Connect to database again
-    sudo -u postgres psql -d racetrack
-
-    # Set ownership of all tables and sequences to your user (replace 'youruser')
-    REASSIGN OWNED BY postgres TO youruser;
-
-    # Exit psql
-    \q
     ```
 
 ### Application Setup
@@ -114,6 +128,10 @@ A real-time race track management system with multiple interfaces for different 
     ```
 
 4. Configure environment variables in `.env`:
+    ```bash
+    nano .env
+    ```
+
     ```
     JWT_SECRET="YOUR_SECRET"
 

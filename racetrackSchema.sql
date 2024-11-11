@@ -61,6 +61,8 @@ CREATE TABLE public.global_state (
     mode character varying(50) DEFAULT 'DANGER'::character varying
 );
 
+-- Insert initial state
+INSERT INTO public.global_state (id, mode) VALUES (1, 'DANGER');
 
 --
 -- Name: global_state_id_seq; Type: SEQUENCE; Schema: public; Owner: -
