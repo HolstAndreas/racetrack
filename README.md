@@ -4,6 +4,7 @@ A real-time race track management system with multiple interfaces for different 
 
 ## Live Demo
 
+Protected route password: `123`
 [Live Demo](https://racetrack.joodkohvi.ee)
 
 ## Table of Contents
