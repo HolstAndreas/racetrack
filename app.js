@@ -99,9 +99,9 @@ export const startRaceTimer = async () => {
     const race = await RaceService.findCurrentRace();
     if (race.length === 0) return;
     console.log(`RACE: ${race}`);
-
+    console.log(`RACE[0].REMAINING_TIME: ${race[0].remaining_time}`);
     globalTimer = race[0].remaining_time || parseInt(process.env.TIMER);
-
+    console.log(`GLOBAL TIMER: ${globalTimer}`);
     // MODE -> SAFE ON 'RACE START'
     await RaceService.setMode("SAFE");
 
@@ -126,7 +126,13 @@ export const startRaceTimer = async () => {
 const initializeRaceState = async () => {
     try {
         const currentRace = await RaceService.findCurrentRace();
-        if (currentRace.length > 0 && currentRace[0].status === "STARTED") {
+        const mode = await RaceService.getMode();
+        if (
+            currentRace.length > 0 &&
+            currentRace[0].status === "STARTED" &&
+            currentRace[0].remaining_time > 0 &&
+            mode !== "FINISH"
+        ) {
             // Directly start the timer instead of emitting an event
             await startRaceTimer(currentRace[0].id);
         }
