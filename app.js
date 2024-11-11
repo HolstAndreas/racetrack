@@ -33,7 +33,18 @@ checkEnvVariables();
 // Sets up Express
 const app = express();
 const httpServer = createServer(app);
-export const io = new Server(httpServer, {});
+export const io = new Server(httpServer, {
+      cors: {
+        // Only allow connections from your domain
+        origin: "https://racetrack.joodkohvi.ee",
+        // Allowed HTTP methods
+        methods: ["GET", "POST"],
+        // Allow credentials (cookies, authorization headers)
+        credentials: true
+    },
+    // Available transport methods for the connection
+    transports: ['websocket', 'polling']
+});
 
 let globalTimer = null;
 let timerInterval = null;

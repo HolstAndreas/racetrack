@@ -22,9 +22,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   document
     .getElementById("finishButton")
     .addEventListener("click", () => changeMode("FINISH"));
-  document
-    .getElementById("reset-race")
-    .addEventListener("click", () => resetRace());
 
   disableButtons();
 });
