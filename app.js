@@ -29,7 +29,6 @@ function checkEnvVariables() {
 }
 
 checkEnvVariables();
-console.log(`TIMER: ${process.env.TIMER}`);
 // Sets up Express
 const app = express();
 const httpServer = createServer(app);
@@ -98,11 +97,7 @@ export const startRaceTimer = async () => {
 
     const race = await RaceService.findCurrentRace();
     if (race.length === 0) return;
-    console.log(`RACE: ${race}`);
-    console.log(`RACE[0].REMAINING_TIME: ${race[0].remaining_time}`);
     globalTimer = race[0].remaining_time || parseInt(process.env.TIMER);
-    console.log(`GLOBAL TIMER: ${globalTimer}`);
-    // MODE -> SAFE ON 'RACE START'
     await RaceService.setMode("SAFE");
 
     timerInterval = setInterval(async () => {

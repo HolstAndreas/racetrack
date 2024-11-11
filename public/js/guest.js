@@ -59,13 +59,11 @@ export const updateLeaderBoard = async (race) => {
     return a.get("fastestLap") - b.get("fastestLap");
   });
 
-  // console.log(leaderboardData);
 
   for (let i = 0; i < 8; i++) {
     const newPos = i + 1;
     const row = document.getElementById(`driver-${newPos}`);
     if (leaderboardData[i]) {
-      //console.log(leaderboardData[i]);
       row.innerHTML = `
     <td><span id="driver-${newPos}-position">${newPos}</span></td>
     <td><span id="driver-${newPos}-car">${leaderboardData[i].get(
