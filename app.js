@@ -29,7 +29,7 @@ function checkEnvVariables() {
 }
 
 checkEnvVariables();
-console.log(process.env.TIMER);
+console.log(`TIMER: ${process.env.TIMER}`);
 // Sets up Express
 const app = express();
 const httpServer = createServer(app);
