@@ -188,7 +188,7 @@ export const updateRaceStatus = async (raceId, status) => {
     }
 
     const lastRace = await findLastFinishedRace();
-    if (lastRace) {
+    if (lastRace.length > 0) {
       const lastRaceLapTimes = await LapTimeService.getLapTimesByRace(
         lastRace[0].id
       );
