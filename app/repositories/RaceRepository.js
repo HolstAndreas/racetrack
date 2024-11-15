@@ -355,9 +355,9 @@ export async function updateRaceStatus(raceId, status) {
 }
 
 export const updateRemainingTime = async (raceId, remainingTime) => {
-    // logger.info(
-    // `RaceRepository.updateRemainingTime(raceId:${raceId}, remainingTime:${remainingTime})`
-    // );
+    logger.info(
+    `RaceRepository.updateRemainingTime(raceId:${raceId}, remainingTime:${remainingTime})`
+    );
     try {
         const res = await pool.query(
             "UPDATE races SET remaining_time = $1 WHERE id = $2 RETURNING *;",
