@@ -180,6 +180,14 @@ export const updateRaceStatus = async (raceId, status) => {
     const upcomingRaces = await findUpcomingRaces();
     io.emit("upcomingRacesUpdate", upcomingRaces);
     if (status === "FINISHED") {
+      const lastRace = await findLastFinishedRace();
+      if (lastRace.length > 0) {
+        const lastRaceLapTimes = await LapTimeService.getLapTimesByRace(
+          lastRace[0].id
+        );
+        lastRace[0].lap_times = lastRaceLapTimes;
+        io.emit("lastRaceUpdate", lastRace[0]);
+      }
       if (upcomingRaces.length > 0) {
         return upcomingRaces[0];
       } else {
