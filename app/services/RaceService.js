@@ -165,15 +165,15 @@ export const updateRaceStatus = async (raceId, status) => {
         return { error: "DRIVER_UNASSIGNED_CAR" };
       }
     }
+    if (status === "FINISHED") {
+      await setMode("DANGER");
+    }
+    const result = await RaceRepository.updateRaceStatus(raceId, status);
     if (status === "STARTED") {
       await RaceRepository.updateTimeStamp(raceId);
       await setMode("SAFE");
       startRaceTimer();
     }
-    if (status === "FINISHED") {
-      await setMode("DANGER");
-    }
-    const result = await RaceRepository.updateRaceStatus(raceId, status);
     const updatedRace = await findCurrentRace();
     io.emit("raceUpdate", updatedRace);
 
